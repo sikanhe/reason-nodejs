@@ -1,6 +1,6 @@
 module Socket = {
   include Stream.Duplex;
-  type t = Stream.t([ Stream.duplex]);
+  type t = Stream.t([ Stream.duplex | `Socket]);
 
   [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
   type address = {
