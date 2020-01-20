@@ -5,8 +5,7 @@
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon examples/example.bs.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "BuckleScript"
