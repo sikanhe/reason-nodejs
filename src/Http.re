@@ -1,5 +1,3 @@
-type t;
-
 module IncomingMessage = {
   include Stream.Readable;
   type t = Stream.t([ Stream.readable | `Http]);
@@ -23,6 +21,12 @@ module ServerResponse = {
   external setHeaderArray: (t, string, array(string)) => unit = "setHeader";
 };
 
-type listener = (IncomingMessage.t, ServerResponse.t) => unit;
-[@bs.module "http"] external createServer: listener => t = "createServer";
-[@bs.send] external listen: (t, int) => unit = "listen";
+module Server = {
+  type t;
+  [@bs.send] external listen: (t, int) => unit = "listen";
+};
+
+[@bs.module "http"]
+external createServer:
+  (IncomingMessage.t, ServerResponse.t => unit) => Server.t =
+  "createServer";
