@@ -2,6 +2,7 @@ type t('a);
 type readable = [ | `Readable];
 type writable = [ | `Writable];
 type duplex = [ readable | writable];
+type transform = [ duplex | `Transform];
 
 module Readable = {
   [@bs.module "stream"] [@bs.new]
@@ -72,9 +73,16 @@ module Duplex = {
   external make: unit => t([> duplex]) = "Duplex";
 };
 
-module PassThrough = {
+module Transform = {
+  include Duplex;
   [@bs.module "stream"] [@bs.new]
-  external make: unit => t([> duplex]) = "PassThrough";
+  external make: unit => t([> transform]) = "Transform";
+};
+
+module PassThrough = {
+  include Transform;
+  [@bs.module "stream"] [@bs.new]
+  external make: unit => t([> transform]) = "PassThrough";
 };
 
 include Readable;
