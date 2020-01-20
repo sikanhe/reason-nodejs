@@ -72,6 +72,11 @@ module Duplex = {
   external make: unit => t([> duplex]) = "Duplex";
 };
 
+module PassThrough = {
+  [@bs.module "stream"] [@bs.new]
+  external make: unit => t([> duplex]) = "PassThrough";
+};
+
 include Readable;
 include Writable;
 
