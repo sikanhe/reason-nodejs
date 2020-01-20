@@ -1,21 +1,18 @@
 type t;
 
 module IncomingMessage = {
-  type connection = {remoteAddress: string};
-  type t = Stream.t([ Stream.readable | `Http]);
-
   include Stream.Readable;
+  type t = Stream.t([ Stream.readable | `Http]);
   [@bs.get] external method_: t => string = "method";
   [@bs.get] external url: t => string = "url";
   [@bs.get] external port: t => int = "port";
   [@bs.get] external headers: t => Js.Dict.t(string) = "headers";
-  [@bs.get] external connection: t => connection = "connection";
+  [@bs.get] external connection: t => Net.Socket.t = "connection";
 };
 
 module ServerResponse = {
-  type t = Stream.t([ Stream.writable | `Http]);
-
   include Stream.Writable;
+  type t = Stream.t([ Stream.writable | `Http]);
   [@bs.get] external statusCode: t => int = "statusCode";
   [@bs.set] external setStatusCode: (t, int) => unit = "statusCode";
   [@bs.send]
