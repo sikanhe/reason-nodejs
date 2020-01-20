@@ -1,6 +1,4 @@
 module Socket = {
-  include Stream.Readable;
-  include Stream.Writable;
   include Stream.Duplex;
   type t = Stream.t([ Stream.duplex]);
 

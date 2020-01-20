@@ -4,6 +4,8 @@ type writable = [ | `Writable];
 type duplex = [ readable | writable];
 
 module Readable = {
+  [@bs.module "stream"] [@bs.new]
+  external make: unit => t([> readable]) = "Readable";
   [@bs.send]
   external onError:
     (t([> readable]), [@bs.as "error"] _, Js.Exn.t => unit) => unit =
@@ -21,9 +23,13 @@ module Readable = {
     "on";
   [@bs.send]
   external pipe: (t([> readable]), t([> writable]) as 'a) => 'a = "pipe";
+  [@bs.send]
+  external unpipe: (t([> readable]) as 'a, t([> writable])) => 'a = "unpipe";
 };
 
 module Writable = {
+  [@bs.module "stream"] [@bs.new]
+  external make: unit => t([> writable]) = "Writable";
   [@bs.send]
   external onClose:
     (t([> writable]), [@bs.as "close"] _, unit => unit) => unit =
@@ -60,7 +66,21 @@ module Writable = {
 };
 
 module Duplex = {
-  [@bs.send]
-  external onError: (t(duplex), [@bs.as "error"] _, Js.Exn.t => unit) => unit =
-    "on";
+  include Readable;
+  include Writable;
+  [@bs.module "stream"] [@bs.new]
+  external make: unit => t([> duplex]) = "Duplex";
 };
+
+include Readable;
+include Writable;
+
+[@bs.send]
+external onError: (t('a), [@bs.as "error"] _, Js.Exn.t => unit) => unit =
+  "on";
+[@bs.send]
+external onClose: (t('a), [@bs.as "close"] _, unit => unit) => unit = "on";
+[@unboxed]
+type cleanup = {unsubscribe: unit => unit};
+[@bs.module "stream"] [@bs.val]
+external finished: (t('a), option(Js.Exn.t) => unit) => cleanup = "finished";
