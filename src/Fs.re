@@ -49,6 +49,29 @@ module Stat = {
   };
 };
 
+[@bs.module "fs"] [@bs.val]
+external openSync:
+  (
+    path,
+    ~flags: [@bs.string] [
+              | [@bs.as "r"] `Read
+              | [@bs.as "r+"] `ReadWrite
+              | [@bs.as "rs+"] `ReadWriteSync
+              | [@bs.as "w"] `Write
+              | [@bs.as "wx"] `WriteFailIfExists
+              | [@bs.as "w+"] `WriteRead
+              | [@bs.as "wx+"] `WriteReadFailIfExists
+              | [@bs.as "a"] `Append
+              | [@bs.as "ax"] `AppendFailIfExists
+              | [@bs.as "a+"] `AppendRead
+              | [@bs.as "ax+"] `AppendReadFailIfExists
+            ]=?,
+    ~mode: int=?,
+    unit
+  ) =>
+  fd =
+  "openSync";
+
 module Handle = {
   type t;
 
@@ -151,7 +174,7 @@ module Handle = {
 
   [@bs.send]
   external write:
-    (t, Node_buffer.t, ~offset: int, ~length: int, ~position: int) =>
+    (fd, Node_buffer.t, ~offset: int=?, ~length: int=?, ~position: int=?) =>
     Js.Promise.t(writeInfo) =
     "write";
 
@@ -262,7 +285,7 @@ external createReadStream:
       "mode": option(int),
       "autoClose": option(bool),
       "emitClose": option(bool),
-      "start": int,
+      "start": option(int),
       "end": option(int),
       "highWaterMark": option(int),
     }
@@ -279,7 +302,7 @@ let createReadStream =
       ~mode=?,
       ~autoClose=?,
       ~emitClose=?,
-      ~start,
+      ~start=?,
       ~end_=?,
       ~highWaterMark=?,
       (),
@@ -316,7 +339,7 @@ external createWriteStream:
       "mode": option(int),
       "autoClose": option(bool),
       "emitClose": option(bool),
-      "start": int,
+      "start": option(int),
     }
   ) =>
   WriteStream.t =
@@ -331,7 +354,7 @@ let createWriteStream =
       ~mode=?,
       ~autoClose=?,
       ~emitClose=?,
-      ~start,
+      ~start=?,
       (),
     ) => {
   createWriteStream(
