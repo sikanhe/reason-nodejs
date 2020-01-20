@@ -25,13 +25,11 @@ module Hash = {
     string =
     "digest";
 
-  [@bs.send] external update: (t, Buffer.t) => unit = "update";
-
+  [@bs.send] external update: (t, string) => unit = "update";
   [@bs.send]
   external updateWithEncoding:
     (
       t,
-      string,
       [@bs.string] [
         | `hex
         | `utf8
@@ -44,8 +42,11 @@ module Hash = {
         | `utf16le
       ]
     ) =>
-    string =
+    unit =
     "update";
+  [@bs.send] external updateBuffer: (t, Buffer.t) => unit = "update";
+  [@bs.send]
+  external updateDataView: (t, Js.TypedArray2.DataView.t) => unit = "update";
 };
 
 module Hmac = {
@@ -73,13 +74,11 @@ module Hmac = {
     string =
     "digest";
 
-  [@bs.send] external update: (t, Buffer.t) => unit = "update";
-
+  [@bs.send] external update: (t, string) => unit = "update";
   [@bs.send]
   external updateWithEncoding:
     (
       t,
-      string,
       [@bs.string] [
         | `hex
         | `utf8
@@ -92,8 +91,11 @@ module Hmac = {
         | `utf16le
       ]
     ) =>
-    string =
+    unit =
     "update";
+  [@bs.send] external updateBuffer: (t, Buffer.t) => unit = "update";
+  [@bs.send]
+  external updateDataView: (t, Js.TypedArray2.DataView.t) => unit = "update";
 };
 
 [@bs.module "crypto"]
