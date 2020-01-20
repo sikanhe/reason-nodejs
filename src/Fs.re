@@ -65,7 +65,7 @@ external openSync:
               | [@bs.as "ax"] `AppendFailIfExists
               | [@bs.as "a+"] `AppendRead
               | [@bs.as "ax+"] `AppendReadFailIfExists
-            ]=?,
+            ],
     ~mode: int=?,
     unit
   ) =>
