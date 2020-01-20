@@ -91,6 +91,31 @@ module Stat = {
     ctime: string,
     birthtime: string,
   };
+
+  [@bs.send] external isFile: t => bool = "isFile";
+  [@bs.send] external isDirectory: t => bool = "isDirectory";
+  [@bs.send] external isBlockDevice: t => bool = "isBlockDevice";
+  [@bs.send] external isCharacterDevice: t => bool = "isCharacterDevice";
+  [@bs.send] external isSymbolicLink: t => bool = "isSymbolicLink";
+  [@bs.send] external isFIFO: t => bool = "isFIFO";
+  [@bs.send] external isSocket: t => bool = "isSocket";
+
+  let classify = stat =>
+    if (isFile(stat)) {
+      `File;
+    } else if (isDirectory(stat)) {
+      `Directory;
+    } else if (isBlockDevice(stat)) {
+      `BlockDevice;
+    } else if (isCharacterDevice(stat)) {
+      `CharacterDevice;
+    } else if (isSymbolicLink(stat)) {
+      `SymbolicLink;
+    } else if (isFIFO(stat)) {
+      `FIFO;
+    } else {
+      `Socket;
+    };
 };
 
 [@bs.module "fs"]
