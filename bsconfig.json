@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/BuckleScript/bucklescript/master/docs/docson/build-schema.json",
+  "name": "node-js",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "commonjs",
+      "in-source": true
+    }
+  ],
+  "suffix": ".bs.js",
+  "namespace": true,
+  "bs-dependencies": [],
+  "ppx-flags": [],
+  "refmt": 3,
+  "bsc-flags": []
+}
