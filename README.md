@@ -16,3 +16,4 @@ Help all Reason Node.js apps and libaries to be built faster by reducing the tim
 ### Principles
 
 - When available, we prefer to bind to the promise version of the library instead of the callback version to reduce binding surface.
+- Use subtyping only where the benefit is huge. We use subtyping for various things that implement Node Streams, for example - http request and response, file streams, crypto stream api, stdin/out/err.  
