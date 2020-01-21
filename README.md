@@ -27,8 +27,7 @@ Help all Reason Node.js apps and libaries to be built faster by reducing the tim
   ##### Echo server
   ```reason
   Http.createServer((request, response) => {
-    request
-    ->Stream.pipe(response)
-    ->Stream.onData(data => Js.log(data))
+    request->Stream.onData(data => Js.log(data))
+    request->Stream.pipe(response)->ignore
   });
   ```
