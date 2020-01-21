@@ -16,4 +16,19 @@ Help all Reason Node.js apps and libaries to be built faster by reducing the tim
 ### Principles
 
 - When available, we prefer to bind to the promise version of the library instead of the callback version to reduce binding surface.
-- Use subtyping only where the benefit is huge. We use subtyping for various APIs that implement Node Streams, such as HTTP Request and Response, FileSystem streams, Crypto streams, and etc.  It allow us to do things like `Fs.createFileStream("/path")->Stream.pipe(Process.stdout)` without writing writing conversion functions between types and ensures that you can only pipe readable streams into writable streams. 
+- Use subtyping only where the benefit is huge. We use subtyping for various APIs that implement Node Streams, such as HTTP Request and Response, FileSystem streams, Crypto streams, and etc. It allow us to use a single set of functions to manipulate and combine streams across different modules. For example: 
+
+  ##### Stream a file into stdout: 
+  ```reason
+    Fs.createReadStream("/path")
+    ->Stream.pipe(Process.stdout)
+    ->Stream.onError(_ => Js.log("handleError"))
+  ```
+  ##### Echo server
+  ```reason
+  Http.createServer((request, response) => {
+    request
+    ->Stream.pipe(response)
+    ->Stream.onData(data => Js.log(data))
+  });
+  ```

@@ -28,5 +28,5 @@ module Server = {
 
 [@bs.module "http"]
 external createServer:
-  (IncomingMessage.t, ServerResponse.t => unit) => Server.t =
+  ((IncomingMessage.t, ServerResponse.t) => unit) => Server.t =
   "createServer";
