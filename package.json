@@ -10,7 +10,8 @@
   "keywords": [
     "BuckleScript"
   ],
-  "author": "",
+  "author": "Sikan He",
+  "homepage": "https://github.com/sikanhe/reason-node",
   "license": "MIT",
   "dependencies": {},
   "peerDependencies": {
