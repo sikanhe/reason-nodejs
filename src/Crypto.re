@@ -8,41 +8,13 @@ module Hash = {
 
   [@bs.send]
   external digestWithEncoding:
-    (
-      t,
-      [@bs.string] [
-        | `hex
-        | `utf8
-        | `ascii
-        | `latin1
-        | `base64
-        | `ucs2
-        | `base64
-        | `binary
-        | `utf16le
-      ]
-    ) =>
-    string =
+    (t, [@bs.string] [ | `latin1 | `hex | `base64]) => string =
     "digest";
 
   [@bs.send] external update: (t, string) => unit = "update";
   [@bs.send]
   external updateWithEncoding:
-    (
-      t,
-      [@bs.string] [
-        | `hex
-        | `utf8
-        | `ascii
-        | `latin1
-        | `base64
-        | `ucs2
-        | `base64
-        | `binary
-        | `utf16le
-      ]
-    ) =>
-    unit =
+    (t, [@bs.string] [ | `utf8 | `ascii | `latin1]) => unit =
     "update";
   [@bs.send] external updateBuffer: (t, Buffer.t) => unit = "update";
   [@bs.send]
@@ -57,73 +29,20 @@ module Hmac = {
 
   [@bs.send]
   external digestWithEncoding:
-    (
-      t,
-      [@bs.string] [
-        | `hex
-        | `utf8
-        | `ascii
-        | `latin1
-        | `base64
-        | `ucs2
-        | `base64
-        | `binary
-        | `utf16le
-      ]
-    ) =>
-    string =
+    (t, [@bs.string] [ | `latin1 | `hex | `base64]) => string =
     "digest";
 
   [@bs.send] external update: (t, string) => unit = "update";
   [@bs.send]
   external updateWithEncoding:
-    (
-      t,
-      [@bs.string] [
-        | `hex
-        | `utf8
-        | `ascii
-        | `latin1
-        | `base64
-        | `ucs2
-        | `base64
-        | `binary
-        | `utf16le
-      ]
-    ) =>
-    unit =
+    (t, [@bs.string] [ | `utf8 | `ascii | `latin1]) => unit =
     "update";
   [@bs.send] external updateBuffer: (t, Buffer.t) => unit = "update";
   [@bs.send]
   external updateDataView: (t, Js.TypedArray2.DataView.t) => unit = "update";
 };
 
-[@bs.module "crypto"]
-external createHash:
-  (
-  [@bs.string]
-  [
-    | [@bs.as "sha256"] `SHA256
-    | [@bs.as "sha512"] `SHA512
-    | [@bs.as "sha384"] `SHA384
-    | [@bs.as "sha1"] `SHA1
-    | [@bs.as "md5"] `MD5
-  ]
-  ) =>
-  Hash.t =
-  "createHash";
+[@bs.module "crypto"] external createHash: string => Hash.t = "createHash";
 
 [@bs.module "crypto"]
-external createHmac:
-  (
-    [@bs.string] [
-      | [@bs.as "sha256"] `SHA256
-      | [@bs.as "sha512"] `SHA512
-      | [@bs.as "sha384"] `SHA384
-      | [@bs.as "sha1"] `SHA1
-      | [@bs.as "md5"] `MD5
-    ],
-    ~key: string
-  ) =>
-  Hmac.t =
-  "createHmac";
+external createHmac: (string, ~key: string) => Hmac.t = "createHmac";
