@@ -14,13 +14,16 @@ external onClose: (t, [@bs.as "close"] _, int => unit) => unit = "on";
 
 [@bs.get] external connected: t => bool = "connected";
 [@bs.send] external disconnect: t => bool = "disconnect";
-[@bs.send] external kill: (t, unit) => unit = "kill";
+[@bs.send] external kill: (t, string) => unit = "kill";
 [@bs.get] external killed: t => bool = "killed";
 [@bs.get] external pid: t => int = "pid";
 [@bs.get] external ref: t => unit = "ref";
-[@bs.get] external stderr: t => Net.Socket.t = "stderr";
-[@bs.get] external stdin: t => Net.Socket.t = "stdin";
-[@bs.get] external stdout: t => Net.Socket.t = "stdout";
+[@bs.get] [@bs.return nullable]
+external stderr: t => option(Net.Socket.t) = "stderr";
+[@bs.get] [@bs.return nullable]
+external stdin: t => option(Net.Socket.t) = "stdin";
+[@bs.get] [@bs.return nullable]
+external stdout: t => option(Net.Socket.t) = "stdout";
 [@bs.get] external unref: t => unit = "unref";
 
 [@bs.module "child_process"] [@bs.val]
@@ -275,6 +278,7 @@ external spawnSync:
       .
       "cwd": option(string),
       "env": option(Js.Dict.t(string)),
+      "input": option('a),
       "argv0": option(string),
       "stdio": option(string),
       "detached": option(bool),
@@ -293,6 +297,7 @@ let spawnSync =
       command,
       args,
       ~cwd=?,
+      ~input=?,
       ~detached=?,
       ~uid=?,
       ~gid=?,
@@ -310,6 +315,11 @@ let spawnSync =
     {
       "cwd": cwd,
       "env": env,
+      "input":
+        switch (input) {
+        | Some(input) => Some(BinaryLike.unwrap(input))
+        | None => None
+        },
       "argv0": argv0,
       "stdio": stdio,
       "detached": detached,
@@ -330,6 +340,7 @@ external execSync:
       .
       "cwd": option(string),
       "env": option(Js.Dict.t(string)),
+      "input": option('a),
       "encoding": option(string),
       "shell": option(string),
       "timeout": option(float),
@@ -347,6 +358,7 @@ let execSync =
     (
       command,
       ~cwd=?,
+      ~input=?,
       ~env=?,
       ~encoding=?,
       ~shell=?,
@@ -363,6 +375,11 @@ let execSync =
     {
       "cwd": cwd,
       "env": env,
+      "input":
+        switch (input) {
+        | Some(input) => Some(BinaryLike.unwrap(input))
+        | None => None
+        },
       "encoding": encoding,
       "shell": shell,
       "timeout": timeout,
@@ -383,6 +400,7 @@ external execFileSync:
     {
       .
       "cwd": option(string),
+      "input": option('a),
       "env": option(Js.Dict.t(string)),
       "encoding": option(string),
       "timeout": option(float),
@@ -402,6 +420,7 @@ let execFileSync =
       file,
       args,
       ~cwd=?,
+      ~input=?,
       ~env=?,
       ~encoding=?,
       ~shell=?,
@@ -411,7 +430,7 @@ let execFileSync =
       ~uid=?,
       ~gid=?,
       ~windowsHide=?,
-      ()
+      (),
     ) => {
   execFileSync(
     file,
@@ -419,6 +438,11 @@ let execFileSync =
     {
       "cwd": cwd,
       "env": env,
+      "input":
+        switch (input) {
+        | Some(input) => Some(BinaryLike.unwrap(input))
+        | None => None
+        },
       "encoding": encoding,
       "shell": shell,
       "timeout": timeout,
