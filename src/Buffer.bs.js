@@ -4,10 +4,5 @@
 
 var Constants = { };
 
-function setPoolSize(n) {
-  return Buffer.poolSize = n;
-}
-
 exports.Constants = Constants;
-exports.setPoolSize = setPoolSize;
 /* No side effect */
