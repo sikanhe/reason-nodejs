@@ -13,6 +13,22 @@ external make:
   t =
   "Console";
 
+type consoleOptions;
+
+[@bs.obj]
+external consoleOptions:
+  (
+    ~stderr: Stream.t(Stream.writable)=?,
+    ~ignoreErrors: bool=?,
+    ~colorMode: bool=?,
+    ~inspectOptions: Util.inspectOptions=?,
+    ~stdout: Stream.t(Stream.writable),
+  ) =>
+  consoleOptions = "";
+
+[@bs.new]
+external make2: consoleOptions => t = "Console";
+
 [@bs.val] external console: t = "console";
 [@bs.send] external assert_: (t, bool) => unit = "assert";
 [@bs.send] external assertWithMessage: (t, bool, string) => unit = "assert";
@@ -86,14 +102,6 @@ module Make = (M: {
   let warnMany = warnMany(console);
 };
 
-let make = (~stderr=?, ~ignoreErrors=?, ~colorMode=?, ~inspectOptions=?, ~stdout) =>
-  make({
-    "stdout": stdout,
-    "stderr": stderr,
-    "ignoreErrors": ignoreErrors,
-    "inspectOptions": inspectOptions,
-    "colorMode": colorMode,
-  });
 let assert_ = assert_(console);
 let assertWithMessage = assertWithMessage(console);
 let clear = clear(console);
