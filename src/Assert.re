@@ -27,5 +27,5 @@ external rejectsError: (unit => Js.Promise.t('a), 'e) => unit = "rejects";
 [@bs.module "assert"]
 external doesNotReject: (unit => Js.Promise.t('a)) => unit = "doesNotReject";
 [@bs.module "assert"]
-external doesNotRejectErrpr: (unit => Js.Promise.t('a), 'e) => unit =
+external doesNotRejectError: (unit => Js.Promise.t('a), 'e) => unit =
   "doesNotReject";
