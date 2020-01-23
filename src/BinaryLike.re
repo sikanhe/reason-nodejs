@@ -1,8 +1,6 @@
 open Js.TypedArray2;
 
-[@unboxed]
-type t = 
-  | Any('a): t;
+type t;
 
 type case =
   | String(string)
@@ -18,15 +16,15 @@ type case =
   | Float64Array(Float64Array.t)
   | DataView(DataView.t);
 
-let string = (a: string) => Any(a);
-let buffer = (a: Buffer.t) => Any(a);
-let int8Array = (a: Int8Array.t) => Any(a);
-let uInt8Array = (a: Uint8Array.t) => Any(a);
-let uInt8ClampedArray = (a: Uint8ClampedArray.t) => Any(a);
-let uInt16Array = (a: Uint16Array.t) => Any(a);
-let int16Array = (a: Int16Array.t) => Any(a);
-let uInt32Array = (a: Uint32Array.t) => Any(a);
-let int32Array = (a: Int32Array.t) => Any(a);
-let float32Array = (a: Float32Array.t) => Any(a);
-let float64Array = (a: Float64Array.t) => Any(a);
-let dataView = (a: DataView.t) => Any(a);
+external string: string => t = "%identity";
+external buffer: Buffer.t => t = "%identity";
+external int8Array: Int8Array.t => t = "%identity";
+external uInt8Array: Uint8Array.t => t = "%identity";
+external uInt8ClampedArray: Uint8ClampedArray.t => t = "%identity";
+external uInt16Array: Uint16Array.t => t = "%identity";
+external int16Array: Int16Array.t => t = "%identity";
+external uInt32Array: Uint32Array.t => t = "%identity";
+external int32Array: Int32Array.t => t = "%identity";
+external float32Array: Float32Array.t => t = "%identity";
+external float64Array: Float64Array.t => t = "%identity";
+external dataView: DataView.t => t = "%identity";
