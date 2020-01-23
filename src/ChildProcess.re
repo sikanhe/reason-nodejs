@@ -26,6 +26,8 @@ external stdin: t => option(Net.Socket.t) = "stdin";
 external stdout: t => option(Net.Socket.t) = "stdout";
 [@bs.get] external unref: t => unit = "unref";
 
+type execOptions;
+
 [@bs.obj]
 external execOptions:
   (
@@ -41,7 +43,7 @@ external execOptions:
     ~windowsHide: bool=?,
     unit
   ) =>
-  _ =
+  execOptions =
   "";
 
 [@bs.module "child_process"] [@bs.val]
@@ -50,25 +52,10 @@ external exec: (string, (option(Js.Exn.t), string, string) => unit) => t =
 
 [@bs.module "child_process"] [@bs.val]
 external execWith:
-  (
-    string,
-    {
-      .
-      "cwd": Js.undefined(string),
-      "env": Js.undefined(Js.Dict.t(string)),
-      "encoding": Js.undefined(string),
-      "shell": Js.undefined(string),
-      "timeout": Js.undefined(int),
-      "maxBuffer": Js.undefined(int),
-      "killSignal": Js.undefined(string),
-      "uid": Js.undefined(int),
-      "gid": Js.undefined(int),
-      "windowsHide": Js.undefined(bool),
-    },
-    (option(Js.Exn.t), string, string) => unit
-  ) =>
-  t =
+  (string, execOptions, (option(Js.Exn.t), string, string) => unit) => t =
   "exec";
+
+type execFileOptions;
 
 [@bs.obj]
 external execFileOption:
@@ -85,7 +72,7 @@ external execFileOption:
     ~shell: string=?,
     unit
   ) =>
-  _ =
+  execFileOptions =
   "";
 
 [@bs.module "child_process"] [@bs.val]
@@ -98,23 +85,13 @@ external execFileWith:
   (
     string,
     array(string),
-    {
-      .
-      "cwd": Js.undefined(string),
-      "env": Js.undefined(Js.Dict.t(string)),
-      "encoding": Js.undefined(string),
-      "timeout": Js.undefined(int),
-      "maxBuffer": Js.undefined(int),
-      "killSignal": Js.undefined(string),
-      "uid": Js.undefined(int),
-      "gid": Js.undefined(int),
-      "windowsHide": Js.undefined(bool),
-      "shell": Js.undefined(string),
-    },
+    execFileOptions,
     (option(Js.Exn.t), string, string) => unit
   ) =>
   t =
   "execFile";
+
+type forkOptions;
 
 [@bs.obj]
 external forkOptions:
@@ -131,33 +108,16 @@ external forkOptions:
     ~windowsVerbatimArguments: bool=?,
     unit
   ) =>
-  _ =
+  forkOptions =
   "";
 
 [@bs.module "child_process"] [@bs.val]
 external fork: (string, array(string)) => t = "fork";
 
 [@bs.module "child_process"] [@bs.val]
-external forkWith:
-  (
-    string,
-    array(string),
-    {
-      .
-      "cwd": Js.undefined(string),
-      "detached": Js.undefined(bool),
-      "env": Js.undefined(Js.Dict.t(string)),
-      "execPath": Js.undefined(string),
-      "execArgv": Js.undefined(array(string)),
-      "silent": Js.undefined(bool),
-      "stdio": Js.undefined(string),
-      "uid": Js.undefined(int),
-      "gid": Js.undefined(int),
-      "windowsVerbatimArguments": Js.undefined(bool),
-    }
-  ) =>
-  t =
-  "fork";
+external forkWith: (string, array(string), forkOptions) => t = "fork";
+
+type spawnOptions;
 
 [@bs.obj]
 external spawnOptions:
@@ -174,33 +134,14 @@ external spawnOptions:
     ~windowsHide: bool=?,
     unit
   ) =>
-  _ =
+  spawnOptions =
   "";
 
 [@bs.module "child_process"] [@bs.val]
 external spawn: (string, array(string)) => t = "spawn";
 
 [@bs.module "child_process"] [@bs.val]
-external spawnWith:
-  (
-    string,
-    array(string),
-    {
-      .
-      "cwd": Js.undefined(string),
-      "env": Js.undefined(Js.Dict.t(string)),
-      "argv0": Js.undefined(string),
-      "stdio": Js.undefined(string),
-      "detached": Js.undefined(bool),
-      "uid": Js.undefined(int),
-      "gid": Js.undefined(int),
-      "shell": Js.undefined(string),
-      "windowsVerbatimArguments": Js.undefined(bool),
-      "windowsHide": Js.undefined(bool),
-    }
-  ) =>
-  t =
-  "spawn";
+external spawnWith: (string, array(string), spawnOptions) => t = "spawn";
 
 type spawnSyncResult('a) = {
   pid: int,
@@ -212,28 +153,38 @@ type spawnSyncResult('a) = {
   error: option(Js.Exn.t),
 };
 
+type spawnSyncOptions;
+
+[@bs.obj]
+external spawnSyncOptions:
+  (
+    ~cwd: string=?,
+    ~env: Js.Dict.t(string)=?,
+    ~input: BinaryLike.t=?,
+    ~argv0: string=?,
+    ~stdio: string=?,
+    ~detached: bool=?,
+    ~uid: int=?,
+    ~gid: int=?,
+    ~shell: string=?,
+    ~windowsVerbatimArguments: bool=?,
+    ~windowsHide: bool=?,
+    unit
+  ) =>
+  spawnSyncOptions =
+  "";
+
 [@bs.module "child_process"] [@bs.val]
 external spawnSync:
-  (
-    string,
-    array(string),
-    {
-      .
-      "cwd": Js.undefined(string),
-      "env": Js.undefined(Js.Dict.t(string)),
-      "input": Js.undefined(BinaryLike.t),
-      "argv0": Js.undefined(string),
-      "stdio": Js.undefined(string),
-      "detached": Js.undefined(bool),
-      "uid": Js.undefined(int),
-      "gid": Js.undefined(int),
-      "shell": Js.undefined(string),
-      "windowsVerbatimArguments": Js.undefined(bool),
-      "windowsHide": Js.undefined(bool),
-    }
-  ) =>
-  spawnSyncResult('a) =
+  (string, array(string), spawnSyncOptions) => spawnSyncResult('a) =
   "spawnSync";
+
+[@bs.module "child_process"] [@bs.val]
+external spawnSyncWith:
+  (string, array(string), spawnSyncOptions) => spawnSyncResult('a) =
+  "spawnSync";
+
+type execSyncOptions;
 
 [@bs.obj]
 external execSyncOptions:
@@ -251,33 +202,16 @@ external execSyncOptions:
     ~windowsHide: bool=?,
     unit
   ) =>
-  _ =
+  execSyncOptions =
   "";
 
 [@bs.module "child_process"] [@bs.val]
 external execSync: string => string = "execSync";
 
 [@bs.module "child_process"] [@bs.val]
-external execSyncWith:
-  (
-    string,
-    {
-      .
-      "cwd": Js.undefined(string),
-      "env": Js.undefined(Js.Dict.t(string)),
-      "input": Js.undefined(BinaryLike.t),
-      "encoding": Js.undefined(string),
-      "shell": Js.undefined(string),
-      "timeout": Js.undefined(int),
-      "maxBuffer": Js.undefined(int),
-      "killSignal": Js.undefined(string),
-      "uid": Js.undefined(int),
-      "gid": Js.undefined(int),
-      "windowsHide": Js.undefined(bool),
-    }
-  ) =>
-  string =
-  "execSync";
+external execSyncWith: (string, execSyncOptions) => string = "execSync";
+
+type execFileSyncOptions;
 
 [@bs.obj]
 external execFileSyncOptions:
@@ -295,7 +229,7 @@ external execFileSyncOptions:
     ~windowsHide: bool=?,
     unit
   ) =>
-  _ =
+  execFileSyncOptions =
   "";
 
 [@bs.module "child_process"] [@bs.val]
@@ -303,23 +237,5 @@ external execFileSync: (string, array(string)) => string = "execFileSync";
 
 [@bs.module "child_process"] [@bs.val]
 external execFileSyncWith:
-  (
-    string,
-    array(string),
-    {
-      .
-      "cwd": Js.undefined(string),
-      "input": Js.undefined(BinaryLike.t),
-      "env": Js.undefined(Js.Dict.t(string)),
-      "encoding": Js.undefined(string),
-      "timeout": Js.undefined(int),
-      "maxBuffer": Js.undefined(int),
-      "killSignal": Js.undefined(string),
-      "uid": Js.undefined(int),
-      "gid": Js.undefined(int),
-      "windowsHide": Js.undefined(bool),
-      "shell": Js.undefined(string),
-    }
-  ) =>
-  string =
+  (string, array(string), execFileSyncOptions) => string =
   "execFileSync";
