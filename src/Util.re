@@ -11,7 +11,8 @@ external makeInspectOptions:
     ~breakLength: int=?,
     ~compact: bool=?,
     ~sorted: bool=?,
-    ~getters: bool=?
+    ~getters: bool=?,
+    unit
   ) =>
   inspectOptions =
   "";
