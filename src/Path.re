@@ -26,8 +26,6 @@ external join: array(string) => string = "join";
 
 [@bs.module "path"] external join2: (string, string) => string = "join";
 
-let (/) = join2;
-
 [@bs.module "path"] external normalize: string => string = "normalize";
 
 [@bs.module "path"] external parse: string => t = "parse";
@@ -70,8 +68,6 @@ module Posix = {
 
   [@bs.module "path"] [@bs.scope "posix"]
   external join2: (string, string) => string = "join";
-
-  let (/) = join2;
 
   [@bs.module "path"] [@bs.scope "posix"]
   external normalize: string => string = "normalize";
@@ -118,8 +114,6 @@ module Win32 = {
 
   [@bs.module "path"] [@bs.scope "win32"]
   external join2: (string, string) => string = "join";
-
-  let (/) = join2;
 
   [@bs.module "path"] [@bs.scope "win32"]
   external normalize: string => string = "normalize";
