@@ -3,9 +3,23 @@
 
 var Stream = require("stream");
 var Caml_option = require("bs-platform/lib/js/caml_option.js");
-var Console$NodeJs = require("../src/Console.bs.js");
 
-var c1 = Console$NodeJs.make(Caml_option.some(new Stream.Writable()), false, true, { }, new Stream.Writable());
+var c1 = new Console({
+      stderr: new Stream.Writable(),
+      ignoreErrors: false,
+      colorMode: true,
+      inspectOptions: { },
+      stdout: new Stream.Writable()
+    });
+
+var c2 = new Console({
+      stderr: Caml_option.some(new Stream.Writable()),
+      ignoreErrors: false,
+      colorMode: true,
+      inspectOptions: { },
+      stdout: new Stream.Writable()
+    });
 
 exports.c1 = c1;
+exports.c2 = c2;
 /* c1 Not a pure module */

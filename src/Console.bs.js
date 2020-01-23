@@ -154,16 +154,6 @@ function Make(M) {
         };
 }
 
-function make(stderr, ignoreErrors, colorMode, inspectOptions, stdout) {
-  return new Console({
-              stdout: stdout,
-              stderr: stderr,
-              ignoreErrors: ignoreErrors,
-              inspectOptions: inspectOptions,
-              colorMode: colorMode
-            });
-}
-
 var partial_arg = console;
 
 function assert_(param) {
@@ -357,7 +347,6 @@ function warnMany(param) {
 }
 
 exports.Make = Make;
-exports.make = make;
 exports.assert_ = assert_;
 exports.assertWithMessage = assertWithMessage;
 exports.clear = clear;
