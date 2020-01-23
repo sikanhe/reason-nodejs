@@ -278,7 +278,7 @@ external spawnSync:
       .
       "cwd": option(string),
       "env": option(Js.Dict.t(string)),
-      "input": option('a),
+      "input": option(BinaryLike.t),
       "argv0": option(string),
       "stdio": option(string),
       "detached": option(bool),
@@ -315,11 +315,7 @@ let spawnSync =
     {
       "cwd": cwd,
       "env": env,
-      "input":
-        switch (input) {
-        | Some(input) => Some(BinaryLike.unwrap(input))
-        | None => None
-        },
+      "input": input,
       "argv0": argv0,
       "stdio": stdio,
       "detached": detached,
@@ -340,7 +336,7 @@ external execSync:
       .
       "cwd": option(string),
       "env": option(Js.Dict.t(string)),
-      "input": option('a),
+      "input": option(BinaryLike.t),
       "encoding": option(string),
       "shell": option(string),
       "timeout": option(float),
@@ -375,11 +371,7 @@ let execSync =
     {
       "cwd": cwd,
       "env": env,
-      "input":
-        switch (input) {
-        | Some(input) => Some(BinaryLike.unwrap(input))
-        | None => None
-        },
+      "input": input,
       "encoding": encoding,
       "shell": shell,
       "timeout": timeout,
@@ -400,7 +392,7 @@ external execFileSync:
     {
       .
       "cwd": option(string),
-      "input": option('a),
+      "input": option(BinaryLike.t),
       "env": option(Js.Dict.t(string)),
       "encoding": option(string),
       "timeout": option(float),
@@ -438,11 +430,7 @@ let execFileSync =
     {
       "cwd": cwd,
       "env": env,
-      "input":
-        switch (input) {
-        | Some(input) => Some(BinaryLike.unwrap(input))
-        | None => None
-        },
+      "input": input,
       "encoding": encoding,
       "shell": shell,
       "timeout": timeout,
