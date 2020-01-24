@@ -57,6 +57,7 @@ module Writable = {
     "on";
 
   [@bs.send] external cork: t([> writable]) => unit = "cork";
+  [@bs.send] external uncork: t([> writable]) => unit = "uncork";
   [@bs.send] external destroy: t([> writable]) => unit = "destroy";
   [@bs.send]
   external destroyWithError: (t([> writable]), Js.Exn.t) => unit = "destroy";
