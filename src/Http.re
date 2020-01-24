@@ -17,7 +17,6 @@ module IncomingMessage = {
   [@bs.get] external statusCode: t => int = "statusCode";
   [@bs.get] external statusMessage: t => string = "statusMessage";
   [@bs.get] external trailers: t => Js.Dict.t(string) = "trailers";
-  [@bs.get] external url: t => string = "url";
 };
 
 module ServerResponse = {
@@ -42,26 +41,8 @@ module ServerResponse = {
   [@bs.get] external writableEnded: t => bool = "writableEnded";
   [@bs.get] external writableFinished: t => bool = "writableFinished";
   [@bs.send] external writeContinue: t => unit = "writeContinue";
-  [@bs.send]
-  external writeHead:
-    (
-      t,
-      Buffer.t,
-      [@bs.string] [
-        | `hex
-        | `utf8
-        | `ascii
-        | `latin1
-        | `base64
-        | `ucs2
-        | `base64
-        | `binary
-        | `utf16le
-      ],
-      unit => unit
-    ) =>
-    bool =
-    "writeHead";
+  [@bs.send] external writeHead: (t, int, Js.t('a)) => t = "writeHead";
+  [@bs.send] external writeHeadWithMessage: (t, int, string, Js.t('a)) => t = "writeHead";
   [@bs.send] external writeProcessing: t => unit = "writeProcessing";
 };
 
