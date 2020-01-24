@@ -57,5 +57,44 @@ module Server = {
   [@bs.send] external keepAliveTimeout: (t, int) => unit = "keepAliveTimeout";
 };
 
+
+/**
+ * TODO: consider moving this function to `Server.make`,
+ * and letting `createServer` be an alias to that function,
+ */
+
 [@bs.module "http"]
-external createServer: (IncomingMessage.t, ServerResponse.t => unit) => Server.t = "createServer";
+external createServer:
+  (
+    {
+      .
+      "IncomingMessage": Js.nullable(IncomingMessage.t),
+      "ServerResponse": Js.nullable(ServerResponse.t),
+      "maxHeaderSize": option(int),
+    },
+    unit => unit
+  ) =>
+  Server.t =
+  "createServer";
+
+let createServer = (~incomingMessage=?, ~serverResponse=?, ~maxHeaderSize=?, requestListener) =>
+  createServer(
+    {
+      "IncomingMessage":
+        incomingMessage
+        |> (
+          fun
+          | None => Js.Nullable.null
+          | Some(a) => Js.Nullable.return(a)
+        ),
+      "ServerResponse":
+        serverResponse
+        |> (
+          fun
+          | None => Js.Nullable.null
+          | Some(a) => Js.Nullable.return(a)
+        ),
+      "maxHeaderSize": maxHeaderSize,
+    },
+    requestListener,
+  );
