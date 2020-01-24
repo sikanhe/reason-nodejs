@@ -60,7 +60,10 @@ module Server = {
 
 /**
  * TODO: consider moving this function to `Server.make`,
- * and letting `createServer` be an alias to that function,
+ * and letting `createServer` be an alias to that function.
+ * Also, the `requestListener` argument is a function that
+ * can take arbitrary arguments after the event name, and t's
+ * not clear what its arity should be.
  */
 
 [@bs.module "http"]
@@ -72,7 +75,7 @@ external createServer:
       "ServerResponse": Js.nullable(ServerResponse.t),
       "maxHeaderSize": option(int),
     },
-    unit => unit
+    (string, 'a) => unit
   ) =>
   Server.t =
   "createServer";
