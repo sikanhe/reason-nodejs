@@ -1,4 +1,0 @@
-
-module Request = {
-  type t;
-};
