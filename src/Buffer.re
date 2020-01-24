@@ -115,8 +115,8 @@ external concatLength: (array(t), ~length: int) => t = "Buffer.concat";
 type buffer;
 [@bs.val] external buffer: buffer = "Buffer";
 [@bs.val] external poolSize: int = "Buffer.poolSize";
-[@bs.set] external setPoolSize: (buffer, int) => int = "poolSize";
-let setPoolSize = n => setPoolSize(buffer, n);
+[@bs.scope "Buffer"] [@bs.set]
+external setPoolSize: (buffer, int) => int = "poolSize";
 
 [@bs.send] external copy: (t, t) => int = "copy";
 [@bs.send] external copyOffset: (t, t, ~offset: int) => int = "copy";

@@ -14,247 +14,134 @@ external onClose: (t, [@bs.as "close"] _, int => unit) => unit = "on";
 
 [@bs.get] external connected: t => bool = "connected";
 [@bs.send] external disconnect: t => bool = "disconnect";
-[@bs.send] external kill: (t, unit) => unit = "kill";
+[@bs.send] external kill: (t, string) => unit = "kill";
 [@bs.get] external killed: t => bool = "killed";
 [@bs.get] external pid: t => int = "pid";
 [@bs.get] external ref: t => unit = "ref";
-[@bs.get] external stderr: t => Net.Socket.t = "stderr";
-[@bs.get] external stdin: t => Net.Socket.t = "stdin";
-[@bs.get] external stdout: t => Net.Socket.t = "stdout";
+[@bs.get] [@bs.return nullable]
+external stderr: t => option(Net.Socket.t) = "stderr";
+[@bs.get] [@bs.return nullable]
+external stdin: t => option(Net.Socket.t) = "stdin";
+[@bs.get] [@bs.return nullable]
+external stdout: t => option(Net.Socket.t) = "stdout";
 [@bs.get] external unref: t => unit = "unref";
 
-[@bs.module "child_process"] [@bs.val]
-external exec:
+type execOptions;
+
+[@bs.obj]
+external execOptions:
   (
-    string,
-    {
-      .
-      "cwd": option(string),
-      "env": option(Js.Dict.t(string)),
-      "encoding": option(string),
-      "shell": option(string),
-      "timeout": option(float),
-      "maxBuffer": option(int),
-      "killSignal": option(string),
-      "uid": option(float),
-      "gid": option(float),
-      "windowsHide": option(bool),
-    },
-    (option(Js.Exn.t), string, string) => unit
+    ~cwd: string=?,
+    ~env: Js.Dict.t(string)=?,
+    ~encoding: string=?,
+    ~shell: string=?,
+    ~timeout: int=?,
+    ~maxBuffer: int=?,
+    ~killSignal: string=?,
+    ~uid: int=?,
+    ~gid: int=?,
+    ~windowsHide: bool=?,
+    unit
   ) =>
-  t =
+  execOptions =
+  "";
+
+[@bs.module "child_process"] [@bs.val]
+external exec: (string, (option(Js.Exn.t), string, string) => unit) => t =
   "exec";
 
-let exec =
-    (
-      command,
-      ~cwd=?,
-      ~env=?,
-      ~encoding=?,
-      ~shell=?,
-      ~timeout=?,
-      ~maxBuffer=?,
-      ~killSignal=?,
-      ~uid=?,
-      ~gid=?,
-      ~windowsHide=?,
-      callback,
-    ) => {
-  exec(
-    command,
-    {
-      "cwd": cwd,
-      "env": env,
-      "encoding": encoding,
-      "shell": shell,
-      "timeout": timeout,
-      "maxBuffer": maxBuffer,
-      "killSignal": killSignal,
-      "uid": uid,
-      "gid": gid,
-      "windowsHide": windowsHide,
-    },
-    (error, stdout, stderr) => {
-    switch (error) {
-    | Some(err) => callback(Error(err))
-    | None => callback(Ok((stdout, stderr)))
-    }
-  });
-};
+[@bs.module "child_process"] [@bs.val]
+external execWith:
+  (string, execOptions, (option(Js.Exn.t), string, string) => unit) => t =
+  "exec";
+
+type execFileOptions;
+
+[@bs.obj]
+external execFileOption:
+  (
+    ~cwd: string=?,
+    ~env: Js.Dict.t(string)=?,
+    ~encoding: string=?,
+    ~timeout: int=?,
+    ~maxBuffer: int=?,
+    ~killSignal: string=?,
+    ~uid: int=?,
+    ~gid: int=?,
+    ~windowsHide: bool=?,
+    ~shell: string=?,
+    unit
+  ) =>
+  execFileOptions =
+  "";
 
 [@bs.module "child_process"] [@bs.val]
 external execFile:
+  (string, array(string), (option(Js.Exn.t), string, string) => unit) => t =
+  "execFile";
+
+[@bs.module "child_process"] [@bs.val]
+external execFileWith:
   (
     string,
     array(string),
-    {
-      .
-      "cwd": option(string),
-      "env": option(Js.Dict.t(string)),
-      "encoding": option(string),
-      "timeout": option(float),
-      "maxBuffer": option(int),
-      "killSignal": option(string),
-      "uid": option(float),
-      "gid": option(float),
-      "windowsHide": option(bool),
-      "shell": option(string),
-    },
+    execFileOptions,
     (option(Js.Exn.t), string, string) => unit
   ) =>
   t =
   "execFile";
 
-let execFile =
-    (
-      file,
-      args,
-      ~cwd=?,
-      ~env=?,
-      ~encoding=?,
-      ~shell=?,
-      ~timeout=?,
-      ~maxBuffer=?,
-      ~killSignal=?,
-      ~uid=?,
-      ~gid=?,
-      ~windowsHide=?,
-      callback,
-    ) => {
-  execFile(
-    file,
-    args,
-    {
-      "cwd": cwd,
-      "env": env,
-      "encoding": encoding,
-      "shell": shell,
-      "timeout": timeout,
-      "maxBuffer": maxBuffer,
-      "killSignal": killSignal,
-      "uid": uid,
-      "gid": gid,
-      "windowsHide": windowsHide,
-    },
-    (error, stdout, stderr) => {
-    switch (error) {
-    | Some(err) => callback(Error(err))
-    | None => callback(Ok((stdout, stderr)))
-    }
-  });
-};
+type forkOptions;
+
+[@bs.obj]
+external forkOptions:
+  (
+    ~cwd: string=?,
+    ~detached: bool=?,
+    ~env: Js.Dict.t(string)=?,
+    ~execPath: string=?,
+    ~execArgv: array(string)=?,
+    ~silent: bool=?,
+    ~stdio: string=?,
+    ~uid: int=?,
+    ~gid: int=?,
+    ~windowsVerbatimArguments: bool=?,
+    unit
+  ) =>
+  forkOptions =
+  "";
 
 [@bs.module "child_process"] [@bs.val]
-external fork:
-  (
-    string,
-    array(string),
-    {
-      .
-      "cwd": option(string),
-      "detached": option(bool),
-      "env": option(Js.Dict.t(string)),
-      "execPath": option(string),
-      "execArgv": option(array(string)),
-      "silent": option(bool),
-      "stdio": option(string),
-      "uid": option(float),
-      "gid": option(float),
-      "windowsVerbatimArguments": option(bool),
-    }
-  ) =>
-  t =
-  "fork";
-
-let fork =
-    (
-      modulePath,
-      args,
-      ~cwd=?,
-      ~detached=?,
-      ~execPath=?,
-      ~execArgv=?,
-      ~uid=?,
-      ~gid=?,
-      ~env=?,
-      ~stdio=?,
-      ~silent=?,
-      ~windowsVerbatimArguments=?,
-      (),
-    ) => {
-  fork(
-    modulePath,
-    Array.of_list(args),
-    {
-      "cwd": cwd,
-      "detached": detached,
-      "env": env,
-      "execPath": execPath,
-      "execArgv": execArgv,
-      "silent": silent,
-      "stdio": stdio,
-      "uid": uid,
-      "gid": gid,
-      "windowsVerbatimArguments": windowsVerbatimArguments,
-    },
-  );
-};
+external fork: (string, array(string)) => t = "fork";
 
 [@bs.module "child_process"] [@bs.val]
-external spawn:
-  (
-    string,
-    array(string),
-    {
-      .
-      "cwd": option(string),
-      "env": option(Js.Dict.t(string)),
-      "argv0": option(string),
-      "stdio": option(string),
-      "detached": option(bool),
-      "uid": option(float),
-      "gid": option(float),
-      "shell": option(string),
-      "windowsVerbatimArguments": option(bool),
-      "windowsHide": option(bool),
-    }
-  ) =>
-  t =
-  "spawn";
+external forkWith: (string, array(string), forkOptions) => t = "fork";
 
-let spawn =
-    (
-      command,
-      args,
-      ~cwd=?,
-      ~detached=?,
-      ~uid=?,
-      ~gid=?,
-      ~env=?,
-      ~argv0=?,
-      ~stdio=?,
-      ~shell=?,
-      ~windowsVerbatimArguments=?,
-      ~windowsHide=?,
-      (),
-    ) => {
-  spawn(
-    command,
-    Array.of_list(args),
-    {
-      "cwd": cwd,
-      "env": env,
-      "argv0": argv0,
-      "stdio": stdio,
-      "detached": detached,
-      "uid": uid,
-      "gid": gid,
-      "shell": shell,
-      "windowsVerbatimArguments": windowsVerbatimArguments,
-      "windowsHide": windowsHide,
-    },
-  );
-};
+type spawnOptions;
+
+[@bs.obj]
+external spawnOptions:
+  (
+    ~cwd: string=?,
+    ~env: Js.Dict.t(string)=?,
+    ~argv0: string=?,
+    ~stdio: string=?,
+    ~detached: bool=?,
+    ~uid: int=?,
+    ~gid: int=?,
+    ~shell: string=?,
+    ~windowsVerbatimArguments: bool=?,
+    ~windowsHide: bool=?,
+    unit
+  ) =>
+  spawnOptions =
+  "";
+
+[@bs.module "child_process"] [@bs.val]
+external spawn: (string, array(string)) => t = "spawn";
+
+[@bs.module "child_process"] [@bs.val]
+external spawnWith: (string, array(string), spawnOptions) => t = "spawn";
 
 type spawnSyncResult('a) = {
   pid: int,
@@ -266,167 +153,89 @@ type spawnSyncResult('a) = {
   error: option(Js.Exn.t),
 };
 
+type spawnSyncOptions;
+
+[@bs.obj]
+external spawnSyncOptions:
+  (
+    ~cwd: string=?,
+    ~env: Js.Dict.t(string)=?,
+    ~input: BinaryLike.t=?,
+    ~argv0: string=?,
+    ~stdio: string=?,
+    ~detached: bool=?,
+    ~uid: int=?,
+    ~gid: int=?,
+    ~shell: string=?,
+    ~windowsVerbatimArguments: bool=?,
+    ~windowsHide: bool=?,
+    unit
+  ) =>
+  spawnSyncOptions =
+  "";
+
 [@bs.module "child_process"] [@bs.val]
 external spawnSync:
-  (
-    string,
-    array(string),
-    {
-      .
-      "cwd": option(string),
-      "env": option(Js.Dict.t(string)),
-      "argv0": option(string),
-      "stdio": option(string),
-      "detached": option(bool),
-      "uid": option(float),
-      "gid": option(float),
-      "shell": option(string),
-      "windowsVerbatimArguments": option(bool),
-      "windowsHide": option(bool),
-    }
-  ) =>
-  spawnSyncResult('a) =
+  (string, array(string), spawnSyncOptions) => spawnSyncResult('a) =
   "spawnSync";
 
-let spawnSync =
-    (
-      command,
-      args,
-      ~cwd=?,
-      ~detached=?,
-      ~uid=?,
-      ~gid=?,
-      ~env=?,
-      ~argv0=?,
-      ~stdio=?,
-      ~shell=?,
-      ~windowsVerbatimArguments=?,
-      ~windowsHide=?,
-      (),
-    ) => {
-  spawnSync(
-    command,
-    Array.of_list(args),
-    {
-      "cwd": cwd,
-      "env": env,
-      "argv0": argv0,
-      "stdio": stdio,
-      "detached": detached,
-      "uid": uid,
-      "gid": gid,
-      "shell": shell,
-      "windowsVerbatimArguments": windowsVerbatimArguments,
-      "windowsHide": windowsHide,
-    },
-  );
-};
+[@bs.module "child_process"] [@bs.val]
+external spawnSyncWith:
+  (string, array(string), spawnSyncOptions) => spawnSyncResult('a) =
+  "spawnSync";
+
+type execSyncOptions;
+
+[@bs.obj]
+external execSyncOptions:
+  (
+    ~cwd: string=?,
+    ~env: Js.Dict.t(string)=?,
+    ~input: BinaryLike.t=?,
+    ~encoding: string=?,
+    ~shell: string=?,
+    ~timeout: int=?,
+    ~maxBuffer: int=?,
+    ~killSignal: string=?,
+    ~uid: int=?,
+    ~gid: int=?,
+    ~windowsHide: bool=?,
+    unit
+  ) =>
+  execSyncOptions =
+  "";
 
 [@bs.module "child_process"] [@bs.val]
-external execSync:
-  (
-    string,
-    {
-      .
-      "cwd": option(string),
-      "env": option(Js.Dict.t(string)),
-      "encoding": option(string),
-      "shell": option(string),
-      "timeout": option(float),
-      "maxBuffer": option(int),
-      "killSignal": option(string),
-      "uid": option(float),
-      "gid": option(float),
-      "windowsHide": option(bool),
-    }
-  ) =>
-  string =
-  "execSync";
-
-let execSync =
-    (
-      command,
-      ~cwd=?,
-      ~env=?,
-      ~encoding=?,
-      ~shell=?,
-      ~timeout=?,
-      ~maxBuffer=?,
-      ~killSignal=?,
-      ~uid=?,
-      ~gid=?,
-      ~windowsHide=?,
-      (),
-    ) => {
-  execSync(
-    command,
-    {
-      "cwd": cwd,
-      "env": env,
-      "encoding": encoding,
-      "shell": shell,
-      "timeout": timeout,
-      "maxBuffer": maxBuffer,
-      "killSignal": killSignal,
-      "uid": uid,
-      "gid": gid,
-      "windowsHide": windowsHide,
-    },
-  );
-};
+external execSync: string => string = "execSync";
 
 [@bs.module "child_process"] [@bs.val]
-external execFileSync:
+external execSyncWith: (string, execSyncOptions) => string = "execSync";
+
+type execFileSyncOptions;
+
+[@bs.obj]
+external execFileSyncOptions:
   (
-    string,
-    array(string),
-    {
-      .
-      "cwd": option(string),
-      "env": option(Js.Dict.t(string)),
-      "encoding": option(string),
-      "timeout": option(float),
-      "maxBuffer": option(int),
-      "killSignal": option(string),
-      "uid": option(float),
-      "gid": option(float),
-      "windowsHide": option(bool),
-      "shell": option(string),
-    }
+    ~cwd: string=?,
+    ~env: Js.Dict.t(string)=?,
+    ~input: BinaryLike.t=?,
+    ~encoding: string=?,
+    ~shell: string=?,
+    ~timeout: int=?,
+    ~maxBuffer: int=?,
+    ~killSignal: string=?,
+    ~uid: int=?,
+    ~gid: int=?,
+    ~windowsHide: bool=?,
+    unit
   ) =>
-  string =
+  execFileSyncOptions =
+  "";
+
+[@bs.module "child_process"] [@bs.val]
+external execFileSync: (string, array(string)) => string = "execFileSync";
+
+[@bs.module "child_process"] [@bs.val]
+external execFileSyncWith:
+  (string, array(string), execFileSyncOptions) => string =
   "execFileSync";
-
-let execFileSync =
-    (
-      file,
-      args,
-      ~cwd=?,
-      ~env=?,
-      ~encoding=?,
-      ~shell=?,
-      ~timeout=?,
-      ~maxBuffer=?,
-      ~killSignal=?,
-      ~uid=?,
-      ~gid=?,
-      ~windowsHide=?,
-      ()
-    ) => {
-  execFileSync(
-    file,
-    args,
-    {
-      "cwd": cwd,
-      "env": env,
-      "encoding": encoding,
-      "shell": shell,
-      "timeout": timeout,
-      "maxBuffer": maxBuffer,
-      "killSignal": killSignal,
-      "uid": uid,
-      "gid": gid,
-      "windowsHide": windowsHide,
-    },
-  );
-};
