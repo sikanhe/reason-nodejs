@@ -41,27 +41,6 @@ function jsReflectClass(data) {
 }
 |}]
 
-/**
- * Note:
- * 
- * Accurate type reflection is a hard problem. This method is relatively
- * standard, but relies on assumptions about how the class instance
- * was created. In particular, it assumes that the standard constructor
- * function was used (or official static constructor methods), and not
- * an extension of the class inheriting from the base class. Extensions
- * of a JS class may not be properly identified by the extension
- * constructor's name.
- * 
- * There are all kinds of other quirks that can prevent accurate type
- * reflection, such as manipulation of prototypes or constructors at
- * runtime. Fortunately those issues are unlikely with these data types.
- * 
- * This works for most binary-like data types, but the class `Buffer` will
- * normally appear as a `Uint8Array`, since that is the underlying data
- * type. So we gueard that with the Node.js function, `Buffer.isBuffer`,
- * to make sure we capture the `Buffer` type.
- */
-
 module Unsafe = {
   [@bs.val] external jsReflectClass: t => string = "jsReflectClass";
   [@bs.get] [@bs.scope "constructor"] external jsConstructorName: t => string = "name";
