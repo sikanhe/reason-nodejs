@@ -3,9 +3,24 @@
 
 var Events$NodeJs = require("./Events.bs.js");
 
+function kill(signal, worker) {
+  worker.kill(signal);
+  return /* () */0;
+}
+
 Events$NodeJs.EventEmitter.Impl({ });
 
-var $$Worker = { };
+var $$Worker = {
+  kill: kill
+};
+
+var Settings = { };
+
+function fork(env, cluster) {
+  return cluster.fork(env);
+}
 
 exports.$$Worker = $$Worker;
+exports.Settings = Settings;
+exports.fork = fork;
 /*  Not a pure module */
