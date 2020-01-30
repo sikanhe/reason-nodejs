@@ -16,10 +16,12 @@ module Worker = {
   [@bs.send] external sendSocketHandle: (string, Net.Socket.t, Js.nullable(Js.t({..}))) => unit = "send";
   let sendSocketHandle = (~options=?, msg, handle) => sendSocketHandle(msg, handle, Js.Nullable.fromOption(options));
 
-  // Class extends EventEmitter
+  // Worker class extends EventEmitter
   include Events.EventEmitter.Impl({ type nonrec t = t; });
 
 };
+
+type t;
 
 module Settings = {
   type t;
@@ -29,11 +31,12 @@ module Settings = {
   [@bs.get] external cwd: t => string = "cwd";
 };
 
-type t;
-
 [@bs.send] external fork: (t, option(Js.Dict.t(string))) => t = "fork";
 let fork = (~env=?, cluster) => fork(cluster, env);
 [@bs.get] external isMaster: t => bool = "isMaster";
 [@bs.get] external isWorker: t => bool = "isWorker";
 [@bs.get] external settings: t => Settings.t = "settings";
+
+// Cluster class extends EventEmitter
+include Events.EventEmitter.Impl({ type nonrec t = t; });
 

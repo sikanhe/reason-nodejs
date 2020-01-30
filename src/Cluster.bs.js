@@ -33,6 +33,8 @@ function fork(env, cluster) {
   return cluster.fork(env);
 }
 
+Events$NodeJs.EventEmitter.Impl({ });
+
 exports.$$Worker = $$Worker;
 exports.Settings = Settings;
 exports.fork = fork;
