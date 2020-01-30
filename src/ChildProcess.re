@@ -6,9 +6,9 @@ external onData: (t, [@bs.as "data"] _, Buffer.t => unit) => unit = "on";
 external onDisconnect: (t, [@bs.as "disconnect"] _, unit => unit) => unit =
   "on";
 [@bs.send]
-external onError: (t, [@bs.as "close"] _, Js.Exn.t => unit) => unit = "on";
+external onError: (t, [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
 [@bs.send]
-external onExit: (t, [@bs.as "close"] _, int => unit) => unit = "on";
+external onExit: (t, [@bs.as "exit"] _, int => unit) => unit = "on";
 [@bs.send]
 external onClose: (t, [@bs.as "close"] _, int => unit) => unit = "on";
 
