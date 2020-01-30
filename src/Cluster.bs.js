@@ -2,16 +2,29 @@
 'use strict';
 
 var Events$NodeJs = require("./Events.bs.js");
+var Js_null_undefined = require("bs-platform/lib/js/js_null_undefined.js");
 
 function kill(signal, worker) {
   worker.kill(signal);
   return /* () */0;
 }
 
+function sendHttpServerHandle(options, msg, handle) {
+  msg.send(handle, Js_null_undefined.fromOption(options));
+  return /* () */0;
+}
+
+function sendSocketHandle(options, msg, handle) {
+  msg.send(handle, Js_null_undefined.fromOption(options));
+  return /* () */0;
+}
+
 Events$NodeJs.EventEmitter.Impl({ });
 
 var $$Worker = {
-  kill: kill
+  kill: kill,
+  sendHttpServerHandle: sendHttpServerHandle,
+  sendSocketHandle: sendSocketHandle
 };
 
 var Settings = { };
