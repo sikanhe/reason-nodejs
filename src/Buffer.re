@@ -9,6 +9,7 @@ module Constants = {
   external max_string_length: int = "MAX_STRING_LENGTH";
 };
 
+[@bs.val] external isBuffer: 'a => bool = "Buffer.isBuffer";
 [@bs.val] external fromString: string => t = "Buffer.from";
 [@bs.val]
 external fromStringWithEncoding:
