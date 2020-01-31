@@ -18,8 +18,6 @@ module Worker = {
 
 };
 
-type t;
-
 module Settings = {
   type t;
   [@bs.get] external execArgv: t => array(string) = "execArgv";
@@ -28,8 +26,8 @@ module Settings = {
   [@bs.get] external cwd: t => string = "cwd";
 };
 
-[@bs.send] external fork: (t, option(Js.Dict.t(string))) => t = "fork";
-let fork = (~env=?, cluster) => fork(cluster, env);
-[@bs.get] external isMaster: t => bool = "isMaster";
-[@bs.get] external isWorker: t => bool = "isWorker";
-[@bs.get] external settings: t => Settings.t = "settings";
+[@bs.module "cluster"] external fork: (option(Js.Dict.t(string))) => Worker.t = "fork";
+let fork = (~env=?, ()) => fork(env);
+[@bs.module "cluster"] external isMaster: bool = "isMaster";
+[@bs.module "cluster"] external isWorker: bool = "isWorker";
+[@bs.module "cluster"] external settings: Settings.t = "settings";
