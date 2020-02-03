@@ -19,7 +19,9 @@
   ],
   "suffix": ".bs.js",
   "namespace": "node-js",
-  "bs-dependencies": [],
+  "bs-dependencies": [
+    "bs-jest"
+  ],
   "ppx-flags": [],
   "refmt": 3,
   "bsc-flags": []
