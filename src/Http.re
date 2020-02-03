@@ -24,10 +24,12 @@ module ServerResponse = {
   type t = Stream.t([ Stream.writable | `Http]);
   [@bs.get] external statusCode: t => int = "statusCode";
   [@bs.set] external setStatusCode: (t, int) => unit = "statusCode";
-  [@bs.send] external writeCallback: (t, string, string, unit => unit) => unit = "write";
+  [@bs.send]
+  external writeCallback: (t, string, string, unit => unit) => unit = "write";
   [@bs.send] external writeStatus: (t, int) => unit = "writeHead";
   [@bs.send] external setHeader: (t, string, string) => unit = "setHeader";
-  [@bs.send] external setHeaderArray: (t, string, array(string)) => unit = "setHeader";
+  [@bs.send]
+  external setHeaderArray: (t, string, array(string)) => unit = "setHeader";
   [@bs.send] external cork: t => unit = "cork";
   [@bs.send] external uncork: t => unit = "uncork";
   [@bs.send] external flushHeaders: t => unit = "flushHeaders";
@@ -42,7 +44,9 @@ module ServerResponse = {
   [@bs.get] external writableFinished: t => bool = "writableFinished";
   [@bs.send] external writeContinue: t => unit = "writeContinue";
   [@bs.send] external writeHead: (t, int, Js.t('a)) => t = "writeHead";
-  [@bs.send] external writeHeadWithMessage: (t, int, string, Js.t('a)) => t = "writeHead";
+  [@bs.send]
+  external writeHeadWithMessage: (t, int, string, Js.t('a)) => t =
+    "writeHead";
   [@bs.send] external writeProcessing: t => unit = "writeProcessing";
 };
 
@@ -52,53 +56,32 @@ module Server = {
   [@bs.send] external close: (t, int) => unit = "close";
   [@bs.get] external listening: t => bool = "listening";
   [@bs.send] external setTimeout: (t, int) => t = "setTimeout";
-  [@bs.send] external setTimeoutWithCallback: (t, int, unit => unit) => t = "setTimeout";
+  [@bs.send]
+  external setTimeoutWithCallback: (t, int, unit => unit) => t = "setTimeout";
   [@bs.get] external timeout: t => int = "timeout";
   [@bs.send] external keepAliveTimeout: (t, int) => unit = "keepAliveTimeout";
 };
 
+type createServerOptions;
 
-/**
- * TODO: consider moving this function to `Server.make`,
- * and letting `createServer` be an alias to that function.
- * Also, the `requestListener` argument is a function that
- * can take arbitrary arguments after the event name, and t's
- * not clear what its arity should be.
- */
+[@bs.obj]
+external createServerOptions:
+  (
+    ~incomingMessage: IncomingMessage.t=?,
+    ~serverResponse: ServerResponse.t=?,
+    ~maxHeaderSize: int=?,
+    unit
+  ) =>
+  createServerOptions =
+  "";
 
 [@bs.module "http"]
 external createServer:
-
-  (
-    {
-      .
-      "IncomingMessage": Js.nullable(IncomingMessage.t),
-      "ServerResponse": Js.nullable(ServerResponse.t),
-      "maxHeaderSize": option(int),
-    },
-    (string, 'a) => unit
-  ) =>
-  Server.t =
+  ((IncomingMessage.t, ServerResponse.t) => unit) => Server.t =
   "createServer";
 
-let createServer = (~incomingMessage=?, ~serverResponse=?, ~maxHeaderSize=?, requestListener) =>
-  createServer(
-    {
-      "IncomingMessage":
-        incomingMessage
-        |> (
-          fun
-          | None => Js.Nullable.null
-          | Some(a) => Js.Nullable.return(a)
-        ),
-      "ServerResponse":
-        serverResponse
-        |> (
-          fun
-          | None => Js.Nullable.null
-          | Some(a) => Js.Nullable.return(a)
-        ),
-      "maxHeaderSize": maxHeaderSize,
-    },
-    requestListener,
-  );
+[@bs.module "http"]
+external createServerWith:
+  (createServerOptions, (IncomingMessage.t, ServerResponse.t) => unit) =>
+  Server.t =
+  "createServer";
