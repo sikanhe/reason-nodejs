@@ -4,9 +4,7 @@
  */
 
 module Worker = {
-
   type t;
-
   [@bs.send] external disconnect: t => unit = "disconnect";
   [@bs.send] external exitedAfterDisconnect: t => bool = "exitedAfterDisconnect";
   [@bs.send] external id: t => int = "id";
@@ -20,10 +18,9 @@ module Worker = {
   let sendHttpServerHandle = (~options=?, msg, handle) => sendHttpServerHandle(msg, handle, Js.Nullable.fromOption(options));
   [@bs.send] external sendSocketHandle: (string, Net.Socket.t, Js.nullable(Js.t({..}))) => unit = "send";
   let sendSocketHandle = (~options=?, msg, handle) => sendSocketHandle(msg, handle, Js.Nullable.fromOption(options));
-
 };
 
-type settings = {
+type clusterSettings = {
   .
   "execArgv": Js.Nullable.t(array(string)),
   "exec": Js.Nullable.t(string),
@@ -38,42 +35,28 @@ type settings = {
   "windowsHide": Js.Nullable.t(bool)
 };
 
+[@bs.obj] external clusterSettings: (
+  ~execArgv: array(string)=?,
+  ~exec: string=?,
+  ~args: array(string)=?,
+  ~cwd: string=?,
+  ~serialization: string=?,
+  ~silent: bool=?,
+  ~stdio: array(string)=?,
+  ~uid: int=?,
+  ~gid: int=?,
+  ~inspectPort: int=?,
+  ~windowsHide: bool=?
+) => clusterSettings = "";
+
 [@bs.module] external disconnect: Js.Nullable.t(unit => unit) => unit = "disconnect";
 let disconnect = (~callback=?, ()) => disconnect(Js.Nullable.fromOption(callback));
 [@bs.module "cluster"] external fork: (option(Js.Dict.t(string))) => Worker.t = "fork";
 let fork = (~env=?, ()) => fork(env);
 [@bs.module "cluster"] external isMaster: bool = "isMaster";
 [@bs.module "cluster"] external isWorker: bool = "isWorker";
-[@bs.module "cluster"] external settings: settings = "settings";
-[@bs.module "cluster"] external setupMaster: settings => unit = "setupMaster";
-let setupMaster = (
-  ~execArgv=?,
-  ~exec=?,
-  ~args=?,
-  ~cwd=?,
-  ~serialization=?,
-  ~silent=?,
-  ~stdio=?,
-  ~uid=?,
-  ~gid=?,
-  ~inspectPort=?,
-  ~windowsHide=?,
-  ()
-) => setupMaster(
-  {
-    "execArgv": Js.Nullable.fromOption(execArgv),
-    "exec": Js.Nullable.fromOption(exec),
-    "args": Js.Nullable.fromOption(args),
-    "cwd": Js.Nullable.fromOption(cwd),
-    "serialization": Js.Nullable.fromOption(serialization),
-    "silent": Js.Nullable.fromOption(silent),
-    "stdio": Js.Nullable.fromOption(stdio),
-    "uid": Js.Nullable.fromOption(uid),
-    "gid": Js.Nullable.fromOption(gid),
-    "inspectPort": Js.Nullable.fromOption(inspectPort),
-    "windowsHide": Js.Nullable.fromOption(windowsHide)
-  }
-);
+[@bs.module "cluster"] external settings: clusterSettings = "settings";
+[@bs.module "cluster"] external setupMaster: clusterSettings => unit = "setupMaster";
 [@bs.module "cluster"] external _SCHED_NONE: int = "SCHED_NONE";
 [@bs.module "cluster"] external _SCHED_RR: int = "SCHED_RR";
 [@bs.module "cluster"] external schedulingPolicy: int = "schedulingPolicy";

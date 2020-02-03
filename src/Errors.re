@@ -129,6 +129,9 @@ module TypeError = {
     && JsTypeReflection.constructorName(x) == "TypeError";
 };
 
+// It's not clear that SystemError works as expressed in the Node API.
+// `SystemError` is an undefined identifier at runtime.
+
 // module SystemError = {
 //   type t;
 //   type constructor;
