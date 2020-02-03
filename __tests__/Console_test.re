@@ -4,7 +4,9 @@ let c1 = Console.make({
   "colorMode": Some(true),
   "inspectOptions": Some(Util.makeInspectOptions()),
   "stdout": Process.stdout,
-})
+});
+
+
 
 let c2 = Console.make2({
   "stderr": Some(Process.stderr),

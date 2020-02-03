@@ -8,6 +8,7 @@
     },
     {
       "dir": "tests",
+      "subdirs": true,
       "type": "dev"
     }
   ],
@@ -20,7 +21,7 @@
   "suffix": ".bs.js",
   "namespace": "node-js",
   "bs-dependencies": [
-    "bs-jest"
+    "@glennsl/bs-jest"
   ],
   "ppx-flags": [],
   "refmt": 3,

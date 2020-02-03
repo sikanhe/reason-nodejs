@@ -1,4 +1,3 @@
-
 /**
  * Note that the *third* definition of this function is
  * strictly necessary because the second one assumes
