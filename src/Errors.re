@@ -71,6 +71,27 @@ module AssertionError = {
     };
 };
 
+module EvalError = {
+  type t;
+  type constructor;
+  [@bs.val] external constructor: constructor = "EvalError";
+  [@bs.new] external make: string => t = "EvalError";
+  [@bs.get] external message: t => string = "message";
+  [@bs.get] external name: t => string = "name";
+  [@bs.get] external stack: t => string = "stack";
+  let instanceOf = (x) => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let isEvalError: 'a => bool = (x) =>
+    JsTypeReflection.constructorName(x) == "EvalError"
+    && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  external toJsExn: t => Js.Exn.t = "%identity";
+  external fromJsExn: Js.Exn.t => t = "%identity";
+  let fromJsExn: Js.Exn.t => option(t) = (exn) =>
+    switch (isEvalError(exn)) {
+      | true => Some(fromJsExn(exn))
+      | false => None
+    };
+};
+
 module RangeError = {
   type t;
   type constructor;
@@ -137,6 +158,24 @@ module SyntaxError = {
     };
 };
 
+// It's not clear that SystemError works as expressed in the Node API.
+// `SystemError` is an undefined identifier at runtime.
+
+module SystemError = {
+  type t;
+  [@bs.get] external name: t => string = "name";
+  [@bs.get] external address: t => option(string) = "address";
+  [@bs.get] external code: t => string = "code";
+  [@bs.get] external dest: t => option(string) = "dest";
+  [@bs.get] external errno: t => int = "errno";
+  [@bs.get] external info: t => option(Js.t({..})) = "info";
+  [@bs.get] external message: t => string = "message";
+  [@bs.get] external path: t => option(string) = "path";
+  [@bs.get] external port: t => option(int) = "port";
+  [@bs.get] external stack: t => option(string) = "stack";
+  [@bs.get] external syscall: t => string = "syscall";
+};
+
 module TypeError = {
   type t;
   type constructor;
@@ -159,36 +198,42 @@ module TypeError = {
     };
 };
 
-// It's not clear that SystemError works as expressed in the Node API.
-// `SystemError` is an undefined identifier at runtime.
-
-module SystemError = {
+module URIError = {
   type t;
-  [@bs.get] external name: t => string = "name";
-  [@bs.get] external address: t => option(string) = "address";
-  [@bs.get] external code: t => string = "code";
-  [@bs.get] external dest: t => option(string) = "dest";
-  [@bs.get] external errno: t => int = "errno";
-  [@bs.get] external info: t => option(Js.t({..})) = "info";
+  type constructor;
+  [@bs.val] external constructor: constructor = "URIError";
+  [@bs.new] external make: string => t = "URIError";
   [@bs.get] external message: t => string = "message";
-  [@bs.get] external path: t => option(string) = "path";
-  [@bs.get] external port: t => option(int) = "port";
-  [@bs.get] external stack: t => option(string) = "stack";
-  [@bs.get] external syscall: t => string = "syscall";
+  [@bs.get] external name: t => string = "name";
+  [@bs.get] external stack: t => string = "stack";
+  let instanceOf = (x) => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let isURIError: 'a => bool = (x) =>
+    JsTypeReflection.constructorName(x) == "URIError"
+    && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  external toJsExn: t => Js.Exn.t = "%identity";
+  external fromJsExn: Js.Exn.t => t = "%identity";
+  let fromJsExn: Js.Exn.t => option(t) = (exn) =>
+    switch (isURIError(exn)) {
+      | true => Some(fromJsExn(exn))
+      | false => None
+    };
 };
 
 type case =
   | Error(Error.t)
   | AssertionError(AssertionError.t)
+  | EvalError(EvalError.t)
   | RangeError(RangeError.t)
   | ReferenceError(ReferenceError.t)
   | SyntaxError(SyntaxError.t)
   | TypeError(TypeError.t)
-;
+  | URIError(URIError.t);
 
 let classifyOpt: 'a => option(case) = (value) =>
   if (AssertionError.isAssertionError(value)) {
     Some(AssertionError(Obj.magic(value)));
+  } else if (EvalError.isEvalError(value)) {
+    Some(EvalError(Obj.magic(value)))
   } else if (RangeError.isRangeError(value)) {
     Some(RangeError(Obj.magic(value)));
   } else if (ReferenceError.isReferenceError(value)) {
@@ -197,6 +242,8 @@ let classifyOpt: 'a => option(case) = (value) =>
     Some(SyntaxError(Obj.magic(value)));
   } else if (TypeError.isTypeError(value)) {
     Some(TypeError(Obj.magic(value)));
+  } else if (URIError.isURIError(value)) {
+    Some(URIError(Obj.magic(value)))
   } else if (Error.isError(value)) {
     Some(Error(Obj.magic(value)));
   } else {
@@ -216,5 +263,3 @@ let classify: 'a => Belt.Result.t(case, 'a) = (value) =>
   };
 
 module ErrorCodes = { };
-
-
