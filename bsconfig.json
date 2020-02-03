@@ -21,6 +21,8 @@
   "suffix": ".bs.js",
   "namespace": "node-js",
   "bs-dependencies": [
+  ],
+  "bs-dev-dependencies": [
     "@glennsl/bs-jest"
   ],
   "ppx-flags": [],
