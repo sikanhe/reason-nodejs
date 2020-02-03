@@ -68,8 +68,8 @@ let instanceOfClass = (~instance, ~class_) => instanceOfClass(instance, class_);
  * has been extended by a sub-class.
  * 
  * Note, this will fail for `null` and `undefined` values, which will
- * raise a exception of type `ReferenceError`, since that property is
- * normally not available for those types.
+ * raise a exception of type `ReferenceError`, since the `[@@toStringTag]`
+ * property is normally unavailable for those types.
  */
 [@bs.val] [@bs.scope ("Object", "prototype", "toString")] external objectToString: 'a => string = "call";
 
