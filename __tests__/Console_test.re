@@ -7,7 +7,7 @@ describe("Console", () => {
     ~stderr=Process.stderr,
     ~ignoreErrors=false,
     ~colorMode=true,
-    ~inspectOptions=Util.makeInspectOptions(),
+    ~inspectOptions=Util.inspectOptions(),
     ~stdout=Process.stdout,
   ));
 
@@ -15,7 +15,7 @@ describe("Console", () => {
     "stderr": Some(Process.stderr),
     "ignoreErrors": Some(false),
     "colorMode": Some(true),
-    "inspectOptions": Some(Util.makeInspectOptions()),
+    "inspectOptions": Some(Util.inspectOptions()),
     "stdout": Process.stdout,
   });
 
