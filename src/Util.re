@@ -30,6 +30,8 @@ external inspectOptions:
 [@bs.val] external promisifyWithResult3: ('a1, 'a2, 'a3, ('err, 'res) => unit) => (('a1, 'a2, 'a3) => Js.Promise.t('res)) = "promisify";
 [@bs.val] external promisify4: ('a1, 'a2, 'a3, 'a4, ('err) => unit) => (('a1, 'a2, 'a3, 'a4) => Js.Promise.t(unit)) = "promisify";
 [@bs.val] external promisifyWithResult4: ('a1, 'a2, 'a3, 'a4, ('err, 'res) => unit) => (('a1, 'a2, 'a3, 'a4) => Js.Promise.t('res)) = "promisify";
+[@bs.val] external promisify5: ('a1, 'a2, 'a3, 'a4, 'a5, ('err) => unit) => (('a1, 'a2, 'a3, 'a4, 'a5) => Js.Promise.t(unit)) = "promisify";
+[@bs.val] external promisifyWithResult5: ('a1, 'a2, 'a3, 'a4, 'a5, ('err, 'res) => unit) => (('a1, 'a2, 'a3, 'a4, 'a5) => Js.Promise.t('res)) = "promisify";
 
 module Types = {
   [@bs.val] [@bs.module "util"] [@bs.scope "types"] external isAnyArrayBuffer: 'a => bool = "isAnyArrayBuffer";
