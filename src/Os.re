@@ -17,7 +17,7 @@ type cpu = {
 [@bs.module "os"] [@bs.val] external endianness: unit => string = "endianness";
 [@bs.module "os"] [@bs.val] external freemem: unit => int = "freemem";
 [@bs.module "os"] [@bs.val] external getPriority: int => int = "getPriority";
-[@bs.module "os"] [@bs.val] external homeDir: unit => string = "homeDir";
+[@bs.module "os"] [@bs.val] external homedir: unit => string = "homedir";
 [@bs.module "os"] [@bs.val] external hostname: unit => string = "hostname";
 [@bs.module "os"] [@bs.val]
 external loadavg: unit => array(float) = "loadavg";
