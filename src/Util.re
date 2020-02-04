@@ -1,3 +1,11 @@
+[@bs.val] [@bs.module "util"] external deprecate0: (unit => 'result) => (unit => 'result) = "deprecate";
+[@bs.val] [@bs.module "util"] external deprecate1: ('a1 => 'result) => ('a1 => 'result) = "deprecate";
+[@bs.val] [@bs.module "util"] external deprecate2: (('a1, 'a2) => 'result) => (('a1, 'a2) => 'result) = "deprecate";
+[@bs.val] [@bs.module "util"] external deprecate3: (('a1, 'a2, 'a3) => 'result) => (('a1, 'a2, 'a3) => 'result) = "deprecate";
+[@bs.val] [@bs.module "util"] external deprecate4: (('a1, 'a2, 'a3, 'a4) => 'result) => (('a1, 'a2, 'a3, 'a4) => 'result) = "deprecate";
+[@bs.val] [@bs.module "util"] external deprecate5: (('a1, 'a2, 'a3, 'a4, 'a5) => 'result) => (('a1, 'a2, 'a3, 'a4, 'a5) => 'result) = "deprecate";
+[@bs.val] [@bs.module "util"] external deprecate6: (('a1, 'a2, 'a3, 'a4, 'a5, 'a6) => 'result) => (('a1, 'a2, 'a3, 'a4, 'a5, 'a6) => 'result) = "deprecate";
+
 type inspectOptions;
 [@bs.obj]
 external inspectOptions:
@@ -22,6 +30,8 @@ external inspectOptions:
 [@bs.val] [@bs.module "util"] [@bs.scope "inspect"] external customInspectSymbol: Js.Types.symbol = "custom";
 [@bs.val] [@bs.module "util"] [@bs.scope "inspect"] external defaultInspectOptions: inspectOptions = "defaultOptions";
 [@bs.val] [@bs.module "util"] external isDeepStrictEqual: ('a, 'a) => bool = "isDeepStrictEqual";
+[@bs.val] [@bs.module "util"] external promisify0: (('err) => unit) => (unit => Js.Promise.t(unit)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisifyWithResult0: (('err, 'res) => unit) => (unit => Js.Promise.t('res)) = "promisify";
 [@bs.val] [@bs.module "util"] external promisify1: ('a1, ('err) => unit) => ('a1 => Js.Promise.t(unit)) = "promisify";
 [@bs.val] [@bs.module "util"] external promisifyWithResult1: ('a1, ('err, 'res) => unit) => ('a1 => Js.Promise.t('res)) = "promisify";
 [@bs.val] [@bs.module "util"] external promisify2: ('a1, 'a2, ('err) => unit) => (('a1, 'a2) => Js.Promise.t(unit)) = "promisify";
