@@ -164,15 +164,15 @@ module SyntaxError = {
 module SystemError = {
   type t;
   [@bs.get] external name: t => string = "name";
-  [@bs.get] external address: t => option(string) = "address";
+  [@bs.get] [@bs.return nullable] external address: t => option(string) = "address";
   [@bs.get] external code: t => string = "code";
-  [@bs.get] external dest: t => option(string) = "dest";
+  [@bs.get] [@bs.return nullable] external dest: t => option(string) = "dest";
   [@bs.get] external errno: t => int = "errno";
-  [@bs.get] external info: t => option(Js.t({..})) = "info";
+  [@bs.get] [@bs.return nullable] external info: t => option(Js.t({..})) = "info";
   [@bs.get] external message: t => string = "message";
-  [@bs.get] external path: t => option(string) = "path";
-  [@bs.get] external port: t => option(int) = "port";
-  [@bs.get] external stack: t => option(string) = "stack";
+  [@bs.get] [@bs.return nullable] external path: t => option(string) = "path";
+  [@bs.get] [@bs.return nullable] external port: t => option(int) = "port";
+  [@bs.get] [@bs.return nullable] external stack: t => option(string) = "stack";
   [@bs.get] external syscall: t => string = "syscall";
 };
 

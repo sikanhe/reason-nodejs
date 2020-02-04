@@ -2,19 +2,19 @@
 // For global console.log and others, use the existing Js.Console.* provided by BuckleScript out of the box
 
 type t;
+type consoleOptions;
+[@bs.obj]
+external consoleOptions:
+  (
+    ~stdout: Stream.t([> Stream.writable]),
+    ~stderr: Stream.t([> Stream.writable])=?,
+    ~ignoreErrors: bool=?,
+    ~colorMode: bool=?,
+    ~inspectOptions: Util.inspectOptions=?,
+  ) =>
+  consoleOptions = "";
 
-[@bs.new][@bs.module "console"]
-external make:
-  {
-    .
-    "stdout": Stream.t([> Stream.writable]),
-    "stderr": option(Stream.t([> Stream.writable])),
-    "ignoreErrors": option(bool),
-    "colorMode": option(bool),
-    "inspectOptions": option(Util.inspectOptions),
-  } =>
-  t =
-  "Console";
+[@bs.new][@bs.module "console"] external make: consoleOptions => t = "Console";
 
 [@bs.new][@bs.module "console"]
 external make2:
@@ -24,21 +24,6 @@ external make2:
   } =>
   t =
   "Console";
-
-type consoleOptions;
-[@bs.obj]
-external consoleOptions:
-  (
-    ~stderr: Stream.t([> Stream.writable])=?,
-    ~ignoreErrors: bool=?,
-    ~colorMode: bool=?,
-    ~inspectOptions: Util.inspectOptions=?,
-    ~stdout: Stream.t([> Stream.writable]),
-  ) =>
-  consoleOptions = "";
-
-[@bs.new][@bs.module "console"]
-external make3: consoleOptions => t = "Console";
 
 [@bs.send] external assert_: (t, bool) => unit = "assert";
 // TODO: reconsider naming

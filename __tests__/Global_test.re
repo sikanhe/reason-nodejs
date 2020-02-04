@@ -47,7 +47,7 @@ describe("Global", () => {
     expect(Global.require("path")->Js.Undefined.return) |> toBeDefined;
   });
 
-  test("'require' fuction should import a module object from a relative path", () => {
+  test("'require' fuction should successfully import a module object from a relative path", () => {
     open Expect;
     expect(Global.require("path")->Js.typeof) |> toEqual("object");
   });
