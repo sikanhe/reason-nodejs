@@ -5,6 +5,7 @@
 [@bs.val] [@bs.module "util"] external deprecate4: (('a1, 'a2, 'a3, 'a4) => 'result) => (('a1, 'a2, 'a3, 'a4) => 'result) = "deprecate";
 [@bs.val] [@bs.module "util"] external deprecate5: (('a1, 'a2, 'a3, 'a4, 'a5) => 'result) => (('a1, 'a2, 'a3, 'a4, 'a5) => 'result) = "deprecate";
 [@bs.val] [@bs.module "util"] external deprecate6: (('a1, 'a2, 'a3, 'a4, 'a5, 'a6) => 'result) => (('a1, 'a2, 'a3, 'a4, 'a5, 'a6) => 'result) = "deprecate";
+[@bs.val] [@bs.module "util"] external getSystemErrorName: int => string = "getSystemErrorName";
 
 type inspectOptions;
 [@bs.obj]
