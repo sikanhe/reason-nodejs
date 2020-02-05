@@ -307,7 +307,7 @@ external createServer: ((IncomingMessage.t, ServerResponse.t) => unit) => Server
   "createServer";
 
 [@bs.module "http"]
-external createServerWith:
+external createServerWithOptions:
   (createServerOptions, (IncomingMessage.t, ServerResponse.t) => unit) => Server.t =
   "createServer";
 
