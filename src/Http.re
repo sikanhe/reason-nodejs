@@ -224,6 +224,21 @@ module ServerResponse = {
   [@bs.send] external writeProcessing: t => unit = "writeProcessing";
 };
 
+module Agent = {
+  type t;
+  [@bs.send] external createConnection: (t, Js.t({..})) => Net.Socket.t = "createConnection";
+  [@bs.send] external createConnectionWithCallback: (t, Js.t({..}), unit => unit) => Net.Socket.t = "createConnection";
+  [@bs.send] external keepSocketAlive: (t, Stream.t(Stream.duplex)) => unit = "keepSocketAlive";
+  [@bs.send] external reuseSocket: (t, Stream.t(Stream.duplex), ClientRequest.t) => unit = "reuseSocket";
+  [@bs.send] external destroy: t => unit = "destroy";
+  [@bs.get] external freeSockets: t => Js.t({..}) = "freeSockets";
+  [@bs.send] external getName: (t, Js.t({..})) => string = "getName";
+  [@bs.send] external maxFreeSockets: t => int = "maxFreeSockets";
+  [@bs.send] external maxSockets: t => int = "maxSockets";
+  [@bs.get] external requests: t => Js.t({..}) = "requests";
+  [@bs.get] external sockets: t => Js.t({..}) = "sockets";
+};
+
 module Server = {
   type t;
   [@bs.send] external listen: (t, int) => unit = "listen";
@@ -258,3 +273,6 @@ external createServerWith:
   (createServerOptions, (IncomingMessage.t, ServerResponse.t) => unit) =>
   Server.t =
   "createServer";
+
+[@bs.module "http"] external _METHODS: array(string) = "METHODS";
+[@bs.module "http"] external _STATUS_CODES: Js.Dict.t(string) = "STATUS_CODES";
