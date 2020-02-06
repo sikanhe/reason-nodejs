@@ -123,11 +123,14 @@ let maybeCoerceTo: type kind data. (tag(kind, data), t(kind)) => (option((data))
 };
 
 
+module Test = {
 
-let x = string("hi"); // BinaryLike.t([ | string ]);
+  let x = string("hi"); // BinaryLike.t([ | string ]);
 
-let testOpt = maybeCoerceTo(String, x); // option(string);
+  let testOpt = maybeCoerceTo(String, x); // option(string);
 
-let test = toString(x); // string;
+  let test = toString(x); // string;
+
+};
 
 
