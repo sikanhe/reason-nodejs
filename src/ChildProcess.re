@@ -160,7 +160,7 @@ external spawnSyncOptions:
   (
     ~cwd: string=?,
     ~env: Js.Dict.t(string)=?,
-    ~input: BinaryLike.t=?,
+    ~input: BinaryLike.t(BinaryLike.any)=?,
     ~argv0: string=?,
     ~stdio: string=?,
     ~detached: bool=?,
@@ -191,7 +191,7 @@ external execSyncOptions:
   (
     ~cwd: string=?,
     ~env: Js.Dict.t(string)=?,
-    ~input: BinaryLike.t=?,
+    ~input: BinaryLike.t(BinaryLike.any)=?,
     ~encoding: string=?,
     ~shell: string=?,
     ~timeout: int=?,
@@ -218,7 +218,7 @@ external execFileSyncOptions:
   (
     ~cwd: string=?,
     ~env: Js.Dict.t(string)=?,
-    ~input: BinaryLike.t=?,
+    ~input: BinaryLike.t(BinaryLike.any)=?,
     ~encoding: string=?,
     ~shell: string=?,
     ~timeout: int=?,

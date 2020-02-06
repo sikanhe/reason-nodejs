@@ -17,7 +17,7 @@ module Script = {
     ~filename: string=?,
     ~lineOffset: int=?,
     ~columnOffset: int=?,
-    ~cachedData: BinaryLike.t=?,
+    ~cachedData: BinaryLike.t([ BinaryLike.buffer | BinaryLike.typedArray | BinaryLike.dataView ])=?,
     ~produceCachedData: bool=?,
   ) => makeOptions = "";
   [@bs.new] [@bs.module "vm"] external make: string => t = "Script";
