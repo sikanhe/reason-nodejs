@@ -63,7 +63,11 @@ module Http2Session = {
   [@bs.get] [@bs.return nullable] external originSet: t => option(array(string)) = "originSet";
   [@bs.get] external pendingSettingsAck: t => bool = "pendingSettingsAck";
   [@bs.send] external ping: (t, (Js.Nullable.t(Js.Exn.t), int, Buffer.t) => unit) => bool = "ping";
-  [@bs.send] external pingWith: (t, ~payload: BinaryLike.t, (Js.Nullable.t(Js.Exn.t), int, Buffer.t) => unit) => bool = "ping";
+  [@bs.send] external pingWith: (
+      t,
+      ~payload: BinaryLike.t([ BinaryLike.buffer | BinaryLike.typedArray | BinaryLike.dataView ]),
+      (Js.Nullable.t(Js.Exn.t), int, Buffer.t) => unit
+    ) => bool = "ping";
   [@bs.send] external ref: t => unit = "ref";
   [@bs.get] external remoteSettings: t => {. 
       "headerTableSize": int,
