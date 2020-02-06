@@ -82,7 +82,7 @@ external toFloat32Array: t(float32Array) => Float32Array.t = "%identity";
 external toFloat64Array: t(float64Array) => Float64Array.t = "%identity";
 external toDataView: t(dataView) => DataView.t = "%identity";
 
-let classify: (t('a)) => tag('b) = (binaryLike) =>
+let classify: t('a) => tag('b) = (binaryLike) =>
   if (Js.typeof(binaryLike) === "string") {
     String(Obj.magic(binaryLike));
   } else if (Buffer.isBuffer(binaryLike)) {
