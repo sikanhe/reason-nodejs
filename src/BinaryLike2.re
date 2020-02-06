@@ -6,12 +6,12 @@ type t('a);
 type string_ = [ `String ];
 type buffer = [ `Buffer ];
 type int8Array = [ `Int8Array ];
-type uInt8Array = [ `UInt8Array ];
-type uInt8ClampedArray = [ `UInt8ClampedArray ];
+type uInt8Array = [ `Uint8Array ];
+type uInt8ClampedArray = [ `Uint8ClampedArray ];
 type int16Array = [ `Int16Array ];
-type uInt16Array = [ `UInt16Array ];
+type uInt16Array = [ `Uint16Array ];
 type int32Array = [ `Int32Array ];
-type uInt32Array = [ `UInt32Array ];
+type uInt32Array = [ `Uint32Array ];
 type float32Array = [ `Float32Array ];
 type float64Array = [ `Float64Array ];
 type dataView = [ `DataView ];
@@ -41,7 +41,7 @@ type any = [
   | float32Array
   | float64Array
   | dataView
-]
+];
 
 type tag(_, _) =
   | String: tag([> string_ ], string)
@@ -105,23 +105,22 @@ external toDataView: t(dataView) => DataView.t = "%identity";
  * // should be `None`;
  * ```
  */
-let maybeCoerceTo: type kind data. (tag(kind, data), t(kind)) => (option((data))) = (k, abstract) => {
+let maybeCoerceTo: type kind data. (tag(kind, data), t(kind)) => (option((data))) = (k, binaryLike) => {
   switch(k) {
-    | String => Js.typeof(abstract) === "string" ? Some(Obj.magic(abstract)) : None;
-    | Buffer => Buffer.isBuffer(abstract) ? Some(Obj.magic(abstract)) : None;
-    | Int8Array => Util.Types.isInt8Array(abstract) ? Some(Obj.magic(abstract)) : None;
-    | Uint8Array => Util.Types.isUint8Array(abstract) ? Some(Obj.magic(abstract)) : None;
-    | Uint8ClampedArray => Util.Types.isUint8ClampedArray(abstract) ? Some(Obj.magic(abstract)) : None;
-    | Int16Array => Util.Types.isInt16Array(abstract) ? Some(Obj.magic(abstract)) : None;
-    | Uint16Array => Util.Types.isUint16Array(abstract) ? Some(Obj.magic(abstract)) : None;
-    | Int32Array => Util.Types.isInt32Array(abstract) ? Some(Obj.magic(abstract)) : None;
-    | Uint32Array => Util.Types.isUint32Array(abstract) ? Some(Obj.magic(abstract)) : None;
-    | Float32Array => Util.Types.isFloat32Array(abstract) ? Some(Obj.magic(abstract)) : None;
-    | Float64Array => Util.Types.isFloat64Array(abstract) ? Some(Obj.magic(abstract)) : None;
-    | DataView => Util.Types.isFloat64Array(abstract) ? Some(Obj.magic(abstract)) : None;
+    | String => Js.typeof(binaryLike) === "string" ? Some(Obj.magic(binaryLike)) : None;
+    | Buffer => Buffer.isBuffer(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
+    | Int8Array => Util.Types.isInt8Array(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
+    | Uint8Array => Util.Types.isUint8Array(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
+    | Uint8ClampedArray => Util.Types.isUint8ClampedArray(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
+    | Int16Array => Util.Types.isInt16Array(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
+    | Uint16Array => Util.Types.isUint16Array(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
+    | Int32Array => Util.Types.isInt32Array(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
+    | Uint32Array => Util.Types.isUint32Array(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
+    | Float32Array => Util.Types.isFloat32Array(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
+    | Float64Array => Util.Types.isFloat64Array(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
+    | DataView => Util.Types.isFloat64Array(binaryLike) ? Some(Obj.magic(binaryLike)) : None;
   }
 };
-
 
 module Test = {
 
@@ -129,7 +128,7 @@ module Test = {
 
   let testOpt = maybeCoerceTo(String, x); // option(string);
 
-  let test = toString(x); // string;
+  let testString = toString(x); // string;
 
 };
 
