@@ -126,5 +126,27 @@ module ServerHttp2Session = {
 
 };
 
+module Http2ServerRequest = {
+  include Stream.Readable;
+  type t = Stream.t([ Stream.readable ]);
+  [@bs.send] external onAborted: (t, [@bs.as "aborted"] _, unit => unit) => unit = "on";
+  [@bs.send] external onClose: (t, [@bs.as "close"] _, unit => unit) => unit = "on";
+  [@bs.get] external aborted: t => bool = "aborted";
+  [@bs.get] external authority: t => string = "authority";
+  [@bs.get] external complete: t => bool = "complete";
+  [@bs.send] external destroy: t => unit = "destroy";
+  [@bs.send] external destroyWithError: (t, Js.Exn.t) => unit = "destroy";
+  [@bs.get] external headers: t => Js.t({..}) = "headers";
+  [@bs.get] external httpVersion: t => string = "httpVersion";
+  [@bs.get] external method_: t => string = "method";
+  [@bs.get] external rawHeaders: t => array(string) = "rawHeaders";
+  [@bs.get] external rawTrailers: t => array(string) = "rawTrailers";
+  [@bs.get] external scheme: t => string = "scheme";
+  [@bs.send] external setTimeout: (t, int, Http2Stream.t => unit) => Http2Stream.t = "setTimeout";
+  [@bs.get] external socket: t => Stream.t([ Stream.duplex | `Socket | `TLSSocket ]) = "socket";
+  [@bs.get] external stream: t => Http2Stream.t = "stream";
+  [@bs.get] external trailers: t => Js.t({..}) = "trailers";
+  [@bs.get] external url: t => string = "url";
+};
 
 
