@@ -128,7 +128,7 @@ module ServerHttp2Session = {
 
 module Http2ServerRequest = {
   include Stream.Readable;
-  type t = Stream.t([ Stream.readable ]);
+  type t = Stream.t([ Stream.readable | `Http2 ]);
   [@bs.send] external onAborted: (t, [@bs.as "aborted"] _, unit => unit) => unit = "on";
   [@bs.send] external onClose: (t, [@bs.as "close"] _, unit => unit) => unit = "on";
   [@bs.get] external aborted: t => bool = "aborted";
@@ -149,4 +149,70 @@ module Http2ServerRequest = {
   [@bs.get] external url: t => string = "url";
 };
 
+module ServerHttp2Stream = {
+  type t;
+};
+
+module Http2ServerResponse = {
+  include Stream.Duplex;
+  type t = Stream.t([ Stream.duplex | `Http2 ]);
+  [@bs.send] external onClose: (t, [@bs.as "close"] _, unit => unit) => unit = "on";
+  [@bs.send] external onFinish: (t, [@bs.as "finish"] _, unit => unit) => unit = "on";
+  [@bs.send] external setTrailers: (t, Js.t({..})) => unit = "setTrailers";
+  [@bs.send] external end_: t => unit = "end";
+  [@bs.send] external endWith: (
+      t,
+      ~data: BinaryLike.t([ BinaryLike.string_ | BinaryLike.buffer ])=?,
+      ~encoding: [@bs.string] [
+        | `hex
+        | `utf8
+        | `ascii
+        | `latin1
+        | `base64
+        | `ucs2
+        | `base64
+        | `binary
+        | `utf16le
+      ]=?,
+      ~callback: unit => unit=?
+    ) => t = "end";
+  [@bs.send] external getHeader: (t, string) => string = "getHeader";
+  [@bs.send] external getHeaderNames: t => array(string) = "getHeaderNames";
+  [@bs.send] external getHeaders: t => Js.t({..}) = "getHeaders";
+  [@bs.send] external hasHeader: (t, string) => bool = "hasHeader";
+  [@bs.send] external headersSent: t => bool = "headersSent";
+  [@bs.send] external removeHeader: (t, string) => unit = "removeHeader";
+  [@bs.send] external setHeader: (t, string) => unit = "setHeader";
+  [@bs.send] external setHeaderArray: (t, array(string)) => unit = "setHeader";
+  [@bs.send] external setTimeout: (t, int, Http2Stream.t => unit) => Http2Stream.t = "setTimeout";
+  [@bs.get] external socket: t => Stream.t([ Stream.duplex | `Socket | `TLSSocket ]) = "socket";
+  [@bs.get] external statusCode: t => int = "statusCode";
+  [@bs.get] external statusMessage: t => string = "statusMessage";
+  [@bs.get] external stream: t => Http2Stream.t = "stream";
+  [@bs.get] external writableEnded: t => bool = "writableEnded";
+  [@bs.send] external write: (
+      t,
+      BinaryLike.t([ BinaryLike.string_ | BinaryLike.buffer ])
+    ) => bool = "write";
+  [@bs.send] external writeWith: (
+      t,
+      BinaryLike.t([ BinaryLike.string_ | BinaryLike.buffer ]),
+      ~encoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]=?,
+      ~callback: unit => unit=?
+    ) => bool = "write";
+  [@bs.send] external writeContinue: t => unit = "writeContinue";
+  [@bs.send] external writeHead: (t, int) => unit = "writeHead";
+  [@bs.send] external writeHeadWith: (t, int, ~message: string=?, ~headers: Js.t({..})=?) => t = "writeHead";
+  [@bs.send] external createPushResponse: (t, Js.t({..}), (Js.Exn.t, ServerHttp2Stream.t) => unit) => unit = "writeHead";
+};
 
