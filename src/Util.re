@@ -31,18 +31,19 @@ external inspectOptions:
 [@bs.val] [@bs.module "util"] [@bs.scope "inspect"] external customInspectSymbol: Js.Types.symbol = "custom";
 [@bs.val] [@bs.module "util"] [@bs.scope "inspect"] external defaultInspectOptions: inspectOptions = "defaultOptions";
 [@bs.val] [@bs.module "util"] external isDeepStrictEqual: ('a, 'a) => bool = "isDeepStrictEqual";
-[@bs.val] [@bs.module "util"] external promisify0: (('err) => unit) => (unit => Js.Promise.t(unit)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisifyWithResult0: (('err, 'res) => unit) => (unit => Js.Promise.t('res)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisify1: ('a1, ('err) => unit) => ('a1 => Js.Promise.t(unit)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisifyWithResult1: ('a1, ('err, 'res) => unit) => ('a1 => Js.Promise.t('res)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisify2: ('a1, 'a2, ('err) => unit) => (('a1, 'a2) => Js.Promise.t(unit)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisifyWithResult2: ('a1, 'a2, ('err, 'res) => unit) => (('a1, 'a2) => Js.Promise.t('res)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisify3: ('a1, 'a2, 'a3, ('err) => unit) => (('a1, 'a2, 'a3) => Js.Promise.t(unit)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisifyWithResult3: ('a1, 'a2, 'a3, ('err, 'res) => unit) => (('a1, 'a2, 'a3) => Js.Promise.t('res)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisify4: ('a1, 'a2, 'a3, 'a4, ('err) => unit) => (('a1, 'a2, 'a3, 'a4) => Js.Promise.t(unit)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisifyWithResult4: ('a1, 'a2, 'a3, 'a4, ('err, 'res) => unit) => (('a1, 'a2, 'a3, 'a4) => Js.Promise.t('res)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisify5: ('a1, 'a2, 'a3, 'a4, 'a5, ('err) => unit) => (('a1, 'a2, 'a3, 'a4, 'a5) => Js.Promise.t(unit)) = "promisify";
-[@bs.val] [@bs.module "util"] external promisifyWithResult5: ('a1, 'a2, 'a3, 'a4, 'a5, ('err, 'res) => unit) => (('a1, 'a2, 'a3, 'a4, 'a5) => Js.Promise.t('res)) = "promisify";
+
+[@bs.val] [@bs.module "util"] external promisify0: ((Js.Exn.t) => unit) => (unit => Js.Promise.t(unit)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisifyWithResult0: ((Js.Exn.t, 'res) => unit) => (unit => Js.Promise.t('res)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisify1: ('a1, (Js.Exn.t, 'a1) => unit) => ('a1 => Js.Promise.t(unit)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisifyWithResult1: ('a1, (Js.Exn.t, 'res) => unit) => ('a1 => Js.Promise.t('res)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisify2: ('a1, 'a2, (Js.Exn.t) => unit) => (('a1, 'a2) => Js.Promise.t(unit)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisifyWithResult2: ('a1, 'a2, (Js.Exn.t, 'res) => unit) => (('a1, 'a2) => Js.Promise.t('res)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisify3: ('a1, 'a2, 'a3, (Js.Exn.t) => unit) => (('a1, 'a2, 'a3) => Js.Promise.t(unit)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisifyWithResult3: ('a1, 'a2, 'a3, (Js.Exn.t, 'res) => unit) => (('a1, 'a2, 'a3) => Js.Promise.t('res)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisify4: ('a1, 'a2, 'a3, 'a4, (Js.Exn.t) => unit) => (('a1, 'a2, 'a3, 'a4) => Js.Promise.t(unit)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisifyWithResult4: ('a1, 'a2, 'a3, 'a4, (Js.Exn.t, 'res) => unit) => (('a1, 'a2, 'a3, 'a4) => Js.Promise.t('res)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisify5: ('a1, 'a2, 'a3, 'a4, 'a5, (Js.Exn.t) => unit) => (('a1, 'a2, 'a3, 'a4, 'a5) => Js.Promise.t(unit)) = "promisify";
+[@bs.val] [@bs.module "util"] external promisifyWithResult5: ('a1, 'a2, 'a3, 'a4, 'a5, (Js.Exn.t, 'res) => unit) => (('a1, 'a2, 'a3, 'a4, 'a5) => Js.Promise.t('res)) = "promisify";
 
 module Types = {
   [@bs.val] [@bs.module "util"] [@bs.scope "types"] external isAnyArrayBuffer: 'a => bool = "isAnyArrayBuffer";
