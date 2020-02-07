@@ -1,20 +1,31 @@
 module Socket = {
-  include Stream.Duplex;
+  type kind = [ Stream.duplex | `Socket ];
   type t = Stream.t([ Stream.duplex | `Socket]);
 
   [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
-  type address = {
-    port: int,
-    family: string,
-    address: string,
+
+  module Impl = {
+    include Stream.Duplex.Impl;
+    type address = {
+      [@bs.as "port"] port: int,
+      [@bs.as "family"] family: string,
+      [@bs.as "address"] address: string,
+    };
+    [@bs.send] external address: Stream.t([> kind ]) => address = "address";
+    [@bs.get] external bufferSize: Stream.t([> kind ]) => int = "bufferSize";
+    [@bs.get] external bytesRead: Stream.t([> kind ]) => int = "bytesRead";
+    [@bs.get] external bytesWritten: Stream.t([> kind ]) => int = "bytesWritten";
+    [@bs.get] external remoteAddress: Stream.t([> kind ]) => string = "remoteAddress";
+    [@bs.get] external remoteFamily: Stream.t([> kind ]) => string = "remoteFamily";
+    [@bs.get] external remotePort: Stream.t([> kind ]) => int = "remotePort";
   };
-  [@bs.send] external address: t => address = "address";
-  [@bs.get] external bufferSize: t => int = "bufferSize";
-  [@bs.get] external bytesRead: t => int = "bytesRead";
-  [@bs.get] external bytesWritten: t => int = "bytesWritten";
-  [@bs.get] external remoteAddress: t => string = "remoteAddress";
-  [@bs.get] external remoteFamily: t => string = "remoteFamily";
-  [@bs.get] external remotePort: t => int = "remotePort";
+
+  include Impl;
+
+};
+
+module Server = {
+  type t;
 };
 
 [@bs.module "net"] [@bs.val] external isIP: string => bool = "isIP";
