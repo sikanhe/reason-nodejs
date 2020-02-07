@@ -278,6 +278,7 @@ external readFileSyncWithEncoding:
 
 [@bs.val] [@bs.module "fs"] external existsSync: string => bool = "existsSync";
 
+/** create options for the `writeFileSyncOptions` */
 type writeFileSyncOptions;
 [@bs.obj]
 external writeFileSyncOptions:
