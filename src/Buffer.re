@@ -3,10 +3,10 @@ open Js.TypedArray2;
 
 module Constants = {
   [@bs.module "buffer"] [@bs.scope "constants"] [@bs.val]
-  external max_length: int = "MAX_LENGTH";
+  external _MAX_LENGTH: int = "MAX_LENGTH";
 
   [@bs.module "buffer"] [@bs.scope "constants"] [@bs.val]
-  external max_string_length: int = "MAX_STRING_LENGTH";
+  external _MAX_STRING_LENGTH: int = "MAX_STRING_LENGTH";
 };
 
 [@bs.val] external isBuffer: 'a => bool = "Buffer.isBuffer";
