@@ -150,7 +150,7 @@ module Http2ServerRequest = {
 };
 
 module ServerHttp2Stream = {
-  type t;
+  include Http2Stream;
 };
 
 module Http2ServerResponse = {
