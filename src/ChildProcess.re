@@ -1,16 +1,10 @@
 type t;
 
-[@bs.send]
-external onData: (t, [@bs.as "data"] _, Buffer.t => unit) => unit = "on";
-[@bs.send]
-external onDisconnect: (t, [@bs.as "disconnect"] _, unit => unit) => unit =
-  "on";
-[@bs.send]
-external onError: (t, [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
-[@bs.send]
-external onExit: (t, [@bs.as "exit"] _, int => unit) => unit = "on";
-[@bs.send]
-external onClose: (t, [@bs.as "close"] _, int => unit) => unit = "on";
+[@bs.send] external onData: (t, [@bs.as "data"] _, Buffer.t => unit) => unit = "on";
+[@bs.send] external onDisconnect: (t, [@bs.as "disconnect"] _, unit => unit) => unit = "on";
+[@bs.send] external onError: (t, [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
+[@bs.send] external onExit: (t, [@bs.as "exit"] _, int => unit) => unit = "on";
+[@bs.send] external onClose: (t, [@bs.as "close"] _, int => unit) => unit = "on";
 
 [@bs.get] external connected: t => bool = "connected";
 [@bs.send] external disconnect: t => bool = "disconnect";
@@ -18,12 +12,9 @@ external onClose: (t, [@bs.as "close"] _, int => unit) => unit = "on";
 [@bs.get] external killed: t => bool = "killed";
 [@bs.get] external pid: t => int = "pid";
 [@bs.get] external ref: t => unit = "ref";
-[@bs.get] [@bs.return nullable]
-external stderr: t => option(Net.Socket.t) = "stderr";
-[@bs.get] [@bs.return nullable]
-external stdin: t => option(Net.Socket.t) = "stdin";
-[@bs.get] [@bs.return nullable]
-external stdout: t => option(Net.Socket.t) = "stdout";
+[@bs.get] [@bs.return nullable] external stderr: t => option(Net.Socket.t) = "stderr";
+[@bs.get] [@bs.return nullable] external stdin: t => option(Net.Socket.t) = "stdin";
+[@bs.get] [@bs.return nullable] external stdout: t => option(Net.Socket.t) = "stdout";
 [@bs.get] external unref: t => unit = "unref";
 
 type execOptions;
