@@ -137,6 +137,7 @@ module PassThrough = {
   [@bs.module "stream"] [@bs.new] external make: unit => t = "PassThrough";
 };
 
+include Base.Impl;
 include Readable.Impl;
 include Writable.Impl;
 
