@@ -95,7 +95,35 @@ module Duplex = {
     [@bs.send] external destroyWithError: (t([> kind]), Js.Exn.t) => unit = "destroy";
     [@bs.get] external destroyed: t([> kind]) => bool = "destroy";
     [@bs.send] external end_: t([> kind]) => unit = "end";
-    [@bs.send] external write: (t([> kind]), string, string) => unit = "write";
+    [@bs.send] external write: (
+      t([> kind]),
+      BinaryLike.t([
+        | BinaryLike.string_
+        | BinaryLike.buffer
+        | BinaryLike.uInt8Array
+      ]))
+      => bool = "write";
+    [@bs.send] external writeWith: (
+        t([> kind]),
+        BinaryLike.t([
+          | BinaryLike.string_
+          | BinaryLike.buffer
+          | BinaryLike.uInt8Array
+        ]),
+        ~encoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]=?,
+        ~callback: Js.Nullable.t(Js.Exn.t) => unit=?
+      )
+      => bool = "write";
     [@bs.send] external setDefaultEncoding: (
         t([> kind]),
         [@bs.string] [
