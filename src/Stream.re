@@ -43,7 +43,7 @@ module Writable = {
     [@bs.send] external end_: t([> kind ]) => unit = "end";
     [@bs.send] external write: (
       t([> kind ]),
-      BinaryLike.t([
+      BinaryLike.t([<
         | BinaryLike.string_
         | BinaryLike.buffer
         | BinaryLike.uInt8Array
@@ -51,7 +51,7 @@ module Writable = {
       => bool = "write";
     [@bs.send] external writeWith: (
         t([> kind ]),
-        BinaryLike.t([
+        BinaryLike.t([<
           | BinaryLike.string_
           | BinaryLike.buffer
           | BinaryLike.uInt8Array
