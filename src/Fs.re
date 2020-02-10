@@ -659,7 +659,7 @@ module WriteStream = {
 };
 
 module ReadStream = {
-  type kind = [ Stream.writable | `FileSystem ];
+  type kind = [ Stream.readable | `FileSystem ];
   type t = Stream.t([ kind ]);
   module Impl = {
     include Stream.Readable.Impl;
@@ -696,3 +696,25 @@ external createReadStream: path => ReadStream.t = "createReadStream";
 [@bs.module "fs"]
 external createReadStreamWith: (path, createReadStreamOptions) => ReadStream.t =
   "createReadStream";
+
+type createWriteStreamOptions;
+[@bs.obj]
+external createWriteStreamOptions:
+  (
+    ~flags: string=?,
+    ~encoding: string=?,
+    ~fd: fd=?,
+    ~mode: int=?,
+    ~autoClose: bool=?,
+    ~emitClose: bool=?,
+    ~start: int=?,
+    ~fs: Js.t({..})=?,
+    unit
+  ) =>
+  createReadStreamOptions =
+  "";
+[@bs.module "fs"]
+external createWriteStream: path => WriteStream.t = "createWriteStream";
+
+[@bs.module "fs"]
+external createWriteStreamWith: (path, createWriteStreamOptions) => WriteStream.t = "createWriteStream";

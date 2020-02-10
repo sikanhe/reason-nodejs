@@ -24,7 +24,7 @@ external onWarning: ([@bs.as "warning"] _, warning => unit) => unit = "on";
 [@bs.module "process"] [@bs.val] external argv: array(string) = "argv";
 [@bs.module "process"] [@bs.val] external argv0: string = "argv0";
 [@bs.module "process"] [@bs.val] external chdir: string => unit = "chdir";
-[@bs.module "process"] [@bs.val] external cwd: string = "cwd";
+[@bs.module "process"] [@bs.val] external cwd: unit => string = "cwd";
 [@bs.module "process"] [@bs.val]
 external disconnect: unit => unit = "disconnect";
 [@bs.module "process"] [@bs.val] external env: Js.Dict.t(string) = "env";
