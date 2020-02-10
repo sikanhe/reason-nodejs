@@ -67,7 +67,8 @@ module Writable = {
           | `binary
           | `utf16le
         ]=?,
-        ~callback: Js.Nullable.t(Js.Exn.t) => unit=?
+        ~callback: Js.Nullable.t(Js.Exn.t) => unit=?,
+        unit
       )
       => bool = "write";
     [@bs.send] external setDefaultEncoding: (
