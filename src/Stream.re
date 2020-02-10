@@ -6,7 +6,7 @@ type duplex = [ readable | writable ];
 type transform = [ duplex | `Transform ];
 type passThrough = [ transform | `PassThrough ];
 
-module BaseStream = {
+module Base = {
   module Impl = {
     [@bs.send] external onError: (t('a), [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
     [@bs.send] external onClose: (t('a), [@bs.as "close"] _, unit => unit) => unit = "on";
@@ -17,7 +17,7 @@ module BaseStream = {
 module Readable = {
   type kind = [ readable ];
   module Impl = {
-    include BaseStream.Impl;
+    include Base.Impl;
     [@bs.send] external onData: (t([> kind]), [@bs.as "data"] _, Buffer.t => unit) => unit = "on";
     [@bs.send] external onEnd: (t([> kind]), [@bs.as "end"] _, unit => unit) => unit = "on";
     [@bs.send] external onPause: (t([> kind]), [@bs.as "pause"] _, unit => unit) => unit = "on";
@@ -32,7 +32,7 @@ module Readable = {
 module Writable = {
   type kind = [ writable ];
   module Impl = {
-    include BaseStream.Impl;
+    include Base.Impl;
     [@bs.send] external onDrain: (t([> kind]), [@bs.as "drain"] _, unit => unit) => unit = "on";
     [@bs.send] external onFinish: (t([> kind]), [@bs.as "finish"] _, unit => unit) => unit = "on";
     [@bs.send] external onPipe: (t([> kind]), [@bs.as "pipe"] _, t([> readable]) => unit) => unit = "on";
