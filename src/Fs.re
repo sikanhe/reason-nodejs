@@ -651,7 +651,6 @@ module WriteStream = {
     [@bs.send] external bytesWritten: Stream.t([> kind ]) => int = "bytesWritten";
     [@bs.send] external path: Stream.t([> kind ]) => string = "path";
     [@bs.send] external pending: Stream.t([> kind ]) => bool = "pending";
-    [@bs.send] external onClose: (Stream.t([> kind ]), [@bs.as "close"] _, unit => unit) => unit = "on";
     [@bs.send] external onOpen: (Stream.t([> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
     [@bs.send] external onReady: (Stream.t([> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
   };
@@ -666,7 +665,6 @@ module ReadStream = {
     [@bs.send] external bytesRead: Stream.t([> kind ]) => int = "bytesWritten";
     [@bs.send] external path: Stream.t([> kind ]) => string = "path";
     [@bs.send] external pending: Stream.t([> kind ]) => bool = "pending";
-    [@bs.send] external onClose: (Stream.t([> kind ]), [@bs.as "close"] _, unit => unit) => unit = "on";
     [@bs.send] external onOpen: (Stream.t([> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
     [@bs.send] external onReady: (Stream.t([> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
   };
