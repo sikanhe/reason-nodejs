@@ -79,14 +79,11 @@ module Cipher = {
   type t = Stream.t([ kind ]);
 
   module Impl = {
-
     include Stream.Transform.Impl;
-
     [@bs.send] external final: string => Buffer.t = "final";
-
-    [@bs.send] external finalWith: (
+    [@bs.send] external finalWithEncoding: (
       string,
-      ~encoding: [@bs.string] [
+      [@bs.string] [
         | `hex
         | `utf8
         | `ascii
@@ -96,8 +93,81 @@ module Cipher = {
         | `base64
         | `binary
         | `utf16le
-      ]) => Buffer.t = "final";
-  };
+      ]) => string = "final";
+    [@bs.send] external setAAD: Buffer.t => t = "setAAD";
+    [@bs.send] external setAADWith: (Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
+    [@bs.send] external getAuthTag: unit => Buffer.t = "getAuthTag";
+    [@bs.send] external setAutoPadding: bool => t = "setAutoPadding";
+
+    [@bs.send] external updateBinaryLikeToString: (
+        BinaryLike.t([<
+          | BinaryLike.buffer
+          | BinaryLike.typedArray
+          | BinaryLike.dataView
+        ]),
+        ~outputEncoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]
+      ) => string = "update";
+
+    [@bs.send] external updateBinaryLikeToBuffer: (
+        BinaryLike.t([<
+          | BinaryLike.buffer
+          | BinaryLike.typedArray
+          | BinaryLike.dataView
+        ])
+      ) => Buffer.t = "update";
+
+    [@bs.send] external updateStringToString: (
+        string,
+        ~inputEncoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ],
+        ~outputEncoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]
+      ) => string = "update";
+
+    [@bs.send] external updateStringToBuffer: (
+      string,
+        ~inputEncoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]
+      ) => Buffer.t = "update";
+
+  }
 
   include Impl;
 
