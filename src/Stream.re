@@ -110,10 +110,25 @@ module Duplex = {
 module Transform = {
   type kind = [ transform ];
   type nonrec t = t([ kind ]);
-  [@bs.module "stream"] [@bs.new] external make: unit => t = "Transform";
+
   module Impl = {
     include Duplex.Impl;
   }
+
+  type makeOptions;
+
+  [@bs.obj] external makeOptions: (
+    ~transform: (
+        ~chunk: BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ] as 'a),
+        ~encoding: string,
+        ~callback: (option(Js.Exn.t), BinaryLike.t('a)) => unit
+      ) => BinaryLike.t('a),
+    ~flush: (option(Js.Exn.t), BinaryLike.t('a)) => unit
+  ) => makeOptions = "";
+
+  [@bs.module "stream"] [@bs.new] external make: unit => t = "Transform";
+  [@bs.module "stream"] [@bs.new] external makeWith: (~options: makeOptions) => t = "Transform";
+
 };
 
 module PassThrough = {
