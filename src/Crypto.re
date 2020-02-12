@@ -1,3 +1,64 @@
+module KeyObject = {
+  type t('a, 'b);
+  type symmetric = [ | `Symmetric ];
+  type asymmetric = [ | `Asymmetric ];
+  type public = [ | `Public ];
+  type private = [ | `Private ];
+  type secret = [ | `Secret ];
+
+  module Symmetric = {
+    type kind = [ `Symmetric ];
+    type nonrec t('a) = t('a, [ kind ]);
+    module Impl = {
+
+    };
+  };
+
+  module Asymmetric = {
+    type kind = [ `Symmetric ];
+    type nonrec t('a) = t('a, [ kind ]);
+    module Impl = {
+      [@bs.send] external asymmetricExport: t('a) => BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) = "export";
+    };
+  };
+
+  module Impl = {
+    include Symmetric.Impl;
+    include Asymmetric.Impl;
+  };
+
+  include Impl;
+
+};
+
+module PivateKey = {
+  include KeyObject.Impl;
+  type kind = [ KeyObject.public ];
+  type t('a) = KeyObject.t([ kind ], 'a);
+
+  [@bs.module "crypto"] external make: BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) => t('a) = "createPrivateKey";
+
+  [@bs.module "crypto"] external makeWithPassphrase:
+    {
+      ..
+      "key": BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]),
+      "passphrase": BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ])
+    }
+    => t('a) = "createPrivateKey";
+
+};
+
+module PublicKey = {
+  include KeyObject.Impl;
+  type kind = [ KeyObject.public ];
+  type t('a) = KeyObject.t([ kind ], 'a);
+
+  [@bs.module "crypto"] external make: BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) => t('a) = "createPublicKey";
+
+  [@bs.module "crypto"] external fromPrivateKey: KeyObject.t([> `Private ], 'a) => t('a) = "createPublicKey";
+
+};
+
 module Hash = {
   type kind = [ Stream.transform | `Hash ];
   type t = Stream.t([ kind ]); 
@@ -34,6 +95,7 @@ module Hmac = {
 [@bs.module "crypto"] external createHmac: (string, ~key: string) => Hmac.t = "createHmac";
 
 module Certificate = {
+
   type t;
 
   [@bs.send] external exportChallenge: (
@@ -196,9 +258,32 @@ module Cipher = {
         ]
       ) => Buffer.t = "update";
 
-  }
+  };
 
   include Impl;
+
+  [@bs.module "crypto"] external make: (
+      ~algorithm: string,
+      ~key: KeyObject.t([> KeyObject.secret ], 'a),
+      ~iv: Js.Null.t(BinaryLike.t([<
+        | BinaryLike.string_
+        | BinaryLike.buffer
+        | BinaryLike.typedArray
+        | BinaryLike.dataView
+      ]))
+    ) => t = "createCipheriv";
+
+  [@bs.module "crypto"] external makeWith: (
+      ~algorithm: string,
+      ~key: KeyObject.t([> KeyObject.secret ], 'a),
+      ~iv: Js.Null.t(BinaryLike.t([<
+        | BinaryLike.string_
+        | BinaryLike.buffer
+        | BinaryLike.typedArray
+        | BinaryLike.dataView
+      ])),
+      ~options: Stream.Transform.makeOptions=?
+    ) => t = "createCipheriv";
 
 };
 
@@ -253,9 +338,107 @@ module Decipher = {
           | BinaryLike.dataView
         ])
       ) => t = "setAuthTag";
+    
+    [@bs.send] external setAutoPatting: (Stream.t([> kind ]), bool) => t = "setAutoPadding";
+
+    [@bs.send] external updateBinaryLikeToString: (
+        Stream.t([> kind ]),
+        BinaryLike.t([<
+          | BinaryLike.buffer
+          | BinaryLike.typedArray
+          | BinaryLike.dataView
+        ]),
+        ~outputEncoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]
+      ) => string = "update";
+
+    [@bs.send] external updateBinaryLikeToBuffer: (
+        Stream.t([> kind ]),
+        BinaryLike.t([<
+          | BinaryLike.buffer
+          | BinaryLike.typedArray
+          | BinaryLike.dataView
+        ])
+      ) => Buffer.t = "update";
+
+    [@bs.send] external updateStringToString: (
+        Stream.t([> kind ]),
+        string,
+        ~inputEncoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ],
+        ~outputEncoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]
+      ) => string = "update";
+
+    [@bs.send] external updateStringToBuffer: (
+      Stream.t([> kind ]),
+      string,
+        ~inputEncoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]
+      ) => Buffer.t = "update";
+
   };
 
   include Impl;
+
+  [@bs.module "crypto"] external make: (
+      ~algorithm: string,
+      ~key: KeyObject.t([> KeyObject.secret ], 'a),
+      ~iv: Js.Null.t(BinaryLike.t([<
+        | BinaryLike.string_
+        | BinaryLike.buffer
+        | BinaryLike.typedArray
+        | BinaryLike.dataView
+      ]))
+    ) => t = "createDecipheriv";
+
+  [@bs.module "crypto"] external makeWith: (
+      ~algorithm: string,
+      ~key: KeyObject.t([> KeyObject.secret ], 'a),
+      ~iv: Js.Null.t(BinaryLike.t([<
+        | BinaryLike.string_
+        | BinaryLike.buffer
+        | BinaryLike.typedArray
+        | BinaryLike.dataView
+      ])),
+      ~options: Stream.Transform.makeOptions=?
+    ) => t = "createDecipheriv";
 
 };
 
@@ -264,10 +447,6 @@ module DiffieHellman = {
 };
 
 module DiffieHellmanGroup = {
-
-};
-
-module KeyObject = {
 
 };
 
