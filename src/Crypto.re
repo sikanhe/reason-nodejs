@@ -87,21 +87,41 @@ module Cipher = {
     include Stream.Transform.Impl;
     [@bs.send] external final: (Stream.t([> kind ]), string) => Buffer.t = "final";
     [@bs.send] external finalWithEncoding: (
-      string,
-      [@bs.string] [
-        | `hex
-        | `utf8
-        | `ascii
-        | `latin1
-        | `base64
-        | `ucs2
-        | `base64
-        | `binary
-        | `utf16le
-      ]) => string = "final";
-    [@bs.send] external setAAD: (Stream.t([> kind ]), Buffer.t) => t = "setAAD";
-    [@bs.send] external setAADWith: (Stream.t([> kind ]), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
+        string,
+        [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]
+      ) => string = "final";
+
+    [@bs.send] external setAAD: (
+        Stream.t([> kind ]),
+        BinaryLike.t([<
+          | BinaryLike.buffer
+          | BinaryLike.typedArray
+          | BinaryLike.dataView
+        ])
+      ) => t = "setAAD";
+
+    [@bs.send] external setAADWith: (
+        Stream.t([> kind ]),
+        BinaryLike.t([<
+          | BinaryLike.buffer
+          | BinaryLike.typedArray
+          | BinaryLike.dataView
+        ]),
+        ~options: Stream.Transform.makeOptions
+      ) => t = "setAAD";
+
     [@bs.send] external getAuthTag: Stream.t([> kind ]) => Buffer.t = "getAuthTag";
+
     [@bs.send] external setAutoPadding: (Stream.t([> kind ]), bool) => t = "setAutoPadding";
 
     [@bs.send] external updateBinaryLikeToString: (
@@ -186,6 +206,56 @@ module Decipher = {
 
   type kind = [ Stream.transform | `Decipher ];
   type t = Stream.t([ kind ]);
+
+  module Impl = {
+
+    [@bs.send] external final: (Stream.t([> kind ]), string) => Buffer.t = "final";
+
+    [@bs.send] external finalWithEncoding: (
+        string,
+        [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]
+      ) => string = "final";
+
+    [@bs.send] external setAAD: (
+        Stream.t([> kind ]),
+        BinaryLike.t([<
+          | BinaryLike.buffer
+          | BinaryLike.typedArray
+          | BinaryLike.dataView
+        ])
+      ) => t = "setAAD";
+
+    [@bs.send] external setAADWith: (
+        Stream.t([> kind ]),
+        BinaryLike.t([<
+          | BinaryLike.buffer
+          | BinaryLike.typedArray
+          | BinaryLike.dataView
+        ]),
+        ~options: Stream.Transform.makeOptions
+      ) => t = "setAAD";
+
+    [@bs.send] external setAuthTag: (
+        Stream.t([> kind ]),
+        BinaryLike.t([<
+          | BinaryLike.buffer
+          | BinaryLike.typedArray
+          | BinaryLike.dataView
+        ])
+      ) => t = "setAuthTag";
+  };
+
+  include Impl;
 
 };
 
