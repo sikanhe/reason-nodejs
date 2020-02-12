@@ -186,30 +186,47 @@ module Stats = {
     [@bs.as "birthtime"] birthtime: string,
   };
 
-  /** `Stats.isFile(stats)` Returns true if the `stats` object describes a file. */
+  /** `isFile(stats)` Returns true if the `stats` object describes a file. */
   [@bs.send] external isFile: t => bool = "isFile";
-  /** `Stats.isDirectory(stats)` Returns true if the `stats` object describes a directory. */
+  /** `isDirectory(stats)` Returns true if the `stats` object describes a directory. */
   [@bs.send] external isDirectory: t => bool = "isDirectory";
-  /** `Stats.isBlockDevice(stats)` Returns true if the `stats` object describes a block device. */
+  /** `isBlockDevice(stats)` Returns true if the `stats` object describes a block device. */
   [@bs.send] external isBlockDevice: t => bool = "isBlockDevice";
-  /** `Stats.isBlockDevice(stats)` Returns true if the `stats` object describes a character device. */
+  /** `isBlockDevice(stats)` Returns true if the `stats` object describes a character device. */
   [@bs.send] external isCharacterDevice: t => bool = "isCharacterDevice";
-  /** `Stats.isBlockDevice(stats)` Returns true if the `stats` object describes a symbolic link. */
+  /** `isBlockDevice(stats)` Returns true if the `stats` object describes a symbolic link. */
   [@bs.send] external isSymbolicLink: t => bool = "isSymbolicLink";
-  /** `Stats.isBlockDevice(stats)` Returns true if the `stats` object describes a first-in-first-out (FIFO) pipe. */
+  /** `isBlockDevice(stats)` Returns true if the `stats` object describes a first-in-first-out (FIFO) pipe. */
   [@bs.send] external isFIFO: t => bool = "isFIFO";
-  /** `Stats.isBlockDevice(stats)` Returns true if the `stats` object describes a socket. */
+  /** `isBlockDevice(stats)` Returns true if the `stats` object describes a socket. */
   [@bs.send] external isSocket: t => bool = "isSocket";
 };
 
+/**
+ * `readdirSync(path)`
+ * Reads the contents of a directory, returning an array of strings representing
+ * the paths of files and sub-directories. **Execution is synchronous and blocking**.
+ */
 [@bs.module "fs"] external readdirSync: string => array(string) = "readdirSync";
-[@bs.module "fs"] external renameSync: (string, string) => unit = "renameSync";
+
+/**
+ * `renameSync(~oldPath, ~newPath)
+ * Renames/moves the file located at `~oldPath` to `~newPath`. **Execution is
+ * synchronous and blocking**.
+ */
+[@bs.module "fs"] external renameSync: (~oldPath: string, ~newPath: string) => unit = "renameSync";
 [@bs.module "fs"] external ftruncateSync: (fd, int) => unit = "ftruncateSync";
 [@bs.module "fs"] external truncateSync: (string, int) => unit = "truncateSync";
 [@bs.module "fs"] external chownSync: (string, ~uid: int, ~gid: int) => unit = "chownSync";
 [@bs.module "fs"] external fchownSync: (fd, ~uid: int, ~gid: int) => unit = "fchownSync";
 [@bs.module "fs"] external readlinkSync: string => string = "readlinkSync";
 [@bs.module "fs"] external unlinkSync: string => unit = "unlinkSync";
+
+/**
+ * `rmdirSync(dirPath)
+ * **Note: (recursive removal is experimental).**
+ * Removes the directory at `dirPath`. **Execution is synchronous and blocking**.
+ */
 [@bs.module "fs"] external rmdirSync: string => unit = "rmdirSync";
 
 [@bs.module "fs"]
