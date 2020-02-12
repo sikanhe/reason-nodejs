@@ -36,41 +36,46 @@ module Hmac = {
 module Certificate = {
   type t;
 
-  [@bs.send] external exportChallenge:
-    BinaryLike.t([<
-      | BinaryLike.string_
-      | BinaryLike.buffer
-      | BinaryLike.typedArray
-      | BinaryLike.dataView
-    ]) => Buffer.t = "exportChallenge";
+  [@bs.send] external exportChallenge: (
+      t,
+      BinaryLike.t([<
+        | BinaryLike.string_
+        | BinaryLike.buffer
+        | BinaryLike.typedArray
+        | BinaryLike.dataView
+      ])
+    ) => Buffer.t = "exportChallenge";
 
   [@bs.send] external exportPublicKey: (
-    BinaryLike.t([<
-      | BinaryLike.string_
-      | BinaryLike.buffer
-      | BinaryLike.typedArray
-      | BinaryLike.dataView
-    ]),
-    ~encoding: [@bs.string] [
-        | `hex
-        | `utf8
-        | `ascii
-        | `latin1
-        | `base64
-        | `ucs2
-        | `base64
-        | `binary
-        | `utf16le
-      ]=?
-  ) => Buffer.t = "exportPublicKey";
+      t,
+      BinaryLike.t([<
+        | BinaryLike.string_
+        | BinaryLike.buffer
+        | BinaryLike.typedArray
+        | BinaryLike.dataView
+      ]),
+      ~encoding: [@bs.string] [
+          | `hex
+          | `utf8
+          | `ascii
+          | `latin1
+          | `base64
+          | `ucs2
+          | `base64
+          | `binary
+          | `utf16le
+        ]=?
+    ) => Buffer.t = "exportPublicKey";
 
   [@bs.send] external verifyCertificate: (
-    BinaryLike.t([<
-      | BinaryLike.buffer
-      | BinaryLike.typedArray
-      | BinaryLike.dataView
-    ])
-  ) => bool = "verifyCertificate"
+      t,
+      BinaryLike.t([<
+        | BinaryLike.buffer
+        | BinaryLike.typedArray
+        | BinaryLike.dataView
+      ])
+    ) => bool = "verifyCertificate"
+
 };
 
 module Cipher = {
@@ -80,7 +85,7 @@ module Cipher = {
 
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external final: string => Buffer.t = "final";
+    [@bs.send] external final: (Stream.t([> kind ]), string) => Buffer.t = "final";
     [@bs.send] external finalWithEncoding: (
       string,
       [@bs.string] [
@@ -94,12 +99,13 @@ module Cipher = {
         | `binary
         | `utf16le
       ]) => string = "final";
-    [@bs.send] external setAAD: Buffer.t => t = "setAAD";
-    [@bs.send] external setAADWith: (Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
-    [@bs.send] external getAuthTag: unit => Buffer.t = "getAuthTag";
-    [@bs.send] external setAutoPadding: bool => t = "setAutoPadding";
+    [@bs.send] external setAAD: (Stream.t([> kind ]), Buffer.t) => t = "setAAD";
+    [@bs.send] external setAADWith: (Stream.t([> kind ]), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
+    [@bs.send] external getAuthTag: Stream.t([> kind ]) => Buffer.t = "getAuthTag";
+    [@bs.send] external setAutoPadding: (Stream.t([> kind ]), bool) => t = "setAutoPadding";
 
     [@bs.send] external updateBinaryLikeToString: (
+        Stream.t([> kind ]),
         BinaryLike.t([<
           | BinaryLike.buffer
           | BinaryLike.typedArray
@@ -119,6 +125,7 @@ module Cipher = {
       ) => string = "update";
 
     [@bs.send] external updateBinaryLikeToBuffer: (
+        Stream.t([> kind ]),
         BinaryLike.t([<
           | BinaryLike.buffer
           | BinaryLike.typedArray
@@ -127,6 +134,7 @@ module Cipher = {
       ) => Buffer.t = "update";
 
     [@bs.send] external updateStringToString: (
+        Stream.t([> kind ]),
         string,
         ~inputEncoding: [@bs.string] [
           | `hex
@@ -153,6 +161,7 @@ module Cipher = {
       ) => string = "update";
 
     [@bs.send] external updateStringToBuffer: (
+      Stream.t([> kind ]),
       string,
         ~inputEncoding: [@bs.string] [
           | `hex
@@ -174,6 +183,9 @@ module Cipher = {
 };
 
 module Decipher = {
+
+  type kind = [ Stream.transform | `Decipher ];
+  type t = Stream.t([ kind ]);
 
 };
 
