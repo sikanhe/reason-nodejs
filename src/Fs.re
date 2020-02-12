@@ -164,34 +164,41 @@ external writeFileUint8ArrayOptions:
   writeFileUint8ArrayOptions =
   "";
 
-module Stat = {
+module Stats = {
   type t = {
-    dev: int,
-    ino: int,
-    mode: int,
-    nlink: int,
-    uid: int,
-    gid: int,
-    rdev: int,
-    size: int,
-    blksize: int,
-    blocks: int,
-    atimeMs: float,
-    mtimeMs: float,
-    ctimeMs: float,
-    birthtimeMs: float,
-    atime: string,
-    mtime: string,
-    ctime: string,
-    birthtime: string,
+    [@bs.as "dev"] dev: int,
+    [@bs.as "ino"] ino: int,
+    [@bs.as "mode"] mode: int,
+    [@bs.as "nlink"] nlink: int,
+    [@bs.as "uid"] uid: int,
+    [@bs.as "gid"] gid: int,
+    [@bs.as "rdev"] rdev: int,
+    [@bs.as "size"] size: int,
+    [@bs.as "blksize"] blksize: int,
+    [@bs.as "blocks"] blocks: int,
+    [@bs.as "atimeMs"] atimeMs: float,
+    [@bs.as "mtimeMs"] mtimeMs: float,
+    [@bs.as "ctimeMs"] ctimeMs: float,
+    [@bs.as "birthtimeMs"] birthtimeMs: float,
+    [@bs.as "atime"] atime: string,
+    [@bs.as "mtime"] mtime: string,
+    [@bs.as "ctime"] ctime: string,
+    [@bs.as "birthtime"] birthtime: string,
   };
 
+  /** `Stats.isFile(stats)` Returns true if the `stats` object describes a file. */
   [@bs.send] external isFile: t => bool = "isFile";
+  /** `Stats.isDirectory(stats)` Returns true if the `stats` object describes a directory. */
   [@bs.send] external isDirectory: t => bool = "isDirectory";
+  /** `Stats.isBlockDevice(stats)` Returns true if the `stats` object describes a block device. */
   [@bs.send] external isBlockDevice: t => bool = "isBlockDevice";
+  /** `Stats.isBlockDevice(stats)` Returns true if the `stats` object describes a character device. */
   [@bs.send] external isCharacterDevice: t => bool = "isCharacterDevice";
+  /** `Stats.isBlockDevice(stats)` Returns true if the `stats` object describes a symbolic link. */
   [@bs.send] external isSymbolicLink: t => bool = "isSymbolicLink";
+  /** `Stats.isBlockDevice(stats)` Returns true if the `stats` object describes a first-in-first-out (FIFO) pipe. */
   [@bs.send] external isFIFO: t => bool = "isFIFO";
+  /** `Stats.isBlockDevice(stats)` Returns true if the `stats` object describes a socket. */
   [@bs.send] external isSocket: t => bool = "isSocket";
 };
 
@@ -365,7 +372,7 @@ module Handle = {
     "";
 
   [@bs.send] external readFileString: (t, readFileStringOptions) => Js.Promise.t(string) = "read";
-  [@bs.send] external stat: t => Js.Promise.t(Stat.t) = "stat";
+  [@bs.send] external stat: t => Js.Promise.t(Stats.t) = "stat";
   [@bs.send] external sync: t => Js.Promise.t(unit) = "sync";
   [@bs.send] external truncate: (t, ~length: int=?, unit) => Js.Promise.t(unit) = "truncate";
 
@@ -558,10 +565,10 @@ external link: (~existingPath: string, ~newPath: string) => Js.Promise.t(unit) =
   "link";
 
 [@bs.module "fs"] [@bs.scope "promises"]
-external lstat: string => Js.Promise.t(Stat.t) = "lstat";
+external lstat: string => Js.Promise.t(Stats.t) = "lstat";
 
 [@bs.module "fs"] [@bs.scope "promises"]
-external lstatBigInt: (string, bool) => Js.Promise.t(Stat.t) = "lstat";
+external lstatBigInt: (string, bool) => Js.Promise.t(Stats.t) = "lstat";
 
 type mkdirOptions;
 [@bs.obj]
