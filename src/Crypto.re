@@ -1,24 +1,29 @@
+
+// TODO: Consider alternative implementation of KeyObject subtype.
+
 module KeyObject = {
   type t('a, 'b);
   type symmetric = [ | `Symmetric ];
   type asymmetric = [ | `Asymmetric ];
-  type public = [ | `Public ];
-  type private = [ | `Private ];
-  type secret = [ | `Secret ];
+  type publicKey = [ | `PublicKey ];
+  type privateKey = [ | `PrivateKey ];
+  type secretKey = [ | `SecretKey ];
+
+  [@bs.send] external symmetricExport: t(symmetric, [< publicKey | privateKey ]) => BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) = "export";
+
+  [@bs.send] external asymmetricExport: ( t(asymmetric, [< publicKey | privateKey | secretKey ])) => BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) = "export";
 
   module Symmetric = {
     type kind = [ `Symmetric ];
-    type nonrec t('a) = t('a, [ kind ]);
+    type nonrec t('a) = t([ kind ], 'a);
     module Impl = {
-
     };
   };
 
   module Asymmetric = {
     type kind = [ `Symmetric ];
-    type nonrec t('a) = t('a, [ kind ]);
+    type nonrec t('a) = t([ kind ], 'a);
     module Impl = {
-      [@bs.send] external asymmetricExport: t('a) => BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) = "export";
     };
   };
 
@@ -33,8 +38,8 @@ module KeyObject = {
 
 module PivateKey = {
   include KeyObject.Impl;
-  type kind = [ KeyObject.public ];
-  type t('a) = KeyObject.t([ kind ], 'a);
+  type kind = [ KeyObject.publicKey ];
+  type t('a) = KeyObject.t('a, [ kind ]);
 
   [@bs.module "crypto"] external make: BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) => t('a) = "createPrivateKey";
 
@@ -50,12 +55,12 @@ module PivateKey = {
 
 module PublicKey = {
   include KeyObject.Impl;
-  type kind = [ KeyObject.public ];
-  type t('a) = KeyObject.t([ kind ], 'a);
+  type kind = [ KeyObject.publicKey ];
+  type t('a) = KeyObject.t('a, [ kind ]);
 
   [@bs.module "crypto"] external make: BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) => t('a) = "createPublicKey";
 
-  [@bs.module "crypto"] external fromPrivateKey: KeyObject.t([> `Private ], 'a) => t('a) = "createPublicKey";
+  [@bs.module "crypto"] external fromPrivateKey: KeyObject.t('a, [> KeyObject.privateKey ]) => t('a) = "createPublicKey";
 
 };
 
@@ -264,7 +269,7 @@ module Cipher = {
 
   [@bs.module "crypto"] external make: (
       ~algorithm: string,
-      ~key: KeyObject.t([> KeyObject.secret ], 'a),
+      ~key: KeyObject.t('a, [> KeyObject.secretKey ]),
       ~iv: Js.Null.t(BinaryLike.t([<
         | BinaryLike.string_
         | BinaryLike.buffer
@@ -275,7 +280,7 @@ module Cipher = {
 
   [@bs.module "crypto"] external makeWith: (
       ~algorithm: string,
-      ~key: KeyObject.t([> KeyObject.secret ], 'a),
+      ~key: KeyObject.t('a, [> KeyObject.secretKey ]),
       ~iv: Js.Null.t(BinaryLike.t([<
         | BinaryLike.string_
         | BinaryLike.buffer
@@ -419,7 +424,7 @@ module Decipher = {
 
   [@bs.module "crypto"] external make: (
       ~algorithm: string,
-      ~key: KeyObject.t([> KeyObject.secret ], 'a),
+      ~key: KeyObject.t('a, [> KeyObject.secretKey ]),
       ~iv: Js.Null.t(BinaryLike.t([<
         | BinaryLike.string_
         | BinaryLike.buffer
@@ -430,7 +435,7 @@ module Decipher = {
 
   [@bs.module "crypto"] external makeWith: (
       ~algorithm: string,
-      ~key: KeyObject.t([> KeyObject.secret ], 'a),
+      ~key: KeyObject.t('a, [> KeyObject.secretKey ]),
       ~iv: Js.Null.t(BinaryLike.t([<
         | BinaryLike.string_
         | BinaryLike.buffer
