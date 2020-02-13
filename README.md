@@ -1,3 +1,12 @@
+# reason-node
+
+## Project Status
+
+This library is still under construction. A few of the core design details are still being ironed out. Thus we cannot guarantee API stability at this time. We intend to achieve stability for most of the API very soon. We will make an announcement on the ReasonML [Discord channel](https://discord.gg/7MgaPKW) when we reach that goal.
+
+----
+
+## Installation
 
 ```shell
 yarn install reason-nodejs
@@ -16,15 +25,17 @@ Help all Reason Node.js apps and libaries to be built faster by reducing the tim
 ### Principles
 
 - When available, we prefer to bind to the promise version of the library instead of the callback version to reduce binding surface.
-- Use subtyping only where the benefit is huge. We use subtyping for various APIs that implement Node Streams, such as HTTP Request and Response, FileSystem streams, Crypto streams, and etc. It allow us to use a single set of functions to manipulate and combine streams across different modules. For example: 
+- Use subtyping only where the benefit is huge. We use subtyping for various APIs that implement Node Streams, such as HTTP Request and Response, FileSystem streams, Crypto streams, and etc. This allows us to use a single set of functions to manipulate and combine streams across different modules. For example:
 
-  ##### Stream a file into stdout: 
+  ##### Stream a file into stdout:
+
   ```reason
     Fs.createReadStream("/path")
     ->Stream.pipe(Process.stdout)
     ->Stream.onError(_ => Js.log("handleError"))
   ```
   ##### Echo server
+
   ```reason
   Http.createServer((request, response) => {
     request->Stream.onData(data => Js.log(data))
