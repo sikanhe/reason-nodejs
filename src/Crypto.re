@@ -1,4 +1,8 @@
 
+/**
+ * UNDER CONSTRUCTION - API UNSTABLE
+ */
+
 // TODO: Consider alternative implementation of KeyObject subtype.
 
 module KeyObject = {
