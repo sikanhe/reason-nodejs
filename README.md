@@ -2,7 +2,7 @@
 
 ## Project Status
 
-This library is still under construction. A few of the core design details are still being ironed out. Thus we cannot guarantee API stability at this time. We intend to achieve stability for most of the API very soon. We will make an announcement on the ReasonML [Discord channel](https://discord.gg/7MgaPKW) when we reach that goal.
+This library is still under construction. Some of the core design details are still being ironed out. Thus we cannot guarantee API stability at this time. We intend to achieve stability for most of the API very soon. We will make an announcement on the ReasonML [Discord channel](https://discord.gg/7MgaPKW) when we reach that goal.
 
 ----
 
