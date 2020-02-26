@@ -89,11 +89,7 @@ module Http2Session = {
   [@bs.get] [@bs.return nullable] external originSet: t => option(array(string)) = "originSet";
   [@bs.get] external pendingSettingsAck: t => bool = "pendingSettingsAck";
   [@bs.send] external ping: (t, (Js.Nullable.t(Js.Exn.t), int, Buffer.t) => unit) => bool = "ping";
-  [@bs.send] external pingWith: (
-      t,
-      ~payload: BinaryLike.t([ BinaryLike.buffer | BinaryLike.typedArray | BinaryLike.dataView ]),
-      (Js.Nullable.t(Js.Exn.t), int, Buffer.t) => unit
-    ) => bool = "ping";
+  [@bs.send] external pingWith: (t, ~payload: Buffer.t, (Js.Nullable.t(Js.Exn.t), int, Buffer.t) => unit) => bool = "ping";
   [@bs.send] external ref: t => unit = "ref";
   [@bs.get] external remoteSettings: t => {. 
       "headerTableSize": int,
@@ -192,22 +188,7 @@ module Http2ServerResponse = {
     [@bs.send] external onFinish: (Stream.t([> kind ]), [@bs.as "finish"] _, unit => unit) => unit = "on";
     [@bs.send] external setTrailers: (Stream.t([> kind ]), Js.t({..})) => unit = "setTrailers";
     [@bs.send] external end_: Stream.t([> kind ]) => unit = "end";
-    [@bs.send] external endWith: (
-        Stream.t([> kind ]),
-        ~data: BinaryLike.t([ BinaryLike.string_ | BinaryLike.buffer ])=?,
-        ~encoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]=?,
-        ~callback: unit => unit=?
-      ) => t = "end";
+    [@bs.send] external endWith: ( Stream.t([> kind ]), ~data: Buffer.t=?, ~callback: unit => unit=?) => t = "end";
     [@bs.send] external getHeader: (Stream.t([> kind ]), string) => string = "getHeader";
     [@bs.send] external getHeaderNames: Stream.t([> kind ]) => array(string) = "getHeaderNames";
     [@bs.send] external getHeaders: Stream.t([> kind ]) => Js.t({..}) = "getHeaders";
@@ -222,26 +203,8 @@ module Http2ServerResponse = {
     [@bs.get] external statusMessage: Stream.t([> kind ]) => string = "statusMessage";
     [@bs.get] external stream: Stream.t([> kind ]) => Http2Stream.t = "stream";
     [@bs.get] external writableEnded: Stream.t([> kind ]) => bool = "writableEnded";
-    [@bs.send] external write: (
-        Stream.t([> kind ]),
-        BinaryLike.t([ BinaryLike.string_ | BinaryLike.buffer ])
-      ) => bool = "write";
-    [@bs.send] external writeWith: (
-        Stream.t([> kind ]),
-        BinaryLike.t([ BinaryLike.string_ | BinaryLike.buffer ]),
-        ~encoding: [@bs.string] [
-            | `hex
-            | `utf8
-            | `ascii
-            | `latin1
-            | `base64
-            | `ucs2
-            | `base64
-            | `binary
-            | `utf16le
-          ]=?,
-        ~callback: unit => unit=?
-      ) => bool = "write";
+    [@bs.send] external write: ( Stream.t([> kind ]), Buffer.t) => bool = "write";
+    [@bs.send] external writeWith: ( Stream.t([> kind ]), Buffer.t, ~callback: unit => unit=?) => bool = "write";
     [@bs.send] external writeContinue: Stream.t([> kind ]) => unit = "writeContinue";
     [@bs.send] external writeHead: (Stream.t([> kind ] as 'a), int) => Stream.t([> kind ] as 'a) = "writeHead";
     [@bs.send] external writeHeadWith: (Stream.t([> kind ] as 'a), int, ~message: string=?, ~headers: Js.t({..})=?) => Stream.t([> kind ] as 'a) = "writeHead";
