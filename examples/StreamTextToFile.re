@@ -1,5 +1,5 @@
 
-let data = "Sample text to write to a file!" -> BinaryLike.string;
+let data = "Sample text to write to a file!" -> Buffer.fromString;
 
 let outputPath = Path.relative(
   ~from= Process.cwd(),

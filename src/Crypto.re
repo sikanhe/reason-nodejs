@@ -13,9 +13,9 @@ module KeyObject = {
   type privateKey = [ | `PrivateKey ];
   type secretKey = [ | `SecretKey ];
 
-  [@bs.send] external symmetricExport: t(symmetric, [< publicKey | privateKey ]) => BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) = "export";
+  [@bs.send] external symmetricExport: t(symmetric, [< publicKey | privateKey ]) => Buffer.t = "export";
 
-  [@bs.send] external asymmetricExport: ( t(asymmetric, [< publicKey | privateKey | secretKey ])) => BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) = "export";
+  [@bs.send] external asymmetricExport: ( t(asymmetric, [< publicKey | privateKey | secretKey ])) => Buffer.t = "export";
 
   module Symmetric = {
     type kind = [ `Symmetric ];
@@ -45,15 +45,8 @@ module PivateKey = {
   type kind = [ KeyObject.publicKey ];
   type t('a) = KeyObject.t('a, [ kind ]);
 
-  [@bs.module "crypto"] external make: BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) => t('a) = "createPrivateKey";
-
-  [@bs.module "crypto"] external makeWithPassphrase:
-    {
-      ..
-      "key": BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]),
-      "passphrase": BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ])
-    }
-    => t('a) = "createPrivateKey";
+  [@bs.module "crypto"] external make: Buffer.t => t('a) = "createPrivateKey";
+  [@bs.module "crypto"] external makeWithPassphrase: { .. "key": Buffer.t, "passphrase": Buffer.t } => t('a) = "createPrivateKey";
 
 };
 
@@ -62,8 +55,7 @@ module PublicKey = {
   type kind = [ KeyObject.publicKey ];
   type t('a) = KeyObject.t('a, [ kind ]);
 
-  [@bs.module "crypto"] external make: BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ]) => t('a) = "createPublicKey";
-
+  [@bs.module "crypto"] external make: Buffer.t => t('a) = "createPublicKey";
   [@bs.module "crypto"] external fromPrivateKey: KeyObject.t('a, [> KeyObject.privateKey ]) => t('a) = "createPublicKey";
 
 };
@@ -75,11 +67,7 @@ module Hash = {
     include Stream.Transform.Impl;
     [@bs.send] external copy: Stream.t([> kind ]) => Stream.t([> kind ]) = "copy"; 
     [@bs.send] external digest: Stream.t([> kind ]) => Buffer.t = "digest"; 
-    [@bs.send] external digestWithEncoding: (Stream.t([> kind ]), [@bs.string] [ | `latin1 | `hex | `base64 ]) => string = "digest";
-    [@bs.send] external update: (Stream.t([> kind ]), string) => unit = "update";
-    [@bs.send] external updateWithEncoding: (Stream.t([> kind ]), [@bs.string] [ | `utf8 | `ascii | `latin1 ]) => unit = "update";
-    [@bs.send] external updateBuffer: (Stream.t([> kind ]), Buffer.t) => unit = "update";
-    [@bs.send] external updateDataView: (Stream.t([> kind ]), Js.TypedArray2.DataView.t) => unit = "update";
+    [@bs.send] external update: (Stream.t([> kind ]), Buffer.t) => unit = "update";
   };
   include Impl;
 };
@@ -92,11 +80,7 @@ module Hmac = {
   module Impl = {
     include Stream.Transform.Impl;
     [@bs.send] external digest: Stream.t([> kind ]) => Buffer.t = "digest";
-    [@bs.send] external digestWithEncoding: (Stream.t([> kind ]), [@bs.string] [ | `latin1 | `hex | `base64 ]) => string = "digest";
-    [@bs.send] external update: (Stream.t([> kind ]), string) => unit = "update";
-    [@bs.send] external updateWithEncoding: (Stream.t([> kind ]), [@bs.string] [ | `utf8 | `ascii | `latin1 ]) => unit = "update";
-    [@bs.send] external updateBuffer: (Stream.t([> kind ]), Buffer.t) => unit = "update";
-    [@bs.send] external updateDataView: (Stream.t([> kind ]), Js.TypedArray2.DataView.t) => unit = "update";
+    [@bs.send] external update: (Stream.t([> kind ]), Buffer.t) => unit = "update";
   };
   include Impl;
 };
@@ -107,45 +91,9 @@ module Certificate = {
 
   type t;
 
-  [@bs.send] external exportChallenge: (
-      t,
-      BinaryLike.t([<
-        | BinaryLike.string_
-        | BinaryLike.buffer
-        | BinaryLike.typedArray
-        | BinaryLike.dataView
-      ])
-    ) => Buffer.t = "exportChallenge";
-
-  [@bs.send] external exportPublicKey: (
-      t,
-      BinaryLike.t([<
-        | BinaryLike.string_
-        | BinaryLike.buffer
-        | BinaryLike.typedArray
-        | BinaryLike.dataView
-      ]),
-      ~encoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]=?
-    ) => Buffer.t = "exportPublicKey";
-
-  [@bs.send] external verifyCertificate: (
-      t,
-      BinaryLike.t([<
-        | BinaryLike.buffer
-        | BinaryLike.typedArray
-        | BinaryLike.dataView
-      ])
-    ) => bool = "verifyCertificate"
+  [@bs.send] external exportChallenge: (t, Buffer.t) => Buffer.t = "exportChallenge"; 
+  [@bs.send] external exportPublicKey: ( t, Buffer.t) => Buffer.t = "exportPublicKey";
+  [@bs.send] external verifyCertificate: (t, Buffer.t) => bool = "verifyCertificate"
 
 };
 
@@ -157,116 +105,11 @@ module Cipher = {
   module Impl = {
     include Stream.Transform.Impl;
     [@bs.send] external final: (Stream.t([> kind ]), string) => Buffer.t = "final";
-    [@bs.send] external finalWithEncoding: (
-        string,
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) => string = "final";
-
-    [@bs.send] external setAAD: (
-        Stream.t([> kind ]),
-        BinaryLike.t([<
-          | BinaryLike.buffer
-          | BinaryLike.typedArray
-          | BinaryLike.dataView
-        ])
-      ) => t = "setAAD";
-
-    [@bs.send] external setAADWith: (
-        Stream.t([> kind ]),
-        BinaryLike.t([<
-          | BinaryLike.buffer
-          | BinaryLike.typedArray
-          | BinaryLike.dataView
-        ]),
-        ~options: Stream.Transform.makeOptions
-      ) => t = "setAAD";
-
+    [@bs.send] external setAAD: (Stream.t([> kind ]), Buffer.t) => t = "setAAD";
+    [@bs.send] external setAADWith: (Stream.t([> kind ]), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
     [@bs.send] external getAuthTag: Stream.t([> kind ]) => Buffer.t = "getAuthTag";
-
     [@bs.send] external setAutoPadding: (Stream.t([> kind ]), bool) => t = "setAutoPadding";
-
-    [@bs.send] external updateBinaryLikeToString: (
-        Stream.t([> kind ]),
-        BinaryLike.t([<
-          | BinaryLike.buffer
-          | BinaryLike.typedArray
-          | BinaryLike.dataView
-        ]),
-        ~outputEncoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) => string = "update";
-
-    [@bs.send] external updateBinaryLikeToBuffer: (
-        Stream.t([> kind ]),
-        BinaryLike.t([<
-          | BinaryLike.buffer
-          | BinaryLike.typedArray
-          | BinaryLike.dataView
-        ])
-      ) => Buffer.t = "update";
-
-    [@bs.send] external updateStringToString: (
-        Stream.t([> kind ]),
-        string,
-        ~inputEncoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ],
-        ~outputEncoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) => string = "update";
-
-    [@bs.send] external updateStringToBuffer: (
-      Stream.t([> kind ]),
-      string,
-        ~inputEncoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) => Buffer.t = "update";
-
+    [@bs.send] external update: (Stream.t([> kind ]), Buffer.t) => Buffer.t = "update";
   };
 
   include Impl;
@@ -274,23 +117,13 @@ module Cipher = {
   [@bs.module "crypto"] external make: (
       ~algorithm: string,
       ~key: KeyObject.t('a, [> KeyObject.secretKey ]),
-      ~iv: Js.Null.t(BinaryLike.t([<
-        | BinaryLike.string_
-        | BinaryLike.buffer
-        | BinaryLike.typedArray
-        | BinaryLike.dataView
-      ]))
+      ~iv: Js.Null.t(Buffer.t)
     ) => t = "createCipheriv";
 
   [@bs.module "crypto"] external makeWith: (
       ~algorithm: string,
       ~key: KeyObject.t('a, [> KeyObject.secretKey ]),
-      ~iv: Js.Null.t(BinaryLike.t([<
-        | BinaryLike.string_
-        | BinaryLike.buffer
-        | BinaryLike.typedArray
-        | BinaryLike.dataView
-      ])),
+      ~iv: Js.Null.t(Buffer.t),
       ~options: Stream.Transform.makeOptions=?
     ) => t = "createCipheriv";
 
@@ -302,126 +135,12 @@ module Decipher = {
   type t = Stream.t([ kind ]);
 
   module Impl = {
-
     [@bs.send] external final: (Stream.t([> kind ]), string) => Buffer.t = "final";
-
-    [@bs.send] external finalWithEncoding: (
-        string,
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) => string = "final";
-
-    [@bs.send] external setAAD: (
-        Stream.t([> kind ]),
-        BinaryLike.t([<
-          | BinaryLike.buffer
-          | BinaryLike.typedArray
-          | BinaryLike.dataView
-        ])
-      ) => t = "setAAD";
-
-    [@bs.send] external setAADWith: (
-        Stream.t([> kind ]),
-        BinaryLike.t([<
-          | BinaryLike.buffer
-          | BinaryLike.typedArray
-          | BinaryLike.dataView
-        ]),
-        ~options: Stream.Transform.makeOptions
-      ) => t = "setAAD";
-
-    [@bs.send] external setAuthTag: (
-        Stream.t([> kind ]),
-        BinaryLike.t([<
-          | BinaryLike.buffer
-          | BinaryLike.typedArray
-          | BinaryLike.dataView
-        ])
-      ) => t = "setAuthTag";
-    
+    [@bs.send] external setAAD: (Stream.t([> kind ]), Buffer.t) => t = "setAAD";
+    [@bs.send] external setAADWith: (Stream.t([> kind ]), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
+    [@bs.send] external setAuthTag: (Stream.t([> kind ]), Buffer.t) => t = "setAuthTag";
     [@bs.send] external setAutoPatting: (Stream.t([> kind ]), bool) => t = "setAutoPadding";
-
-    [@bs.send] external updateBinaryLikeToString: (
-        Stream.t([> kind ]),
-        BinaryLike.t([<
-          | BinaryLike.buffer
-          | BinaryLike.typedArray
-          | BinaryLike.dataView
-        ]),
-        ~outputEncoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) => string = "update";
-
-    [@bs.send] external updateBinaryLikeToBuffer: (
-        Stream.t([> kind ]),
-        BinaryLike.t([<
-          | BinaryLike.buffer
-          | BinaryLike.typedArray
-          | BinaryLike.dataView
-        ])
-      ) => Buffer.t = "update";
-
-    [@bs.send] external updateStringToString: (
-        Stream.t([> kind ]),
-        string,
-        ~inputEncoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ],
-        ~outputEncoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) => string = "update";
-
-    [@bs.send] external updateStringToBuffer: (
-      Stream.t([> kind ]),
-      string,
-        ~inputEncoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) => Buffer.t = "update";
-
+    [@bs.send] external update: (Stream.t([> kind ]), Buffer.t) => Buffer.t = "update";
   };
 
   include Impl;
@@ -429,23 +148,13 @@ module Decipher = {
   [@bs.module "crypto"] external make: (
       ~algorithm: string,
       ~key: KeyObject.t('a, [> KeyObject.secretKey ]),
-      ~iv: Js.Null.t(BinaryLike.t([<
-        | BinaryLike.string_
-        | BinaryLike.buffer
-        | BinaryLike.typedArray
-        | BinaryLike.dataView
-      ]))
+      ~iv: Js.Null.t(Buffer.t)
     ) => t = "createDecipheriv";
 
   [@bs.module "crypto"] external makeWith: (
       ~algorithm: string,
       ~key: KeyObject.t('a, [> KeyObject.secretKey ]),
-      ~iv: Js.Null.t(BinaryLike.t([<
-        | BinaryLike.string_
-        | BinaryLike.buffer
-        | BinaryLike.typedArray
-        | BinaryLike.dataView
-      ])),
+      ~iv: Js.Null.t(Buffer.t),
       ~options: Stream.Transform.makeOptions=?
     ) => t = "createDecipheriv";
 

@@ -18,12 +18,12 @@ module Readable = {
   type kind = [ readable ];
   module Impl = {
     include Base.Impl;
-    [@bs.send] external onData: (t([> kind ]), [@bs.as "data"] _, Buffer.t => unit) => unit = "on";
-    [@bs.send] external onEnd: (t([> kind ]), [@bs.as "end"] _, unit => unit) => unit = "on";
-    [@bs.send] external pipe: (t([> kind ]), t([> writable]) as 'a) => 'a = "pipe";
-    [@bs.send] external unpipe: (t([> kind ]) as 'a, t([> writable])) => 'a = "unpipe";
+    [@bs.send] external onData: (t([> readable ]), [@bs.as "data"] _, Buffer.t => unit) => unit = "on";
+    [@bs.send] external onEnd: (t([> readable ]), [@bs.as "end"] _, unit => unit) => unit = "on";
+    [@bs.send] external pipe: (t([> readable ]), t([> writable ]) as 'a) => 'a = "pipe";
+    [@bs.send] external unpipe: (t([> readable ]) as 'a, t([> writable ])) => 'a = "unpipe";
   };
-  [@bs.module "stream"] [@bs.new] external make: unit => t([> readable]) = "Readable";
+  [@bs.module "stream"] [@bs.new] external make: unit => t([> readable ]) = "Readable";
   include Impl;
 };
 
@@ -31,85 +31,43 @@ module Writable = {
   type kind = [ writable ];
   module Impl = {
     include Base.Impl;
-    [@bs.send] external onDrain: (t([> kind ]), [@bs.as "drain"] _, unit => unit) => unit = "on";
-    [@bs.send] external onFinish: (t([> kind ]), [@bs.as "finish"] _, unit => unit) => unit = "on";
-    [@bs.send] external onPipe: (t([> kind ]), [@bs.as "pipe"] _, t([> readable]) => unit) => unit = "on";
-    [@bs.send] external onUnpipe: (t([> kind ]), [@bs.as "unpipe"] _, t([> readable]) => unit) => unit = "on";
-    [@bs.send] external cork: t([> kind ]) => unit = "cork";
-    [@bs.send] external uncork: t([> kind ]) => unit = "uncork";
-    [@bs.send] external destroy: t([> kind ]) => unit = "destroy";
-    [@bs.send] external destroyWithError: (t([> kind ]), Js.Exn.t) => unit = "destroy";
-    [@bs.get] external destroyed: t([> kind ]) => bool = "destroy";
-    [@bs.send] external end_: t([> kind ]) => unit = "end";
-    [@bs.send] external write: (
-      t([> kind ]),
-      BinaryLike.t([<
-        | BinaryLike.string_
-        | BinaryLike.buffer
-        | BinaryLike.uInt8Array
-      ]))
-      => bool = "write";
-    [@bs.send] external writeWith: (
-        t([> kind ]),
-        BinaryLike.t([<
-          | BinaryLike.string_
-          | BinaryLike.buffer
-          | BinaryLike.uInt8Array
-        ]),
-        ~encoding: [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]=?,
-        ~callback: Js.Nullable.t(Js.Exn.t) => unit=?,
-        unit
-      )
-      => bool = "write";
-    [@bs.send] external setDefaultEncoding: (
-        t([> kind ]),
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) => unit = "setDefaultEncoding";
-    [@bs.get] external writable: t([> kind ]) => bool = "writable";
-    [@bs.get] external writableEnded: t([> kind ]) => bool = "writableEnded";
-    [@bs.get] external writableCorked: t([> kind ]) => bool = "writableCorked";
-    [@bs.get] external writableFinished: t([> kind ]) => bool = "writableFinished";
-    [@bs.get] external writableLength: t([> kind ]) => int = "writableLength";
-    [@bs.get] external writableHighWaterMark: t([> kind ]) => int = "writableHighWaterMark";
-    [@bs.get] external writableObjectMode: t([> kind ]) => bool = "writableObjectMode";
+    [@bs.send] external onDrain: (t([> writable ]), [@bs.as "drain"] _, unit => unit) => unit = "on";
+    [@bs.send] external onFinish: (t([> writable ]), [@bs.as "finish"] _, unit => unit) => unit = "on";
+    [@bs.send] external onPipe: (t([> writable ]), [@bs.as "pipe"] _, t([> readable]) => unit) => unit = "on";
+    [@bs.send] external onUnpipe: (t([> writable ]), [@bs.as "unpipe"] _, t([> readable]) => unit) => unit = "on";
+    [@bs.send] external cork: t([> writable ]) => unit = "cork";
+    [@bs.send] external uncork: t([> writable ]) => unit = "uncork";
+    [@bs.send] external destroy: t([> writable ]) => unit = "destroy";
+    [@bs.send] external destroyWithError: (t([> writable ]), Js.Exn.t) => unit = "destroy";
+    [@bs.get] external destroyed: t([> writable ]) => bool = "destroy";
+    [@bs.send] external end_: t([> writable ]) => unit = "end";
+    [@bs.send] external write: ( t([> writable ]), Buffer.t) => bool = "write";
+    [@bs.send] external writeWith: (t([> writable ]), Buffer.t, ~callback: Js.Nullable.t(Js.Exn.t) => unit=?, unit) => bool = "write";
+    [@bs.get] external writable: t([> writable ]) => bool = "writable";
+    [@bs.get] external writableEnded: t([> writable ]) => bool = "writableEnded";
+    [@bs.get] external writableCorked: t([> writable ]) => bool = "writableCorked";
+    [@bs.get] external writableFinished: t([> writable ]) => bool = "writableFinished";
+    [@bs.get] external writableLength: t([> writable ]) => int = "writableLength";
+    [@bs.get] external writableHighWaterMark: t([> writable ]) => int = "writableHighWaterMark";
+    [@bs.get] external writableObjectMode: t([> writable ]) => bool = "writableObjectMode";
   };
-  [@bs.module "stream"] [@bs.new] external make: unit => t([ kind ]) = "Writable";
+  [@bs.module "stream"] [@bs.new] external make: unit => t([ writable ]) = "Writable";
   include Impl;
 };
 
 module Duplex = {
   type kind = [ duplex ];
-  [@bs.module "stream"] [@bs.new] external make: unit => t([ kind ]) = "Duplex";
+  [@bs.module "stream"] [@bs.new] external make: unit => t([ duplex ]) = "Duplex";
   module Impl = {
     include Readable.Impl;
     include Writable.Impl;
   };
-  type nonrec t = t([ kind ]);
+  type nonrec t = t([ duplex ]);
 };
 
 module Transform = {
   type kind = [ transform ];
-  type nonrec t = t([ kind ]);
+  type nonrec t = t([ transform ]);
 
   module Impl = {
     include Duplex.Impl;
@@ -119,11 +77,11 @@ module Transform = {
 
   [@bs.obj] external makeOptions: (
     ~transform: (
-        ~chunk: BinaryLike.t([< BinaryLike.string_ | BinaryLike.buffer ] as 'a),
+        ~chunk: Buffer.t,
         ~encoding: string,
-        ~callback: (option(Js.Exn.t), BinaryLike.t('a)) => unit
-      ) => BinaryLike.t('a),
-    ~flush: (option(Js.Exn.t), BinaryLike.t('a)) => unit
+        ~callback: (option(Js.Exn.t), Buffer.t) => unit
+      ) => Buffer.t,
+    ~flush: (option(Js.Exn.t), Buffer.t) => unit
   ) => makeOptions = "";
 
   [@bs.module "stream"] [@bs.new] external make: unit => t = "Transform";
@@ -134,7 +92,7 @@ module Transform = {
 module PassThrough = {
   include Transform.Impl;
   type kind = [ passThrough ];
-  type nonrec t = t([ kind ]);
+  type nonrec t = t([ passThrough ]);
   [@bs.module "stream"] [@bs.new] external make: unit => t = "PassThrough";
 };
 

@@ -15,11 +15,8 @@ module IncomingMessage = {
     [@bs.get] external complete: Stream.t([> kind ]) => bool = "complete";
     [@bs.send] external destroy: Stream.t([> kind ]) => unit = "destroy";
     [@bs.send] external destroyWithError: (Stream.t([> kind ]), Js.Exn.t) => bool = "destroy";
-    [@bs.send] external setTimeout: (
-        Stream.t([> kind ] as 'a),
-        int,
-        Stream.t([> kind ] as 'a) => unit
-      ) => Stream.t([> kind ] as 'a) = "setTimeout";
+    [@bs.send] external setTimeout: (Stream.t([> kind ] as 'a), int) => Stream.t([> kind ] as 'a) = "setTimeout";
+    [@bs.send] external setTimeoutWithCallback: (Stream.t([> kind ] as 'a), int, Stream.t([> kind ] as 'a) => unit) => Stream.t([> kind ] as 'a) = "setTimeout";
     [@bs.get] external socket: Stream.t([> kind ]) => Stream.Duplex.t = "socket";
     [@bs.get] external statusCode: Stream.t([> kind ]) => int = "statusCode";
     [@bs.get] external statusMessage: Stream.t([> kind ]) => string = "statusMessage";
@@ -68,44 +65,9 @@ module ClientRequest = {
     [@bs.send] external abort: Stream.t([> kind ]) => unit = "abort";
     [@bs.get] external aborted: Stream.t([> kind ]) => bool = "aborted";
     [@bs.send] external end_: Stream.t([> kind ]) => unit = "end";
-    [@bs.send] external endWithData: (Stream.t([> kind ]), StringBuffer.t) => unit = "end";
-    [@bs.send] external endWithDataEncoding:
-      (
-        Stream.t([> kind ]),
-        StringBuffer.t,
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) =>
-      unit =
-      "end";
-    [@bs.send] external endWithDataEncodingCallback:
-      (
-        Stream.t([> kind ]),
-        StringBuffer.t,
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ],
-        unit => unit
-      ) =>
-      unit =
-      "end";
+    [@bs.send] external endWithData: (Stream.t([> kind ]), Buffer.t) => unit = "end";
+    [@bs.send] external endWithCallback: (Stream.t([> kind ]), unit => unit) => unit = "end";
+    [@bs.send] external endWithDataCallback: (Stream.t([> kind ]), Buffer.t, unit => unit) => unit = "end";
     [@bs.send] external flushHeaders: Stream.t([> kind ]) => unit = "flushHeaders";
     [@bs.send] external getHeader: (Stream.t([> kind ]), string) => 'a = "getHeader";
     [@bs.send] external maxHeadersCount: Stream.t([> kind ]) => int = "maxHeadersCount";
@@ -120,46 +82,8 @@ module ClientRequest = {
     [@bs.send] external setTimeoutWithCallback: (Stream.t([> kind ]), int, unit => unit) => unit = "setTimeout";
     [@bs.send] external socket: Stream.t([> kind ]) => Stream.t([> Net.Socket.kind ]) = "socket";
     [@bs.send] external writableEnded: Stream.t([> kind ]) => bool = "writableEnded";
-    [@bs.send] external write: (Stream.t([> kind ]), StringBuffer.t) => bool = "writableEnded";
-    [@bs.send]
-    external writeWithEncoding:
-      (
-        Stream.t([> kind ]),
-        StringBuffer.t,
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) =>
-      bool =
-      "writableEnded";
-    [@bs.send]
-    external writeWithEncodingCallback:
-      (
-        Stream.t([> kind ]),
-        StringBuffer.t,
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ],
-        unit => unit
-      ) =>
-      bool =
-      "writableEnded";
+    [@bs.send] external write: (Stream.t([> kind ]), Buffer.t) => bool = "write";
+    [@bs.send] external writeWithCallback: (Stream.t([> kind ]), Buffer.t, unit => unit) => bool = "write";
   };
 
   include Impl;
@@ -173,89 +97,14 @@ module ServerResponse = {
     include Stream.Duplex.Impl;
     [@bs.get] external statusCode: Stream.t([> kind ]) => int = "statusCode";
     [@bs.set] external setStatusCode: (Stream.t([> kind ]), int) => unit = "statusCode";
-    [@bs.send] external write: (Stream.t([> kind ]), StringBuffer.t) => bool = "write";
-    [@bs.send]
-    external writeWithEncoding:
-      (
-        Stream.t([> kind ]),
-        StringBuffer.t,
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) =>
-      bool =
-      "writableEnded";
-    [@bs.send]
-    external writeWithEncodingCallback:
-      (
-        Stream.t([> kind ]),
-        StringBuffer.t,
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ],
-        unit => unit
-      ) =>
-      bool =
-      "writableEnded";
+    [@bs.send] external write: (Stream.t([> kind ]), Buffer.t) => bool = "write";
+    [@bs.send] external writeWithEncodingCallback: ( Stream.t([> kind ]), Buffer.t, unit => unit) => bool = "write";
     [@bs.send] external writeStatus: (Stream.t([> kind ]), int) => unit = "writeHead";
     [@bs.send] external cork: Stream.t([> kind ]) => unit = "cork";
     [@bs.send] external end_: Stream.t([> kind ]) => unit = "end";
-    [@bs.send] external endWithData: (Stream.t([> kind ]), StringBuffer.t) => unit = "end";
-    [@bs.send]
-    external endWithDataEncoding:
-      (
-        Stream.t([> kind ]),
-        StringBuffer.t,
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ]
-      ) =>
-      unit =
-      "end";
-    [@bs.send]
-    external endWithDataEncodingCallback:
-      (
-        Stream.t([> kind ]),
-        StringBuffer.t,
-        [@bs.string] [
-          | `hex
-          | `utf8
-          | `ascii
-          | `latin1
-          | `base64
-          | `ucs2
-          | `base64
-          | `binary
-          | `utf16le
-        ],
-        unit => unit
-      ) =>
-      unit =
-      "end";
+    [@bs.send] external endWithData: (Stream.t([> kind ]), Buffer.t) => unit = "end";
+    [@bs.send] external endWithCallback: (Stream.t([> kind ]), unit => unit) => unit = "end";
+    [@bs.send] external endWithDataCallback: ( Stream.t([> kind ]), Buffer.t, unit => unit) => unit = "end";
     [@bs.send] external uncork: Stream.t([> kind ]) => unit = "uncork";
     [@bs.send] external flushHeaders: Stream.t([> kind ]) => unit = "flushHeaders";
     [@bs.send] external getHeader: (Stream.t([> kind ]), string) => 'a = "getHeader";
