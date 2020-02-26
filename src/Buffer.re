@@ -367,9 +367,23 @@ external toStringWithEncodingRange:
   "toString";
 
 [@bs.send] external write: (t, string) => int = "write";
+[@bs.send] external writeWithEncoding:
+  (
+    t,
+    string,
+    [@bs.string] [
+      | `ascii
+      | `utf8
+      | `utf16le
+      | `usc2
+      | `base64
+      | `latin1
+      | `binary
+      | `hex
+    ]
+  ) => int = "write";
 [@bs.send] external writeOffset: (t, string, ~offset: int) => int = "write";
-[@bs.send]
-external writeRange: (t, string, ~offset: int, ~length: int) => int = "write";
+[@bs.send] external writeRange: (t, string, ~offset: int, ~length: int) => int = "write";
 [@bs.send]
 external writeRangeWithEncoding:
   (
