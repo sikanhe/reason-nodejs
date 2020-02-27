@@ -25,7 +25,7 @@ external fromStringWithEncoding:
   ) =>
   t =
   "Buffer.from";
-[@bs.val] external fromArray: array(int) => t = "Buffer.from";
+[@bs.val] external fromArray: array('a) => t = "Buffer.from";
 [@bs.val] external fromArrayBuffer: ArrayBuffer.t => t = "Buffer.from";
 [@bs.val] external fromArrayBufferOffset: (ArrayBuffer.t, ~offset: int) => t = "Buffer.from";
 [@bs.val] external fromArrayBufferRange: (ArrayBuffer.t, ~offset: int, ~length: int) => t = "Buffer.from";
