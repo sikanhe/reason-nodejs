@@ -24,10 +24,55 @@ module Constants = {
   ) =>
   t =
   "Buffer.from";
-[@bs.val] external fromArray: array('a) => t = "Buffer.from";
+
+/**
+ * `fromArray(array)`
+ * 
+ * Constructs a new `Buffer` object from an array of integers.
+ */
+[@bs.val] external fromArray: array(int) => t = "Buffer.from";
+
+/**
+ * `fromArrayBuffer(arrayBuffer)`
+ * 
+ * Constructs a new `Buffer` object from an `ArrayBuffer` object.
+ * 
+ * **Note:** This does not copy the data from the `ArrayBuffer` instance, but instead creates
+ * a "view" over the existing data in memory. Mutations of the underlying `ArrayBuffer`
+ * will be reflected in the `Buffer` view, and vice versa.
+ */
 [@bs.val] external fromArrayBuffer: ArrayBuffer.t => t = "Buffer.from";
+
+/**
+ * `fromArrayBufferOffset(arrayBuffer, ~offset)`
+ * 
+ * Constructs a new `Buffer` object from an `ArrayBuffer` object, starting at index
+ * `offset`.
+ * 
+ * **Note:** This does not copy the data from the `ArrayBuffer` instance, but instead creates
+ * a "view" over the existing data in memory. Mutations of the underlying `ArrayBuffer`
+ * will be reflected in the `Buffer` view, and vice versa.
+ */
 [@bs.val] external fromArrayBufferOffset: (ArrayBuffer.t, ~offset: int) => t = "Buffer.from";
+
+/**
+ * `fromArrayBufferRange(arrayBuffer, ~offset, ~length)`
+ * 
+ * Constructs a new `Buffer` object from an `ArrayBuffer` object, starting at index
+ * `~offset`, and ending at index `~length`.
+ * 
+ * **Note:** This does not copy the data from the `ArrayBuffer` instance, but instead creates
+ * a "view" over the existing data in memory. Mutations of the underlying `ArrayBuffer`
+ * will be reflected in the `Buffer` view, and vice versa.
+ */
 [@bs.val] external fromArrayBufferRange: (ArrayBuffer.t, ~offset: int, ~length: int) => t = "Buffer.from";
+
+/**
+ * `fromBuffer(buffer)`
+ * 
+ * Constructs a new `Buffer` object from an existing `Buffer` object, creating a **copy** of
+ * its internal data.
+ */
 [@bs.val] external fromBuffer: t => t = "Buffer.from";
 
 [@bs.val] external alloc: int => t = "Buffer.alloc";
