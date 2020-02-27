@@ -8,8 +8,7 @@ module Constants = {
 
 [@bs.val] external isBuffer: 'a => bool = "Buffer.isBuffer";
 [@bs.val] external fromString: string => t = "Buffer.from";
-[@bs.val]
-external fromStringWithEncoding:
+[@bs.val] external fromStringWithEncoding:
   (
     string,
     [@bs.string] [
@@ -34,8 +33,7 @@ external fromStringWithEncoding:
 [@bs.val] external alloc: int => t = "Buffer.alloc";
 [@bs.val] external allocFillInt: (int, ~fill: int) => t = "Buffer.alloc";
 [@bs.val] external allocFillString: (int, ~fill: string) => t = "Buffer.alloc";
-[@bs.val]
-external allocFillStringWithEncoding:
+[@bs.val] external allocFillStringWithEncoding:
   (
     int,
     ~fill: string,
@@ -60,8 +58,7 @@ external allocFillStringWithEncoding:
 [@bs.set_index] external unsafeSet: (t, int, int) => unit = "";
 
 [@bs.val] external byteLengthString: string => int = "Buffer.byteLength";
-[@bs.val]
-external byteLengthStringWithEncoding:
+[@bs.val] external byteLengthStringWithEncoding:
   (
     string,
     [@bs.string] [
@@ -97,6 +94,7 @@ external byteLengthStringWithEncoding:
 [@bs.val] external isEncoding: string => bool = "Buffer.isEncoding";
 
 type buffer;
+
 [@bs.val] external buffer: buffer = "Buffer";
 [@bs.val] external poolSize: int = "Buffer.poolSize";
 [@bs.scope "Buffer"] [@bs.set] external setPoolSize: (buffer, int) => int = "poolSize";
