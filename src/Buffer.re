@@ -93,11 +93,11 @@ module Constants = {
 
 [@bs.val] external isEncoding: string => bool = "Buffer.isEncoding";
 
-type buffer;
+type bufferClass;
 
-[@bs.val] external buffer: buffer = "Buffer";
+[@bs.val] external bufferClass: bufferClass = "Buffer";
 [@bs.val] external poolSize: int = "Buffer.poolSize";
-[@bs.scope "Buffer"] [@bs.set] external setPoolSize: (buffer, int) => int = "poolSize";
+[@bs.set] external setPoolSize: (bufferClass, int) => int = "poolSize";
 
 [@bs.send] external copy: (t, t) => int = "copy";
 [@bs.send] external copyOffset: (t, t, ~offset: int) => int = "copy";
