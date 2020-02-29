@@ -331,9 +331,9 @@ type writeFileSyncOptions;
   writeFileSyncOptions =
   "";
 
-[@bs.val] [@bs.module "fs"] external writeFileSync: (string, string) => unit = "writeFileSync";
+[@bs.val] [@bs.module "fs"] external writeFileSync: (string, Buffer.t) => unit = "writeFileSync";
 
-[@bs.val] [@bs.module "fs"] external writeFileSyncWith: (string, string, writeFileSyncOptions) => unit = "writeFileSync";
+[@bs.val] [@bs.module "fs"] external writeFileSyncWith: (string, Buffer.t, writeFileSyncOptions) => unit = "writeFileSync";
 
 module Handle = {
   type t;
