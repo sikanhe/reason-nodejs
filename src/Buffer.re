@@ -75,9 +75,36 @@ module Constants = {
  */
 [@bs.val] external fromBuffer: t => t = "Buffer.from";
 
+/**
+ * `alloc(size)`
+ * 
+ * Allocates a new `Buffer` object with a length specified by `size`, setting each element
+ * to zero.
+ */
 [@bs.val] external alloc: int => t = "Buffer.alloc";
+
+/**
+ * `allocFillInt(size, ~fill)`
+ * 
+ * Allocates a new `Buffer` object with a length specified by `size`, and fills each element
+ * with the value of `~fill`.
+ */
 [@bs.val] external allocFillInt: (int, ~fill: int) => t = "Buffer.alloc";
+
+/**
+ * `allocFillString(size, ~fill)`
+ * 
+ * Allocates a new `Buffer` object with a length specified by `size`, and fills each element
+ * with the value of `~fill`.
+ */
 [@bs.val] external allocFillString: (int, ~fill: string) => t = "Buffer.alloc";
+
+/**
+ * `allocFillStringEncoding(size, ~fill, encoding)`
+ * 
+ * Allocates a new `Buffer` object with a length specified by `size`, fills each element
+ * with the value of `~fill`, and sets the string encoding to `encoding`.
+ */
 [@bs.val] external allocFillStringWithEncoding:
   (
     int,
@@ -95,6 +122,13 @@ module Constants = {
   ) =>
   t =
   "Buffer.alloc";
+
+/**
+ * `allocFillBuffer(size, ~fill)
+ * 
+ * Allocates a new `Buffer` object with a length specified by `size`, copying the data
+ * from the `Buffer` object passed to the `~fill` parameter.
+ */
 [@bs.val] external allocFillBuffer: (int, ~fill: t) => t = "Buffer.alloc";
 [@bs.val] external allocUnsafe: int => t = "Buffer.allocUnsafe";
 [@bs.val] external allocUnsafeSlow: int => t = "Buffer.allocUnsafeSlow";
