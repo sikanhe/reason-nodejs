@@ -23,7 +23,7 @@ module Readable = {
     [@bs.send] external pipe: (t('data, [> readable ]), t('data, [> writable ]) as 'a) => 'a = "pipe";
     [@bs.send] external unpipe: (t('data, [> readable ]) as 'a, t('data, [> writable ])) => 'a = "unpipe";
   };
-  [@bs.module "stream"] [@bs.new] external make: unit => t([> readable ], Buffer.t) = "Readable";
+  [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t, [> readable ]) = "Readable";
   include Impl;
 };
 
@@ -57,7 +57,7 @@ module Writable = {
 
 module Duplex = {
   type kind = [ duplex ];
-  [@bs.module "stream"] [@bs.new] external make: unit => t([ duplex ], Buffer.t) = "Duplex";
+  [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t, [ duplex ]) = "Duplex";
   module Impl = {
     include Readable.Impl;
     include Writable.Impl;
