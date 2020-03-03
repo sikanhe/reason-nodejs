@@ -8,6 +8,4 @@ bsb
 *.bs.js
 
 
-*ScratchPad.re
-src/Stream__.re
-src/Http__.re
+src/ScratchPad.re
