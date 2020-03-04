@@ -668,37 +668,37 @@ external openWithMode:
   Js.Promise.t(Handle.t) =
   "open";
 
-module WriteStream__ = {
-  type kind = [ Stream__.writable | `FileSystem ];
-  type t = Stream__.t(Buffer.t, [ kind ]);
+module WriteStream = {
+  type kind = [ Stream.writable | `FileSystem ];
+  type t = Stream.t(Buffer.t, [ kind ]);
   module Impl = {
-    include Stream__.Writable.Impl;
-    [@bs.send] external bytesWritten: Stream__.t('data, [> kind ]) => int = "bytesWritten";
-    [@bs.send] external path: Stream__.t('data, [> kind ]) => string = "path";
-    [@bs.send] external pending: Stream__.t('data, [> kind ]) => bool = "pending";
-    [@bs.send] external onOpen: (Stream__.t('data, [> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
-    [@bs.send] external onReady: (Stream__.t('data, [> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
+    include Stream.Writable.Impl;
+    [@bs.send] external bytesWritten: Stream.t('data, [> kind ]) => int = "bytesWritten";
+    [@bs.send] external path: Stream.t('data, [> kind ]) => string = "path";
+    [@bs.send] external pending: Stream.t('data, [> kind ]) => bool = "pending";
+    [@bs.send] external onOpen: (Stream.t('data, [> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
+    [@bs.send] external onReady: (Stream.t('data, [> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
   };
   include Impl;
 };
 
-module ReadStream__ = {
-  type kind = [ Stream__.readable | `FileSystem ];
-  type t = Stream__.t(Buffer.t, [ kind ]);
+module ReadStream = {
+  type kind = [ Stream.readable | `FileSystem ];
+  type t = Stream.t(Buffer.t, [ kind ]);
   module Impl = {
-    include Stream__.Readable.Impl;
-    [@bs.send] external bytesRead: Stream__.t('data, [> kind ]) => int = "bytesWritten";
-    [@bs.send] external path: Stream__.t('data, [> kind ]) => string = "path";
-    [@bs.send] external pending: Stream__.t('data, [> kind ]) => bool = "pending";
-    [@bs.send] external onOpen: (Stream__.t('data, [> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
-    [@bs.send] external onReady: (Stream__.t('data, [> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
+    include Stream.Readable.Impl;
+    [@bs.send] external bytesRead: Stream.t('data, [> kind ]) => int = "bytesWritten";
+    [@bs.send] external path: Stream.t('data, [> kind ]) => string = "path";
+    [@bs.send] external pending: Stream.t('data, [> kind ]) => bool = "pending";
+    [@bs.send] external onOpen: (Stream.t('data, [> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
+    [@bs.send] external onReady: (Stream.t('data, [> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
   };
   include Impl;
 };
 
-type createReadStream__Options;
+type createReadStreamOptions;
 [@bs.obj]
-external createReadStream__Options:
+external createReadStreamOptions:
   (
     ~flags: string=?,
     ~encoding: string=?,
@@ -711,18 +711,18 @@ external createReadStream__Options:
     ~highWaterMark: int=?,
     unit
   ) =>
-  createReadStream__Options =
+  createReadStreamOptions =
   "";
 
 [@bs.module "fs"]
-external createReadStream__: path => ReadStream__.t = "createReadStream__";
+external createReadStream: path => ReadStream.t = "createReadStream";
 [@bs.module "fs"]
-external createReadStream__With: (path, createReadStream__Options) => ReadStream__.t =
-  "createReadStream__";
+external createReadStreamWith: (path, createReadStreamOptions) => ReadStream.t =
+  "createReadStream";
 
-type createWriteStream__Options;
+type createWriteStreamOptions;
 [@bs.obj]
-external createWriteStream__Options:
+external createWriteStreamOptions:
   (
     ~flags: string=?,
     ~encoding: string=?,
@@ -734,10 +734,10 @@ external createWriteStream__Options:
     ~fs: Js.t({..})=?,
     unit
   ) =>
-  createReadStream__Options =
+  createReadStreamOptions =
   "";
 [@bs.module "fs"]
-external createWriteStream__: path => WriteStream__.t = "createWriteStream__";
+external createWriteStream: path => WriteStream.t = "createWriteStream";
 
 [@bs.module "fs"]
-external createWriteStream__With: (path, createWriteStream__Options) => WriteStream__.t = "createWriteStream__";
+external createWriteStreamWith: (path, createWriteStreamOptions) => WriteStream.t = "createWriteStream";

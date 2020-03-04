@@ -670,28 +670,28 @@ external openWithMode:
 
 module WriteStream = {
   type kind = [ Stream.writable | `FileSystem ];
-  type t = Stream.t([ kind ]);
+  type t = Stream.t(Buffer.t, [ kind ]);
   module Impl = {
     include Stream.Writable.Impl;
-    [@bs.send] external bytesWritten: Stream.t([> kind ]) => int = "bytesWritten";
-    [@bs.send] external path: Stream.t([> kind ]) => string = "path";
-    [@bs.send] external pending: Stream.t([> kind ]) => bool = "pending";
-    [@bs.send] external onOpen: (Stream.t([> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
-    [@bs.send] external onReady: (Stream.t([> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
+    [@bs.send] external bytesWritten: Stream.t('data, [> kind ]) => int = "bytesWritten";
+    [@bs.send] external path: Stream.t('data, [> kind ]) => string = "path";
+    [@bs.send] external pending: Stream.t('data, [> kind ]) => bool = "pending";
+    [@bs.send] external onOpen: (Stream.t('data, [> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
+    [@bs.send] external onReady: (Stream.t('data, [> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
   };
   include Impl;
 };
 
 module ReadStream = {
   type kind = [ Stream.readable | `FileSystem ];
-  type t = Stream.t([ kind ]);
+  type t = Stream.t(Buffer.t, [ kind ]);
   module Impl = {
     include Stream.Readable.Impl;
-    [@bs.send] external bytesRead: Stream.t([> kind ]) => int = "bytesWritten";
-    [@bs.send] external path: Stream.t([> kind ]) => string = "path";
-    [@bs.send] external pending: Stream.t([> kind ]) => bool = "pending";
-    [@bs.send] external onOpen: (Stream.t([> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
-    [@bs.send] external onReady: (Stream.t([> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
+    [@bs.send] external bytesRead: Stream.t('data, [> kind ]) => int = "bytesWritten";
+    [@bs.send] external path: Stream.t('data, [> kind ]) => string = "path";
+    [@bs.send] external pending: Stream.t('data, [> kind ]) => bool = "pending";
+    [@bs.send] external onOpen: (Stream.t('data, [> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
+    [@bs.send] external onReady: (Stream.t('data, [> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
   };
   include Impl;
 };

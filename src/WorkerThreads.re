@@ -72,9 +72,9 @@ module Worker = {
   [@bs.send] external postMessage: (t('a), 'a) => unit = "postMessage";
   [@bs.send] external ref: t('a) => unit = "ref";
   [@bs.send] external resourceLimits: t('a) => workerResourceLimits = "workerResourceLimits";
-  [@bs.get] external stderr: t('a) => Stream.t(Stream.readable) = "stderr";
-  [@bs.get] external stdin: t('a) => Stream.t(Stream.writable) = "stdin";
-  [@bs.get] external stdout: t('a) => Stream.t(Stream.readable) = "stdout";
+  [@bs.get] external stderr: t('a) => Stream.t('a, Stream.readable) = "stderr";
+  [@bs.get] external stdin: t('a) => Stream.t('a, Stream.writable) = "stdin";
+  [@bs.get] external stdout: t('a) => Stream.t('a, Stream.readable) = "stdout";
   [@bs.send] external terminate: t('a) => Js.Promise.t(int) = "terminate";
   [@bs.get] external threadId: t('a) => int = "threadId";
   [@bs.send] external unref: t('a) => unit = "unref";
@@ -106,9 +106,9 @@ module Worker = {
     [@bs.send] external postMessage: (t, T.message) => unit = "postMessage";
     [@bs.send] external ref: t => unit = "ref";
     [@bs.send] external resourceLimits: t => workerResourceLimits = "workerResourceLimits";
-    [@bs.get] external stderr: t => Stream.t(Stream.readable) = "stderr";
-    [@bs.get] external stdin: t => Stream.t(Stream.writable) = "stdin";
-    [@bs.get] external stdout: t => Stream.t(Stream.readable) = "stdout";
+    [@bs.get] external stderr: t => Stream.t('a, Stream.readable) = "stderr";
+    [@bs.get] external stdin: t => Stream.t('a, Stream.writable) = "stdin";
+    [@bs.get] external stdout: t => Stream.t('a, Stream.readable) = "stdout";
     [@bs.send] external terminate: t => Js.Promise.t(int) = "terminate";
     [@bs.get] external threadId: t => int = "threadId";
     [@bs.send] external unref: t => unit = "unref";
