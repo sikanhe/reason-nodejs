@@ -1,3 +1,17 @@
+/**
+ * TODO:
+ * 
+ * Not sure if the functor approach is the best way to use this module. But it
+ * does allow us to "lock in" the data types we want to use across contexts.
+ * 
+ * There may be some other issues with this implementaiton due to a naive
+ * understanding of how data is passed/shared, as well as how local thread contexts
+ * work.
+ * 
+ * We should revisit this with concrete tests to determine the best design.
+ */
+
+
 module MessagePort = {
   type t('a);
   [@bs.send] external onClose: (t('a), [@bs.as "close"] _, unit => unit) => unit = "on";
@@ -62,9 +76,10 @@ module Worker = {
     ~stderr: bool=?,
     ~workerData: 'a=?,
     ~resourceLimits: workerResourceLimits=?,
+    unit
   ) => makeOptions('a) = "";
 
-  [@bs.module "worker_threads"] [@bs.new] external make: unit => t('a) = "Worker";
+  [@bs.module "worker_threads"] [@bs.new] external make: (~file: string, ~options: makeOptions('a)=?, unit) => t('a) = "Worker";
   [@bs.send] external onError: (t('a), [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
   [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, 'a => unit) => unit = "on";
   [@bs.send] external onExit: (t('a), [@bs.as "exit"] _, int => unit) => unit = "on";
@@ -96,9 +111,10 @@ module Worker = {
       ~stderr: bool=?,
       ~workerData: T.message=?,
       ~resourceLimits: workerResourceLimits=?,
+      unit
     ) => makeOptions = "";
 
-    [@bs.module "worker_threads"] [@bs.new] external make: unit => t = "Worker";
+    [@bs.module "worker_threads"] [@bs.new] external make: (~file: string, ~options: makeOptions) => t = "Worker";
     [@bs.send] external onError: (t, [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
     [@bs.send] external onMessage: (t, [@bs.as "message"] _, T.message => unit) => unit = "on";
     [@bs.send] external onExit: (t, [@bs.as "exit"] _, int => unit) => unit = "on";
