@@ -1,15 +1,17 @@
-
-type t('a, 'ty);
 type readable = [ `Readable ];
 type writable = [ `Writable ];
 type duplex = [ readable | writable ];
 type transform = [ duplex | `Transform ];
 type passThrough = [ transform | `PassThrough ];
+type objectMode = [ `ObjectMode ];
+
+type t('data, 'ty);
+type objectStream('data, 'ty) = t('data, [> objectMode ] as 'ty);
 
 module Base = {
   module Impl = {
-    [@bs.send] external onError: (t('a, [> ]), [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
-    [@bs.send] external onClose: (t('a, [> ]), [@bs.as "close"] _, unit => unit) => unit = "on";
+    [@bs.send] external onError: (t('data, [> ]), [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
+    [@bs.send] external onClose: (t('data, [> ]), [@bs.as "close"] _, unit => unit) => unit = "on";
   }
   include Impl;
 };
@@ -23,8 +25,10 @@ module Readable = {
     [@bs.send] external pipe: (t('data, [> readable ]), t('data, [> writable ]) as 'a) => 'a = "pipe";
     [@bs.send] external unpipe: (t('data, [> readable ]) as 'a, t('data, [> writable ])) => 'a = "unpipe";
   };
-  [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t, [> readable ]) = "Readable";
   include Impl;
+  type nonrec t('data) = t('data, [ writable ]);
+  type nonrec objectStream('data) = objectStream('data, [ readable | objectMode ]);
+  [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Readable";
 };
 
 module Writable = {
@@ -51,29 +55,32 @@ module Writable = {
     [@bs.get] external writableHighWaterMark: t('data, [> writable ]) => int = "writableHighWaterMark";
     [@bs.get] external writableObjectMode: t('data, [> writable ]) => bool = "writableObjectMode";
   };
-  [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t, [ writable ]) = "Writable";
   include Impl;
+  type nonrec t('data) = t('data, [ writable ]);
+  type nonrec objectStream('data) = objectStream('data, [ writable | objectMode ]);
+  [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Writable";
+
 };
 
 module Duplex = {
   type kind = [ duplex ];
-  [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t, [ duplex ]) = "Duplex";
   module Impl = {
     include Readable.Impl;
     include Writable.Impl;
   };
+  include Impl;
   type nonrec t('data) = t('data, [ duplex ]);
+  type nonrec objectStream('data) = objectStream('data, [ duplex | objectMode ]);
+  [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Duplex";
 };
 
 module Transform = {
   type kind = [ transform ];
-
   module Impl = {
     include Duplex.Impl;
-  }
-
+  };
+  include Impl;
   type makeOptions;
-
   [@bs.obj] external makeOptions: (
     ~transform: (
         ~chunk: Buffer.t,
@@ -82,19 +89,25 @@ module Transform = {
       ) => Buffer.t,
     ~flush: (option(Js.Exn.t), Buffer.t) => unit
   ) => makeOptions = "";
+  type nonrec t = t(Buffer.t, [ transform ]);
+  type nonrec objectStream('data) = objectStream('data, [ transform | objectMode ]);
+  [@bs.module "stream"] [@bs.new] external make: unit => t = "Transform";
+  [@bs.module "stream"] [@bs.new] external makeWith: (~options: makeOptions) => t = "Transform";
 
-  type nonrec t('data) = t('data, [ transform ]);
-
-  [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Transform";
-  [@bs.module "stream"] [@bs.new] external makeWith: (~options: makeOptions) => t(Buffer.t) = "Transform";
+  // [@bs.module "stream"] [@bs.new] external makeObjectMode: unit => t = "Transform";
+  // [@bs.module "stream"] [@bs.new] external makeObjectModeWith: (~options: makeOptions) => t = "Transform";
 
 };
 
 module PassThrough = {
-  include Transform.Impl;
   type kind = [ passThrough ];
-  type nonrec t('data) = t('data, [ passThrough ]);
-  [@bs.module "stream"] [@bs.new] external make: unit => t('data) = "PassThrough";
+  module Impl = {
+    include Transform.Impl;
+  };
+  include Impl;
+  type objectMode('data) = t('data, [ passThrough | `ObjectMode ]);
+  type nonrec t = t(Buffer.t, [ passThrough ]);
+  [@bs.module "stream"] [@bs.new] external make: unit => t = "PassThrough";
 };
 
 include Base.Impl;
