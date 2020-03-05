@@ -230,3 +230,10 @@ external requestOptions:
 
 [@bs.module "http"] external globalAgent: Agent.t = "globalAgent";
 [@bs.module "http"] external maxHeaderSize: int = "maxHeaderSize";
+
+type statusCodes = Js.Dict.t(string);
+[@bs.module "http"] external _STATUS_CODES: statusCodes = "STATUS_CODES";
+
+type methods = array(string);
+[@bs.module "http"] external _METHODS: methods = "METHODS";
+
