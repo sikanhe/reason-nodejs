@@ -4,9 +4,8 @@
 npm-debug.log
 /lib/bs/
 /node_modules/
-*.bs.js
 bsb
+*.bs.js
 
-*ScratchPad.re
-src/Stream__.re
-src/Http__.re
+src/ScratchPad.re
+

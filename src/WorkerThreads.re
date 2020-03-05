@@ -1,3 +1,17 @@
+/**
+ * TODO:
+ * 
+ * Not sure if the functor approach is the best way to use this module. But it
+ * does allow us to "lock in" the data types we want to use across contexts.
+ * 
+ * There may be some other issues with this implementaiton due to a naive
+ * understanding of how data is passed/shared, as well as how local thread contexts
+ * work.
+ * 
+ * We should revisit this with concrete tests to determine the best design.
+ */
+
+
 module MessagePort = {
   type t('a);
   [@bs.send] external onClose: (t('a), [@bs.as "close"] _, unit => unit) => unit = "on";
@@ -62,9 +76,10 @@ module Worker = {
     ~stderr: bool=?,
     ~workerData: 'a=?,
     ~resourceLimits: workerResourceLimits=?,
+    unit
   ) => makeOptions('a) = "";
 
-  [@bs.module "worker_threads"] [@bs.new] external make: unit => t('a) = "Worker";
+  [@bs.module "worker_threads"] [@bs.new] external make: (~file: string, ~options: makeOptions('a)=?, unit) => t('a) = "Worker";
   [@bs.send] external onError: (t('a), [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
   [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, 'a => unit) => unit = "on";
   [@bs.send] external onExit: (t('a), [@bs.as "exit"] _, int => unit) => unit = "on";
@@ -72,9 +87,9 @@ module Worker = {
   [@bs.send] external postMessage: (t('a), 'a) => unit = "postMessage";
   [@bs.send] external ref: t('a) => unit = "ref";
   [@bs.send] external resourceLimits: t('a) => workerResourceLimits = "workerResourceLimits";
-  [@bs.get] external stderr: t('a) => Stream.t(Stream.readable) = "stderr";
-  [@bs.get] external stdin: t('a) => Stream.t(Stream.writable) = "stdin";
-  [@bs.get] external stdout: t('a) => Stream.t(Stream.readable) = "stdout";
+  [@bs.get] external stderr: t('a) => Stream.t('a, Stream.readable) = "stderr";
+  [@bs.get] external stdin: t('a) => Stream.t('a, Stream.writable) = "stdin";
+  [@bs.get] external stdout: t('a) => Stream.t('a, Stream.readable) = "stdout";
   [@bs.send] external terminate: t('a) => Js.Promise.t(int) = "terminate";
   [@bs.get] external threadId: t('a) => int = "threadId";
   [@bs.send] external unref: t('a) => unit = "unref";
@@ -96,9 +111,10 @@ module Worker = {
       ~stderr: bool=?,
       ~workerData: T.message=?,
       ~resourceLimits: workerResourceLimits=?,
+      unit
     ) => makeOptions = "";
 
-    [@bs.module "worker_threads"] [@bs.new] external make: unit => t = "Worker";
+    [@bs.module "worker_threads"] [@bs.new] external make: (~file: string, ~options: makeOptions) => t = "Worker";
     [@bs.send] external onError: (t, [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
     [@bs.send] external onMessage: (t, [@bs.as "message"] _, T.message => unit) => unit = "on";
     [@bs.send] external onExit: (t, [@bs.as "exit"] _, int => unit) => unit = "on";
@@ -106,9 +122,9 @@ module Worker = {
     [@bs.send] external postMessage: (t, T.message) => unit = "postMessage";
     [@bs.send] external ref: t => unit = "ref";
     [@bs.send] external resourceLimits: t => workerResourceLimits = "workerResourceLimits";
-    [@bs.get] external stderr: t => Stream.t(Stream.readable) = "stderr";
-    [@bs.get] external stdin: t => Stream.t(Stream.writable) = "stdin";
-    [@bs.get] external stdout: t => Stream.t(Stream.readable) = "stdout";
+    [@bs.get] external stderr: t => Stream.t('a, Stream.readable) = "stderr";
+    [@bs.get] external stdin: t => Stream.t('a, Stream.writable) = "stdin";
+    [@bs.get] external stdout: t => Stream.t('a, Stream.readable) = "stdout";
     [@bs.send] external terminate: t => Js.Promise.t(int) = "terminate";
     [@bs.get] external threadId: t => int = "threadId";
     [@bs.send] external unref: t => unit = "unref";

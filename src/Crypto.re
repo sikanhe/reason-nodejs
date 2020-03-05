@@ -1,4 +1,3 @@
-
 /**
  * UNDER CONSTRUCTION - API UNSTABLE
  */
@@ -62,12 +61,12 @@ module PublicKey = {
 
 module Hash = {
   type kind = [ Stream.transform | `Hash ];
-  type t = Stream.t([ kind ]); 
+  type t = Stream.t(Buffer.t, [ kind ]); 
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external copy: Stream.t([> kind ]) => Stream.t([> kind ]) = "copy"; 
-    [@bs.send] external digest: Stream.t([> kind ]) => Buffer.t = "digest"; 
-    [@bs.send] external update: (Stream.t([> kind ]), Buffer.t) => unit = "update";
+    [@bs.send] external copy: Stream.t('data, [> kind ]) => Stream.t('data, [> kind ]) = "copy"; 
+    [@bs.send] external digest: Stream.t('data, [> kind ]) => Buffer.t = "digest"; 
+    [@bs.send] external update: (Stream.t('data, [> kind ]), Buffer.t) => unit = "update";
   };
   include Impl;
 };
@@ -76,11 +75,11 @@ module Hash = {
 
 module Hmac = {
   type kind = [ Stream.transform | `Hmac ];
-  type t = Stream.t([ kind ]);
+  type t = Stream.t(Buffer.t, [ kind ]);
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external digest: Stream.t([> kind ]) => Buffer.t = "digest";
-    [@bs.send] external update: (Stream.t([> kind ]), Buffer.t) => unit = "update";
+    [@bs.send] external digest: Stream.t('data, [> kind ]) => Buffer.t = "digest";
+    [@bs.send] external update: (Stream.t('data, [> kind ]), Buffer.t) => unit = "update";
   };
   include Impl;
 };
@@ -100,16 +99,16 @@ module Certificate = {
 module Cipher = {
 
   type kind = [ Stream.transform | `Cipher ];
-  type t = Stream.t([ kind ]);
+  type t = Stream.t(Buffer.t, [ kind ]);
 
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external final: (Stream.t([> kind ]), string) => Buffer.t = "final";
-    [@bs.send] external setAAD: (Stream.t([> kind ]), Buffer.t) => t = "setAAD";
-    [@bs.send] external setAADWith: (Stream.t([> kind ]), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
-    [@bs.send] external getAuthTag: Stream.t([> kind ]) => Buffer.t = "getAuthTag";
-    [@bs.send] external setAutoPadding: (Stream.t([> kind ]), bool) => t = "setAutoPadding";
-    [@bs.send] external update: (Stream.t([> kind ]), Buffer.t) => Buffer.t = "update";
+    [@bs.send] external final: (Stream.t('data, [> kind ]), string) => Buffer.t = "final";
+    [@bs.send] external setAAD: (Stream.t('data, [> kind ]), Buffer.t) => t = "setAAD";
+    [@bs.send] external setAADWith: (Stream.t('data, [> kind ]), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
+    [@bs.send] external getAuthTag: Stream.t('data, [> kind ]) => Buffer.t = "getAuthTag";
+    [@bs.send] external setAutoPadding: (Stream.t('data, [> kind ]), bool) => t = "setAutoPadding";
+    [@bs.send] external update: (Stream.t('data, [> kind ]), Buffer.t) => Buffer.t = "update";
   };
 
   include Impl;
@@ -132,15 +131,15 @@ module Cipher = {
 module Decipher = {
 
   type kind = [ Stream.transform | `Decipher ];
-  type t = Stream.t([ kind ]);
+  type t = Stream.t(Buffer.t, [ kind ]);
 
   module Impl = {
-    [@bs.send] external final: (Stream.t([> kind ]), string) => Buffer.t = "final";
-    [@bs.send] external setAAD: (Stream.t([> kind ]), Buffer.t) => t = "setAAD";
-    [@bs.send] external setAADWith: (Stream.t([> kind ]), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
-    [@bs.send] external setAuthTag: (Stream.t([> kind ]), Buffer.t) => t = "setAuthTag";
-    [@bs.send] external setAutoPatting: (Stream.t([> kind ]), bool) => t = "setAutoPadding";
-    [@bs.send] external update: (Stream.t([> kind ]), Buffer.t) => Buffer.t = "update";
+    [@bs.send] external final: (Stream.t('data, [> kind ]), string) => Buffer.t = "final";
+    [@bs.send] external setAAD: (Stream.t('data, [> kind ]), Buffer.t) => t = "setAAD";
+    [@bs.send] external setAADWith: (Stream.t('data, [> kind ]), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
+    [@bs.send] external setAuthTag: (Stream.t('data, [> kind ]), Buffer.t) => t = "setAuthTag";
+    [@bs.send] external setAutoPatting: (Stream.t('data, [> kind ]), bool) => t = "setAutoPadding";
+    [@bs.send] external update: (Stream.t('data, [> kind ]), Buffer.t) => Buffer.t = "update";
   };
 
   include Impl;
@@ -175,3 +174,4 @@ module Sign = {
 module Verify = {
 
 };
+
