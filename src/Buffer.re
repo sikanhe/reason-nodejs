@@ -302,40 +302,42 @@ type bufferClass;
 [@bs.get] external length: t => int = "length";
 
 [@bs.send] external readDoubleBE: (t, ~offset: int) => float = "readDoubleBE";
-
 [@bs.send] external readDoubleLE: (t, ~offset: int) => float = "readDoubleLE";
 
 [@bs.send] external readFloatBE: (t, ~offset: int) => float = "readFloatBE";
-
 [@bs.send] external readFloatLE: (t, ~offset: int) => float = "readFloatLE";
 
 [@bs.send] external readInt8: (t, ~offset: int) => float = "readInt8";
 
 [@bs.send] external readInt16BE: (t, ~offset: int) => float = "readInt16BE";
-
 [@bs.send] external readInt16LE: (t, ~offset: int) => float = "readInt16LE";
 
 [@bs.send] external readInt32BE: (t, ~offset: int) => float = "readInt32BE";
-
 [@bs.send] external readInt32LE: (t, ~offset: int) => float = "readInt32LE";
+
 [@bs.send] external readIntBE: (t, ~offset: int) => float = "readIntBE";
 [@bs.send] external readIntLE: (t, ~offset: int, ~length: int) => float = "readIntLE";
+
 [@bs.send] external readUint8: (t, ~offset: int) => float = "readUint8";
+
 [@bs.send] external readUint16BE: (t, ~offset: int) => float = "readUint16BE";
 [@bs.send] external readUint16LE: (t, ~offset: int) => float = "readUint16LE";
+
 [@bs.send] external readUint32BE: (t, ~offset: int) => float = "readUint32BE";
 [@bs.send] external readUint32LE: (t, ~offset: int) => float = "readUint32LE";
-[@bs.send] external readUintBE: (t, ~offset: int, ~length: int) => float = "readUintBE";
 
+[@bs.send] external readUintBE: (t, ~offset: int, ~length: int) => float = "readUintBE";
 [@bs.send] external readUintLE: (t, ~offset: int, ~length: int) => float = "readUintLE";
 
 [@bs.send] external slice: (t, ~start: int, ~end_: int) => t = "slice";
 [@bs.send] external sliceToEnd: (t, ~start: int) => t = "slice";
+
 [@bs.send] external swap16: t => t = "swap16";
 [@bs.send] external swap32: t => t = "swap32";
 [@bs.send] external swap64: t => t = "swap64";
 
 [@bs.send] external toJSON: t => Js.Json.t = "toJSON";
+
 [@bs.send] external toString: t => string = "toString";
 [@bs.send] external toStringWithEncoding:
   (
