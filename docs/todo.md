@@ -9,6 +9,8 @@ Below are some concrete tasks that we want to complete. Some of them may already
 - `Tls` module
 - `V8` module
 - `Zlib` module
+- `Domain` module
+- `Tty` module
 
 ## Possible improvements
 
