@@ -24,8 +24,18 @@ module Socket = {
 
 };
 
+type server('a);
+
 module Server = {
-  type t;
+  type kind = [ `NetServer ]
+  type t = server([ kind ]);
+  module Impl = {
+    [@bs.send] external onClose: (server([> `NetServer ]), [@bs.as "close"] _, unit => unit) => unit = "on";
+    [@bs.send] external onError: (server([> `NetServer ]), [@bs.as "error"] _, unit => unit) => unit = "on";
+    [@bs.send] external onConnection: (server([> `NetServer ]), [@bs.as "connection"] _, unit => unit) => unit = "on";
+  };
+  include Impl;
+
 };
 
 [@bs.module "net"] [@bs.val] external isIP: string => bool = "isIP";

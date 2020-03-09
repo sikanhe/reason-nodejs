@@ -6,3 +6,12 @@ module TLSSocket = {
   };
   include Impl;
 };
+
+module Server = {
+  type kind = [ Net.Server.kind | `TLSServer ];
+  type t = Net.server([ kind ]);
+  module Impl = {
+    include Net.Server.Impl;
+  };
+  include Impl;
+};
