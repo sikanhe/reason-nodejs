@@ -26,7 +26,7 @@ module Readable = {
     [@bs.send] external unpipe: (t('data, [> readable ]) as 'a, t('data, [> writable ])) => 'a = "unpipe";
   };
   include Impl;
-  type nonrec t('data) = t('data, [ writable ]);
+  type nonrec t('data) = t('data, [ readable ]);
   type nonrec objectStream('data) = objectStream('data, [ readable | objectMode ]);
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Readable";
 };
