@@ -114,7 +114,7 @@ module Worker = {
       unit
     ) => makeOptions = "";
 
-    [@bs.module "worker_threads"] [@bs.new] external make: (~file: string, ~options: makeOptions) => t = "Worker";
+    [@bs.module "worker_threads"] [@bs.new] external make: (~file: string, ~options: makeOptions=?, unit) => t = "Worker";
     [@bs.send] external onError: (t, [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
     [@bs.send] external onMessage: (t, [@bs.as "message"] _, T.message => unit) => unit = "on";
     [@bs.send] external onExit: (t, [@bs.as "exit"] _, int => unit) => unit = "on";
