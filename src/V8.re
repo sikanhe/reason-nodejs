@@ -37,5 +37,5 @@ type heapCodeStats = {
 
 [@bs.module "v8"] external writeHeapSnapshot: (string) => Js.Json.t = "writeHeapSnapshot";
 
-[@bs.module "v8"] external serialize: (Buffer.t) => 'a = "serialize";
-[@bs.module "v8"] external deserialize: 'a => (Buffer.t) = "deserialize";
+[@bs.module "v8"] external serialize: 'a => Buffer.t = "serialize";
+[@bs.module "v8"] external deserialize: Buffer.t => 'a = "deserialize";
