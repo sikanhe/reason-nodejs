@@ -13,14 +13,9 @@ module Timeout = {
   [@bs.send] external unref: t => t = "unref";
 };
 
-[@bs.module "timer"]
-external setImmediate: (unit => unit) => Immediate.t = "setImmediate";
-[@bs.module "timer"]
-external setTimeout: (unit => unit, int) => Timeout.t = "setTimeout";
-[@bs.module "timer"]
-external setInterval: (unit => unit, int) => Timeout.t = "setInterval";
-[@bs.module "timer"]
-external clearImmediate: Immediate.t => unit = "clearImmediate";
-[@bs.module "timer"] external clearTimeout: Timeout.t => unit = "clearTimeout";
-[@bs.module "timer"]
-external clearInterval: Timeout.t => unit = "clearInterval";
+[@bs.val] external setImmediate: (unit => unit) => Immediate.t = "setImmediate";
+[@bs.val] external setTimeout: (unit => unit, int) => Timeout.t = "setTimeout";
+[@bs.val] external setInterval: (unit => unit, int) => Timeout.t = "setInterval";
+[@bs.val] external clearImmediate: Immediate.t => unit = "clearImmediate";
+[@bs.val] external clearTimeout: Timeout.t => unit = "clearTimeout";
+[@bs.val] external clearInterval: Timeout.t => unit = "clearInterval";
