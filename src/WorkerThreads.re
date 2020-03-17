@@ -144,6 +144,9 @@ module Worker = {
 module WithMessageType = (T: {
   type message;
 }) => {
+  module Worker = Worker.WithMessageType({
+    type nonrec message = T.message;
+  });
   [@bs.val] [@bs.module "worker_threads"] external isMainThread: bool = "isMainThread";
   [@bs.val] [@bs.module "worker_threads"] external moveMessagePortToContext: (MessagePort.t(T.message), VM.contextifiedObject('b)) => MessagePort.t(T.message) = "moveMessagePortToContext";
   [@bs.val] [@bs.module "worker_threads"] [@bs.return nullable] external parentPort: option(MessagePort.t(T.message)) = "parentPort";
