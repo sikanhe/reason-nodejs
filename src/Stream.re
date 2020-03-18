@@ -6,6 +6,7 @@ type passThrough = [ transform | `PassThrough ];
 type objectMode = [ `ObjectMode ];
 
 type t('data, 'ty);
+type subtype('data, 'ty) = t('data, [> ] as 'ty);
 type objectStream('data, 'ty) = t('data, [> objectMode ] as 'ty);
 
 module Base = {
@@ -18,45 +19,52 @@ module Base = {
 
 module Readable = {
   type kind = [ readable ];
+  type subtype('data, 'ty) = t('data, [> kind ] as 'ty);
+  type supertype('data, 'ty) = t('data, [< kind ] as 'ty);
   module Impl = {
     include Base.Impl;
-    [@bs.send] external onData: (t('data, [> readable ]), [@bs.as "data"] _, 'data => unit) => unit = "on";
-    [@bs.send] external onEnd: (t('data, [> readable ]), [@bs.as "end"] _, unit => unit) => unit = "on";
-    [@bs.send] external pipe: (t('data, [> readable ]), t('data, [> writable ]) as 'a) => 'a = "pipe";
-    [@bs.send] external unpipe: (t('data, [> readable ]) as 'a, t('data, [> writable ])) => 'a = "unpipe";
+    [@bs.send] external onData: (subtype('data, 'ty), [@bs.as "data"] _, 'data => unit) => unit = "on";
+    [@bs.send] external onEnd: (subtype('data, 'ty), [@bs.as "end"] _, unit => unit) => unit = "on";
+    [@bs.send] external pipe: (subtype('data, 'ty), t('data, [> writable ]) as 'a) => 'a = "pipe";
+    [@bs.send] external unpipe: (subtype('data, 'ty) as 'a, t('data, [> writable ])) => 'a = "unpipe";
   };
   include Impl;
-  type nonrec t('data) = t('data, [ readable ]);
+  type nonrec t('data) = subtype('data, kind);
   type nonrec objectStream('data) = objectStream('data, [ readable | objectMode ]);
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Readable";
 };
 
+let test = Readable.make();
+Readable.onData(test, ignore);
+
 module Writable = {
   type kind = [ writable ];
+  type subtype('data, 'ty) = t('data, [> kind ] as 'ty);
+  type supertype('data, 'ty) = t('data, [< kind ] as 'ty);
   module Impl = {
     include Base.Impl;
-    [@bs.send] external onDrain: (t('data, [> writable ]), [@bs.as "drain"] _, unit => unit) => unit = "on";
-    [@bs.send] external onFinish: (t('data, [> writable ]), [@bs.as "finish"] _, unit => unit) => unit = "on";
-    [@bs.send] external onPipe: (t('data, [> writable ]), [@bs.as "pipe"] _, t('data, [> readable]) => unit) => unit = "on";
-    [@bs.send] external onUnpipe: (t('data, [> writable ]), [@bs.as "unpipe"] _, t('data, [> readable]) => unit) => unit = "on";
-    [@bs.send] external cork: t('data, [> writable ]) => unit = "cork";
-    [@bs.send] external uncork: t('data, [> writable ]) => unit = "uncork";
-    [@bs.send] external destroy: t('data, [> writable ]) => unit = "destroy";
-    [@bs.send] external destroyWithError: (t('data, [> writable ]), Js.Exn.t) => unit = "destroy";
-    [@bs.get] external destroyed: t('data, [> writable ]) => bool = "destroy";
-    [@bs.send] external end_: t('data, [> writable ]) => unit = "end";
-    [@bs.send] external write: (t('data, [> writable ]), 'data) => bool = "write";
-    [@bs.send] external writeWith: (t('data, [> writable ]), 'data , ~callback: Js.Nullable.t(Js.Exn.t) => unit=?, unit) => bool = "write";
-    [@bs.get] external writable: t('data, [> writable ]) => bool = "writable";
-    [@bs.get] external writableEnded: t('data, [> writable ]) => bool = "writableEnded";
-    [@bs.get] external writableCorked: t('data, [> writable ]) => bool = "writableCorked";
-    [@bs.get] external writableFinished: t('data, [> writable ]) => bool = "writableFinished";
-    [@bs.get] external writableLength: t('data, [> writable ]) => int = "writableLength";
-    [@bs.get] external writableHighWaterMark: t('data, [> writable ]) => int = "writableHighWaterMark";
-    [@bs.get] external writableObjectMode: t('data, [> writable ]) => bool = "writableObjectMode";
+    [@bs.send] external onDrain: (subtype('data, 'ty), [@bs.as "drain"] _, unit => unit) => unit = "on";
+    [@bs.send] external onFinish: (subtype('data, 'ty), [@bs.as "finish"] _, unit => unit) => unit = "on";
+    [@bs.send] external onPipe: (subtype('data, 'ty), [@bs.as "pipe"] _, t('data, [> readable]) => unit) => unit = "on";
+    [@bs.send] external onUnpipe: (subtype('data, 'ty), [@bs.as "unpipe"] _, t('data, [> readable]) => unit) => unit = "on";
+    [@bs.send] external cork: subtype('data, 'ty) => unit = "cork";
+    [@bs.send] external uncork: subtype('data, 'ty) => unit = "uncork";
+    [@bs.send] external destroy: subtype('data, 'ty) => unit = "destroy";
+    [@bs.send] external destroyWithError: (subtype('data, 'ty), Js.Exn.t) => unit = "destroy";
+    [@bs.get] external destroyed: subtype('data, 'ty) => bool = "destroy";
+    [@bs.send] external end_: subtype('data, 'ty) => unit = "end";
+    [@bs.send] external write: (subtype('data, 'ty), 'data) => bool = "write";
+    [@bs.send] external writeWith: (subtype('data, 'ty), 'data , ~callback: Js.Nullable.t(Js.Exn.t) => unit=?, unit) => bool = "write";
+    [@bs.get] external writable: subtype('data, 'ty) => bool = "writable";
+    [@bs.get] external writableEnded: subtype('data, 'ty) => bool = "writableEnded";
+    [@bs.get] external writableCorked: subtype('data, 'ty) => bool = "writableCorked";
+    [@bs.get] external writableFinished: subtype('data, 'ty) => bool = "writableFinished";
+    [@bs.get] external writableLength: subtype('data, 'ty) => int = "writableLength";
+    [@bs.get] external writableHighWaterMark: subtype('data, 'ty) => int = "writableHighWaterMark";
+    [@bs.get] external writableObjectMode: subtype('data, 'ty) => bool = "writableObjectMode";
   };
   include Impl;
-  type nonrec t('data) = t('data, [ writable ]);
+  type nonrec t('data) = subtype('data, kind);
   type nonrec objectStream('data) = objectStream('data, [ writable | objectMode ]);
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Writable";
 
@@ -64,6 +72,8 @@ module Writable = {
 
 module Duplex = {
   type kind = [ duplex ];
+  type subtype('data, 'ty) = t('data, [> kind ] as 'ty);
+  type supertype('data, 'ty) = t('data, [< kind ] as 'ty);
   module Impl = {
     include Readable.Impl;
     include Writable.Impl;
@@ -76,6 +86,8 @@ module Duplex = {
 
 module Transform = {
   type kind = [ transform ];
+  type subtype('data, 'ty) = t('data, [> kind ] as 'ty);
+  type supertype('data, 'ty) = t('data, [< kind ] as 'ty);
   module Impl = {
     include Duplex.Impl;
   };
