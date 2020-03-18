@@ -1,3 +1,5 @@
+type http = [ `Http ];
+
 module IncomingMessage = {
 
   type kind = [ Stream.readable | `IncomingMessage ];
@@ -11,7 +13,7 @@ module IncomingMessage = {
     [@bs.get] external headers: Stream.t('data, [> kind ]) => Js.Dict.t(string) = "headers";
     [@bs.get] external rawHeaders: Stream.t('data, [> kind ]) => array(string) = "rawHeaders";
     [@bs.get] external rawTrailers: Stream.t('data, [> kind ]) => array(string) = "rawTrailers";
-    [@bs.get] external connection: Stream.t('data, [> kind ]) => Net.Socket.t = "connection";
+    [@bs.get] external connection: Stream.t('data, [> kind ]) => Net.TcpSocket.t = "connection";
     [@bs.get] external aborted: Stream.t('data, [> kind ]) => bool = "aborted";
     [@bs.get] external complete: Stream.t('data, [> kind ]) => bool = "complete";
     [@bs.send] external destroy: Stream.t('data, [> kind ]) => unit = "destroy";
@@ -119,7 +121,7 @@ module ServerResponse = {
     [@bs.send] external setHeaderArray: (Stream.t('data, [> kind ]), string, array('a)) => unit = "setHeader";
     [@bs.send] external setTimeout: (Stream.t('data, [> kind ]), int) => unit = "setTimeout";
     [@bs.send] external setTimeoutWithCallback: (Stream.t('data, [> kind ]), int, unit => unit) => unit = "setTimeout";
-    [@bs.get] external socket: Stream.t('data, [> kind ]) => Net.Socket.t = "socket";
+    [@bs.get] external socket: Stream.t('data, [> kind ]) => Net.TcpSocket.t = "socket";
     [@bs.get] external statusMessage: Stream.t('data, [> kind ]) => string = "statusMessage";
     [@bs.get] external writableEnded: Stream.t('data, [> kind ]) => bool = "writableEnded";
     [@bs.get] external writableFinished: Stream.t('data, [> kind ]) => bool = "writableFinished";
@@ -134,8 +136,8 @@ module ServerResponse = {
 
 module Agent = {
   type t;
-  [@bs.send] external createConnection: (t, Js.t({..})) => Net.Socket.t = "createConnection";
-  [@bs.send] external createConnectionWithCallback: (t, Js.t({..}), unit => unit) => Net.Socket.t = "createConnection";
+  [@bs.send] external createConnection: (t, Js.t({..})) => Net.TcpSocket.t = "createConnection";
+  [@bs.send] external createConnectionWithCallback: (t, Js.t({..}), unit => unit) => Net.TcpSocket.t = "createConnection";
   [@bs.send] external keepSocketAlive: (t, Stream.t('data, [> Net.Socket.kind ])) => unit = "keepSocketAlive";
   [@bs.send] external reuseSocket: (t, Stream.t('data, [> Net.Socket.kind ]), Stream.t('data, [> ClientRequest.kind ])) => unit = "reuseSocket";
   [@bs.send] external destroy: t => unit = "destroy";
@@ -148,14 +150,18 @@ module Agent = {
 };
 
 module Server = {
-  type t;
-  [@bs.send] external listen: (t, int) => unit = "listen";
-  [@bs.send] external close: (t, int) => unit = "close";
-  [@bs.get] external listening: t => bool = "listening";
-  [@bs.send] external setTimeout: (t, int) => t = "setTimeout";
-  [@bs.send] external setTimeoutWithCallback: (t, int, unit => unit) => t = "setTimeout";
-  [@bs.get] external timeout: t => int = "timeout";
-  [@bs.send] external keepAliveTimeout: (t, int) => unit = "keepAliveTimeout";
+  type kind = [ Net.TcpServer.kind | http ];
+  type subtype('a) = Net.Server.subtype([> kind ] as 'a);
+  type supertype('a) = Net.Server.subtype([< kind ] as 'a);
+  type t = subtype(kind);
+  module Impl = (T: { type t; }) => {
+    [@bs.send] external setTimeout: (T.t, int) => T.t = "setTimeout";
+    [@bs.send] external setTimeoutWithCallback: (T.t, int, unit => unit) => T.t = "setTimeout";
+    [@bs.get] external timeout: T.t => int = "timeout";
+    [@bs.send] external keepAliveTimeout: (T.t, int) => unit = "keepAliveTimeout";
+    include Net.TcpServer.Impl(T);
+  };
+  include Impl({ type nonrec t = t; });
 };
 
 type createServerOptions;
@@ -189,7 +195,7 @@ external requestOptions:
   (
     ~agent: Agent.t=?,
     ~auth: string=?,
-    ~createConnection: unit => Net.Socket.t=?,
+    ~createConnection: unit => Net.TcpSocket.t=?,
     ~defaultPort: int=?,
     ~family: int=?,
     ~headers: Js.t({..})=?,

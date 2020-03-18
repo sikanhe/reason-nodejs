@@ -41,9 +41,9 @@ external nextTick: (unit => unit) => unit = "nextTick";
 external hrtime: unit => (int, int) = "hrtime";
 [@bs.module "process"] [@bs.scope "hrtime"] [@bs.val]
 external hrtimeBigInt: unit => BigInt.t = "bigint";
-[@bs.module "process"] [@bs.val] external stderr: Net.Socket.t = "stderr";
-[@bs.module "process"] [@bs.val] external stdin: Net.Socket.t = "stdin";
-[@bs.module "process"] [@bs.val] external stdout: Net.Socket.t = "stdout";
+[@bs.module "process"] [@bs.val] external stderr: Stream.t(Buffer.t, [< Net.Socket.kind | Stream.writable ]) = "stderr";
+[@bs.module "process"] [@bs.val] external stdin: Stream.t(Buffer.t, [< Net.Socket.kind | Stream.readable ]) = "stdin";
+[@bs.module "process"] [@bs.val] external stdout: Stream.t(Buffer.t, [< Net.Socket.kind | Stream.writable ]) = "stdout";
 [@bs.module "process"] [@bs.val] external pid: int = "pid";
 [@bs.module "process"] [@bs.val] external platform: string = "platform";
 [@bs.module "process"] [@bs.val] external ppid: int = "ppid";

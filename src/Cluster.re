@@ -16,7 +16,7 @@ module Worker = {
   [@bs.send] external send: string => unit = "send";
   [@bs.send] external sendHttpServerHandle: (string, Http.Server.t, Js.nullable(Js.t({..}))) => unit = "send";
   let sendHttpServerHandle = (~options=?, msg, handle) => sendHttpServerHandle(msg, handle, Js.Nullable.fromOption(options));
-  [@bs.send] external sendSocketHandle: (string, Net.Socket.t, Js.nullable(Js.t({..}))) => unit = "send";
+  [@bs.send] external sendSocketHandle: (string, Net.Socket.subtype('a), Js.nullable(Js.t({..}))) => unit = "send";
   let sendSocketHandle = (~options=?, msg, handle) => sendSocketHandle(msg, handle, Js.Nullable.fromOption(options));
 };
 

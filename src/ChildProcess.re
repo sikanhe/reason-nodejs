@@ -12,9 +12,9 @@ type t;
 [@bs.get] external killed: t => bool = "killed";
 [@bs.get] external pid: t => int = "pid";
 [@bs.get] external ref: t => unit = "ref";
-[@bs.get] [@bs.return nullable] external stderr: t => option(Net.Socket.t) = "stderr";
-[@bs.get] [@bs.return nullable] external stdin: t => option(Net.Socket.t) = "stdin";
-[@bs.get] [@bs.return nullable] external stdout: t => option(Net.Socket.t) = "stdout";
+[@bs.get] [@bs.return nullable] external stderr: t => option(Stream.t(Buffer.t, [< Net.Socket.kind | Stream.writable ])) = "stderr";
+[@bs.get] [@bs.return nullable] external stdin: t => option(Stream.t(Buffer.t, [< Net.Socket.kind | Stream.readable ])) = "stdin";
+[@bs.get] [@bs.return nullable] external stdout: t => option(Stream.t(Buffer.t, [< Net.Socket.kind | Stream.writable ])) = "stdout";
 [@bs.get] external unref: t => unit = "unref";
 
 type execOptions;

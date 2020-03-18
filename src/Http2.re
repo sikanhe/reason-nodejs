@@ -101,7 +101,7 @@ module Http2Session = {
       "enableConnectProtocol": bool,
     } = "remoteSettings";
   [@bs.send] external setTimeout: (t, int, unit => unit) => unit = "setTimeout";
-  [@bs.get] external socket: t => Net.Socket.t = "socket";
+  [@bs.get] external socket: t => Net.TcpSocket.t = "socket";
   [@bs.get] external state: t => {
       .
       "effectiveLocalWindowSize": int,
@@ -198,7 +198,7 @@ module Http2ServerResponse = {
     [@bs.send] external setHeader: (Stream.t(Buffer.t, [> kind ]), string) => unit = "setHeader";
     [@bs.send] external setHeaderArray: (Stream.t(Buffer.t, [> kind ]), array(string)) => unit = "setHeader";
     [@bs.send] external setTimeout: (Stream.t(Buffer.t, [> kind ]), int, Http2Stream.t => unit) => Http2Stream.t = "setTimeout";
-    [@bs.get] external socket: Stream.t(Buffer.t, [> kind ]) => Net.Socket.t = "socket";
+    [@bs.get] external socket: Stream.t(Buffer.t, [> kind ]) => Net.TcpSocket.t = "socket";
     [@bs.get] external statusCode: Stream.t(Buffer.t, [> kind ]) => int = "statusCode";
     [@bs.get] external statusMessage: Stream.t(Buffer.t, [> kind ]) => string = "statusMessage";
     [@bs.get] external stream: Stream.t(Buffer.t, [> kind ]) => Http2Stream.t = "stream";
