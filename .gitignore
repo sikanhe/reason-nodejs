@@ -9,5 +9,5 @@ bsb
 
 src/ScratchPad.re
 
-src/Stream__.re
+src/ScratchPadJs.js
 
