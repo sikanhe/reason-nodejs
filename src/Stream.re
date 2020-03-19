@@ -1,9 +1,18 @@
+/**
+ * This section contains most of polymorphic variant constraints
+ * corresponding to the various subtypes of `Stream.t` throughout this library.
+ * These are the "canonical" constraint types. for the sake of consistency
+ * and correctness, User code should use these type aliases rather than writing
+ * the polymorphic variants directly.
+ */
 type readable = [ `Readable ];
 type writable = [ `Writable ];
 type duplex = [ readable | writable ];
 type transform = [ duplex | `Transform ];
 type passThrough = [ transform | `PassThrough ];
 type socket = [ `Socket ];
+type tls = [ `Tls ];
+type tty = [ `Tty ];
 type objectMode = [ `ObjectMode ];
 
 type t('data, 'ty);
