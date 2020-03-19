@@ -67,7 +67,6 @@ module Socket = {
       [@bs.send] external setNoDelay: (subtype('a), ~noDelay: bool) => subtype('a) = "noDelay";
       [@bs.send] external setTimeout: (subtype('a), int, ~callback: [@bs.this] (subtype('a)) => unit=?) => subtype('a) = "setTimeout";
       [@bs.send] external unref: subtype('a) => subtype('a) = "unref";
-      [@bs.send] external write: (subtype('a), Buffer.t, ~callback: [@bs.this] subtype('a) => unit) => bool = "write";
     };
 
 
@@ -135,6 +134,8 @@ module Socket = {
     module Impl = {
       include Stream.Writable.Impl;
       include Base.Impl;
+      [@bs.send] external end_: (subtype('a)) => subtype('a) = "end";
+      [@bs.send] external write: (subtype('a), Buffer.t, ~callback: [@bs.this] subtype('a) => unit) => bool = "write";
     };
     include Impl;
     [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
