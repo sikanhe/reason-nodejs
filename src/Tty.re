@@ -16,4 +16,8 @@ module WriteStream = {
   type subtype('a) = Net.Socket.Writable.subtype([> kind ] as 'a);
   type supertype('a) = Net.Socket.Writable.subtype([< kind ] as 'a);
   type t = subtype(kind);
+  module Impl = {
+    include Net.Socket.Writable.Impl;
+  }
+  include Impl;
 };
