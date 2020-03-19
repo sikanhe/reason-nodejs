@@ -176,8 +176,16 @@ module TcpSocket = {
   type t = subtype(kind);
   module Impl = {
     include Socket.Impl;
+    [@bs.send] external connect: (
+      subtype([> kind ] as 'a),
+      ~port: int,
+      ~host: string,
+      ~callback: [@bs.this] subtype('a) => unit=?
+    ) => subtype('a)
+    = "connect";
   };
   include Impl;
+  [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
 };
 
 module IcpSocket = {
@@ -187,8 +195,15 @@ module IcpSocket = {
   type t = subtype(kind);
   module Impl = {
     include Socket.Impl;
+    [@bs.send] external connect: (
+      subtype([> kind ] as 'a),
+      ~path: string,
+      ~callback: [@bs.this] subtype('a) => unit=?
+    ) => subtype('a)
+    = "connect";
   };
   include Impl;
+  [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
 };
 
 type tcpSocket = TcpSocket.t;
