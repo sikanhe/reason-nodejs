@@ -54,6 +54,17 @@ module Socket = {
       [@bs.send] external setNoDelay: (subtype('a), ~noDelay: bool) => subtype('a) = "noDelay";
       [@bs.send] external setTimeout: (subtype('a), int, ~callback: [@bs.this] (subtype('a)) => unit=?) => subtype('a) = "setTimeout";
       [@bs.send] external unref: subtype('a) => subtype('a) = "unref";
+      [@bs.send] external connectIcp: (
+          subtype([> kind | icp ] as 'a),
+          ~path: string,
+          unit => unit
+        ) => subtype('a) = "connect";
+      [@bs.send] external connectTcp: (
+          subtype([> kind | tcp ] as 'a),
+          ~port: int,
+          ~host: string,
+          unit => unit
+        ) => subtype('a) = "connect";
     };
 
     include Impl;
@@ -69,18 +80,6 @@ module Socket = {
  
     [@bs.module "net"] [@bs.new] external make: (~options: makeOptions=?, unit) => t = "Socket";
 
-    [@bs.send] external connectIcp: (
-        subtype([> kind | icp ] as 'a),
-        ~path: string,
-        ~callback: [@bs.this] subtype('a) => unit=?
-      ) => subtype([> kind | icp ]) = "connect";
-
-    [@bs.send] external connectTcp: (
-        subtype([> kind | tcp ] as 'a),
-        ~port: int,
-        ~host: string,
-        ~callback: [@bs.this] subtype('a) => unit=?
-      ) => subtype([> kind | tcp ]) = "connect";
   };
 
   module Readable = {
@@ -143,21 +142,22 @@ module Socket = {
     [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
   };
 
-  type kind = [ Duplex.kind ];
+  type kind = [ Stream.socket ];
   type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
   type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
   type t = subtype(kind);
 
   module Impl = {
-    include Duplex.Impl;
+    include Base.Impl;
   };
+
   include Impl;
   [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
 
 };
 
 module TcpSocket = {
-  type nonrec kind = [ Socket.kind | tcp ];
+  type nonrec kind = [ Socket.Duplex.kind | tcp ];
   type subtype('a) = Socket.subtype([> kind ] as 'a);
   type supertype('a) = Socket.subtype([< kind ] as 'a);
   type t = subtype(kind);
@@ -176,7 +176,7 @@ module TcpSocket = {
 };
 
 module IcpSocket = {
-  type kind = [ Socket.kind | icp ];
+  type kind = [ Socket.Duplex.kind | icp ];
   type subtype('a) = Socket.subtype([> kind ] as 'a);
   type supertype('a) = Socket.subtype([< kind ] as 'a);
   type t = subtype(kind);
