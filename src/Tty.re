@@ -1,3 +1,9 @@
+type tty = [ `Tty ];
+
 module ReadStream = {
-  include Net.Socket;
+  type kind = [ Stream.readable | Net.Socket.kind | tty ];
+  type subtype('a) = Net.Socket.subtype([> kind ] as 'a);
+  type supertype('a) = Net.Socket.subtype([< kind ] as 'a);
+  type t = subtype(kind);
+  include Net.Socket.Impl;
 };
