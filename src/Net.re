@@ -18,16 +18,84 @@ module Socket = {
     type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
     type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
     type t = subtype(kind);
+    type nonrec address = address;
+
     module Impl = {
+
+      include Stream.Base.Impl;
+
+      [@bs.send] external onClose: (subtype('a), [@bs.as "close"] _, [@bs.this] (subtype('a), bool) => unit) => subtype('a) = "on";
+      [@bs.send] external onConnect: (subtype('a), [@bs.as "connect"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
+      [@bs.send] external onData: (subtype('a), [@bs.as "data"] _, [@bs.this] (subtype('a), Buffer.t) => unit) => subtype('a) = "on";
+      [@bs.send] external onDrain: (subtype('a), [@bs.as "drain"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
+      [@bs.send] external onEnd: (subtype('a), [@bs.as "end"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
+      [@bs.send] external onError: (subtype('a), [@bs.as "error"] _, [@bs.this] (subtype('a), Js.Exn.t) => unit) => subtype('a) = "on";
+      [@bs.send] external onLookup: (subtype('a), [@bs.as "lookup"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
+      [@bs.send] external onReady: (subtype('a), [@bs.as "ready"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
+      [@bs.send] external onTimeout: (subtype('a), [@bs.as "timeout"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
+
       [@bs.send] external address: subtype('a) => address = "address";
       [@bs.get] external bufferSize: subtype('a) => int = "bufferSize";
       [@bs.get] external bytesRead: subtype('a) => int = "bytesRead";
       [@bs.get] external bytesWritten: subtype('a) => int = "bytesWritten";
+      [@bs.get] external connecting: subtype('a) => bool = "connecting";
+      [@bs.send] external connectIcp: (
+          subtype([> kind | icp ] as 'a),
+          ~path: string,
+          ~callback: [@bs.this] subtype('a) => unit=?
+        ) => subtype([> kind | icp ])
+        = "connect";
+      [@bs.send] external connectTcp: (
+          subtype([> kind | tcp ] as 'a),
+          ~port: int,
+          ~host: string,
+          ~callback: [@bs.this] subtype('a) => unit=?
+        ) => subtype([> kind | tcp ])
+        = "connect";
+      [@bs.get] external destroyed: subtype('a) => bool = "destroyed";
+      [@bs.send] external destroy: (subtype('a), ~exn: Js.Exn.t=?, unit) => subtype('a) = "destroy";
+      [@bs.get] external localAddress: subtype('a) => string = "localAddress";
+      [@bs.get] external localPort: subtype('a) => int = "localPort";
+      [@bs.send] external pause: subtype('a) => subtype('a) = "pause";
+      [@bs.get] external pending: subtype('a) => bool = "pending";
+      [@bs.send] external ref: subtype('a) => subtype('a) = "ref";
       [@bs.get] external remoteAddress: subtype('a) => string = "remoteAddress";
       [@bs.get] external remoteFamily: subtype('a) => string = "remoteFamily";
       [@bs.get] external remotePort: subtype('a) => int = "remotePort";
+      [@bs.send] external resume: subtype('a) => subtype('a) = "resume";
+      [@bs.send] external setKeepAlive: (subtype('a), ~enable: bool, ~delay: int) => subtype('a) = "setKeepAlive";
+      [@bs.send] external setNoDelay: (subtype('a), ~noDelay: bool) => subtype('a) = "noDelay";
+      [@bs.send] external setTimeout: (subtype('a), int, ~callback: [@bs.this] (subtype('a)) => unit=?) => subtype('a) = "setTimeout";
+      [@bs.send] external unref: subtype('a) => subtype('a) = "unref";
+      [@bs.send] external write: (subtype('a), Buffer.t, ~callback: [@bs.this] subtype('a) => unit) => bool = "write";
     };
+
+
     include Impl;
+
+    type makeOptions;
+
+    [@bs.obj] external makeOptions: (
+      ~fd: int=?,
+      ~readable: bool=?,
+      ~writable: bool=?,
+      unit
+    ) => makeOptions = "";
+ 
+    [@bs.module "net"] [@bs.new] external make: (~options: makeOptions=?, unit) => t = "Socket";
+
+    [@bs.send] external connectIcp: (
+        subtype([> kind | icp ] as 'a),
+        ~path: string,
+        ~callback: [@bs.this] subtype('a) => unit=?
+      ) => subtype([> kind | icp ]) = "connect";
+
+    [@bs.send] external connectTcp: (
+        subtype([> kind | tcp ] as 'a),
+        ~port: int,
+        ~host: string,
+        ~callback: [@bs.this] subtype('a) => unit=?
+      ) => subtype([> kind | tcp ]) = "connect";
   };
 
   module Readable = {
@@ -35,11 +103,27 @@ module Socket = {
     type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
     type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
     type t = subtype(kind);
+    type nonrec address = address;
     module Impl = {
       include Stream.Readable.Impl;
       include Base.Impl;
+      [@bs.send] external setEncoding: (
+          subtype('a),
+          [@bs.string] [
+            | `ascii
+            | `utf8
+            | `utf16le
+            | `usc2
+            | `base64
+            | `latin1
+            | `binary
+            | `hex
+          ],
+        ) => subtype('a)
+        = "setEncoding";
     };
     include Impl;
+    [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
   };
 
   module Writable = {
@@ -47,11 +131,13 @@ module Socket = {
     type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
     type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
     type t = subtype(kind);
+    type nonrec address = address;
     module Impl = {
       include Stream.Writable.Impl;
       include Base.Impl;
     };
     include Impl;
+    [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
   };
 
   module Duplex = {
@@ -59,6 +145,7 @@ module Socket = {
     type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
     type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
     type t = subtype(kind);
+    type nonrec address = address;
     module Impl = {
       include Stream.Duplex.Impl;
       include Base.Impl;
@@ -66,6 +153,7 @@ module Socket = {
       include Writable.Impl;
     };
     include Impl;
+    [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
   };
 
   type kind = [ Duplex.kind ];
@@ -77,6 +165,8 @@ module Socket = {
     include Duplex.Impl;
   };
   include Impl;
+  [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
+
 };
 
 module TcpSocket = {
