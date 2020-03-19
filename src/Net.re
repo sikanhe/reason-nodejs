@@ -24,34 +24,21 @@ module Socket = {
 
       include Stream.Base.Impl;
 
-      [@bs.send] external onClose: (subtype('a), [@bs.as "close"] _, [@bs.this] (subtype('a), bool) => unit) => subtype('a) = "on";
-      [@bs.send] external onConnect: (subtype('a), [@bs.as "connect"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
-      [@bs.send] external onData: (subtype('a), [@bs.as "data"] _, [@bs.this] (subtype('a), Buffer.t) => unit) => subtype('a) = "on";
-      [@bs.send] external onDrain: (subtype('a), [@bs.as "drain"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
-      [@bs.send] external onEnd: (subtype('a), [@bs.as "end"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
-      [@bs.send] external onError: (subtype('a), [@bs.as "error"] _, [@bs.this] (subtype('a), Js.Exn.t) => unit) => subtype('a) = "on";
-      [@bs.send] external onLookup: (subtype('a), [@bs.as "lookup"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
-      [@bs.send] external onReady: (subtype('a), [@bs.as "ready"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
-      [@bs.send] external onTimeout: (subtype('a), [@bs.as "timeout"] _, [@bs.this] (subtype('a)) => unit) => subtype('a) = "on";
+      [@bs.send] external onClose: (subtype('a), [@bs.as "close"] _, bool => unit) => subtype('a) = "on";
+      [@bs.send] external onConnect: (subtype('a), [@bs.as "connect"] _, unit => unit) => subtype('a) = "on";
+      [@bs.send] external onData: (subtype('a), [@bs.as "data"] _, Buffer.t => unit) => subtype('a) = "on";
+      [@bs.send] external onDrain: (subtype('a), [@bs.as "drain"] _, unit => unit) => subtype('a) = "on";
+      [@bs.send] external onEnd: (subtype('a), [@bs.as "end"] _, unit => unit) => subtype('a) = "on";
+      [@bs.send] external onError: (subtype('a), [@bs.as "error"] _, Js.Exn.t => unit) => subtype('a) = "on";
+      [@bs.send] external onLookup: (subtype('a), [@bs.as "lookup"] _, unit => unit) => subtype('a) = "on";
+      [@bs.send] external onReady: (subtype('a), [@bs.as "ready"] _, unit => unit) => subtype('a) = "on";
+      [@bs.send] external onTimeout: (subtype('a), [@bs.as "timeout"] _, unit => unit) => subtype('a) = "on";
 
       [@bs.send] external address: subtype('a) => address = "address";
       [@bs.get] external bufferSize: subtype('a) => int = "bufferSize";
       [@bs.get] external bytesRead: subtype('a) => int = "bytesRead";
       [@bs.get] external bytesWritten: subtype('a) => int = "bytesWritten";
       [@bs.get] external connecting: subtype('a) => bool = "connecting";
-      [@bs.send] external connectIcp: (
-          subtype([> kind | icp ] as 'a),
-          ~path: string,
-          ~callback: [@bs.this] subtype('a) => unit=?
-        ) => subtype([> kind | icp ])
-        = "connect";
-      [@bs.send] external connectTcp: (
-          subtype([> kind | tcp ] as 'a),
-          ~port: int,
-          ~host: string,
-          ~callback: [@bs.this] subtype('a) => unit=?
-        ) => subtype([> kind | tcp ])
-        = "connect";
       [@bs.get] external destroyed: subtype('a) => bool = "destroyed";
       [@bs.send] external destroy: (subtype('a), ~exn: Js.Exn.t=?, unit) => subtype('a) = "destroy";
       [@bs.get] external localAddress: subtype('a) => string = "localAddress";
@@ -68,7 +55,6 @@ module Socket = {
       [@bs.send] external setTimeout: (subtype('a), int, ~callback: [@bs.this] (subtype('a)) => unit=?) => subtype('a) = "setTimeout";
       [@bs.send] external unref: subtype('a) => subtype('a) = "unref";
     };
-
 
     include Impl;
 
@@ -181,7 +167,7 @@ module TcpSocket = {
       subtype([> kind ] as 'a),
       ~port: int,
       ~host: string,
-      ~callback: [@bs.this] subtype('a) => unit=?
+      unit => unit,
     ) => subtype('a)
     = "connect";
   };
@@ -199,7 +185,7 @@ module IcpSocket = {
     [@bs.send] external connect: (
       subtype([> kind ] as 'a),
       ~path: string,
-      ~callback: [@bs.this] subtype('a) => unit=?
+      unit => unit,
     ) => subtype('a)
     = "connect";
   };
@@ -314,7 +300,6 @@ module IcpServer = {
 type server('a) = Server.subtype('a);
 type tcpServer = server(TcpServer.kind);
 type icpServer = server(IcpServer.kind);
-
 
 [@bs.module "net"] [@bs.val] external isIP: string => bool = "isIP";
 [@bs.module "net"] [@bs.val] external isIPv4: string => bool = "isIPv4";
