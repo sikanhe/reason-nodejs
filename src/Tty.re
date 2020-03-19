@@ -1,9 +1,19 @@
 type tty = [ `Tty ];
 
 module ReadStream = {
-  type kind = [ Stream.readable | Net.Socket.kind | tty ];
-  type subtype('a) = Net.Socket.subtype([> kind ] as 'a);
-  type supertype('a) = Net.Socket.subtype([< kind ] as 'a);
+  type kind = [ Net.Socket.readable | tty ];
+  type subtype('a) = Net.Socket.Readable.subtype([> kind ] as 'a);
+  type supertype('a) = Net.Socket.Readable.subtype([< kind ] as 'a);
   type t = subtype(kind);
-  include Net.Socket.Impl;
+  module Impl = {
+    include Net.Socket.Readable.Impl;
+  };
+  include Impl;
+};
+
+module WriteStream = {
+  type kind = [ Net.Socket.writable | tty ];
+  type subtype('a) = Net.Socket.Writable.subtype([> kind ] as 'a);
+  type supertype('a) = Net.Socket.Writable.subtype([< kind ] as 'a);
+  type t = subtype(kind);
 };

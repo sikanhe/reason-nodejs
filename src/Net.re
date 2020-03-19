@@ -8,21 +8,73 @@ type address = {
 };
 
 module Socket = {
-  type nonrec tcp = tcp;
-  type nonrec icp = icp;
-  type kind = [ Stream.duplex | `Socket ];
-  type subtype('a) = Stream.t(Buffer.t, [> kind ] as 'a);
-  type supertype('a) = Stream.t(Buffer.t, [< kind ] as 'a);
+
+  type readable = [ Stream.readable | Stream.socket ];
+  type writable = [ Stream.writable | Stream.socket ];
+  type duplex = [ Stream.duplex | Stream.socket ];
+
+  module Base = {
+    type kind = [ Stream.socket ];
+    type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
+    type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
+    type t = subtype(kind);
+    module Impl = {
+      [@bs.send] external address: subtype('a) => address = "address";
+      [@bs.get] external bufferSize: subtype('a) => int = "bufferSize";
+      [@bs.get] external bytesRead: subtype('a) => int = "bytesRead";
+      [@bs.get] external bytesWritten: subtype('a) => int = "bytesWritten";
+      [@bs.get] external remoteAddress: subtype('a) => string = "remoteAddress";
+      [@bs.get] external remoteFamily: subtype('a) => string = "remoteFamily";
+      [@bs.get] external remotePort: subtype('a) => int = "remotePort";
+    };
+    include Impl;
+  };
+
+  module Readable = {
+    type kind = [ Stream.readable | Stream.socket ];
+    type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
+    type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
+    type t = subtype(kind);
+    module Impl = {
+      include Stream.Readable.Impl;
+      include Base.Impl;
+    };
+    include Impl;
+  };
+
+  module Writable = {
+    type kind = [ Stream.writable | Stream.socket ];
+    type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
+    type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
+    type t = subtype(kind);
+    module Impl = {
+      include Stream.Writable.Impl;
+      include Base.Impl;
+    };
+    include Impl;
+  };
+
+  module Duplex = {
+    type kind = [ Stream.duplex | Stream.socket ];
+    type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
+    type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
+    type t = subtype(kind);
+    module Impl = {
+      include Stream.Duplex.Impl;
+      include Base.Impl;
+      include Readable.Impl;
+      include Writable.Impl;
+    };
+    include Impl;
+  };
+
+  type kind = [ Duplex.kind ];
+  type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
+  type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
   type t = subtype(kind);
+
   module Impl = {
-    include Stream.Duplex.Impl;
-    [@bs.send] external address: subtype('a) => address = "address";
-    [@bs.get] external bufferSize: subtype('a) => int = "bufferSize";
-    [@bs.get] external bytesRead: subtype('a) => int = "bytesRead";
-    [@bs.get] external bytesWritten: subtype('a) => int = "bytesWritten";
-    [@bs.get] external remoteAddress: subtype('a) => string = "remoteAddress";
-    [@bs.get] external remoteFamily: subtype('a) => string = "remoteFamily";
-    [@bs.get] external remotePort: subtype('a) => int = "remotePort";
+    include Duplex.Impl;
   };
   include Impl;
 };

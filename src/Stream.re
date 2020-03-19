@@ -3,6 +3,7 @@ type writable = [ `Writable ];
 type duplex = [ readable | writable ];
 type transform = [ duplex | `Transform ];
 type passThrough = [ transform | `PassThrough ];
+type socket = [ `Socket ];
 type objectMode = [ `ObjectMode ];
 
 type t('data, 'ty);
