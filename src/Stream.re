@@ -34,9 +34,6 @@ module Readable = {
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Readable";
 };
 
-let test = Readable.make();
-Readable.onData(test, ignore);
-
 module Writable = {
   type kind = [ writable ];
   type subtype('data, 'ty) = t('data, [> kind ] as 'ty);
@@ -130,4 +127,3 @@ include Writable.Impl;
 [@bs.send] external onClose: (t('data, [> ]), [@bs.as "close"] _, unit => unit) => unit = "on";
 [@unboxed] type cleanup = {unsubscribe: unit => unit};
 [@bs.module "stream"] [@bs.val] external finished: (t('data, [> ]), option(Js.Exn.t) => unit) => cleanup = "finished";
-let test = onError;
