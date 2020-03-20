@@ -11,8 +11,6 @@ type duplex = [ readable | writable ];
 type transform = [ duplex | `Transform ];
 type passThrough = [ transform | `PassThrough ];
 type socket = [ `Socket ];
-type tls = [ `Tls ];
-type tty = [ `Tty ];
 type objectMode = [ `ObjectMode ];
 
 type t('data, 'a);
