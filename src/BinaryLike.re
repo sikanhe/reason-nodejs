@@ -1,3 +1,18 @@
+/**
+ * Currently, this module is not used in the libary. It solved a
+ * problem that we have since decided to solve in other ways. It may
+ * come in handy as a useful abstraction, so we will leave it in for now.
+ * However users are expected to not rely on it.
+ * 
+ * The purpose of this module is for unifying most of the binary-like
+ * data types that are commonly used for streaming, IO, data serialization,
+ * compression, etc. it also facilitates type-safe conversions between
+ * unified and normal types Since many of Node's functions are
+ * polymorphic, this might help with binding to those functions.
+ * 
+ * However, we prefer to just assume everything uses the `Buffer` type,
+ * for the most part. And this is typically enforced by the API design.
+ */
 
 open Js.TypedArray2;
 
