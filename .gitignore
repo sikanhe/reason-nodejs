@@ -8,6 +8,6 @@ bsb
 *.bs.js
 
 src/ScratchPad.re
-
 src/ScratchPadJs.js
+src/Events.re
 
