@@ -22,6 +22,8 @@ module Base = {
     [@bs.send] external offClose: (t('data, [> ] as 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "off";
     [@bs.send] external onErrorOnce: (t('data, [> ] as 'a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('data, 'a) = "once";
     [@bs.send] external onCloseOnce: (t('data, [> ] as 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "once";
+    [@bs.send] external removeAllListeners: t('data, [> ] as 'a) => t('data, 'a) = "removeAllListeners";
+
   };
   module Impl = {
     include Events;
