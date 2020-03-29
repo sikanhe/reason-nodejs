@@ -170,9 +170,6 @@ module Duplex = {
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Duplex";
 };
 
-let test = Duplex.make();
-test -> Duplex.on(`data((. _) => Js.log))
-
 module Transform = {
   type kind = [ transform ];
   type subtype('data, 'a) = t('data, [> kind ] as 'a);
