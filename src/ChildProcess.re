@@ -21,6 +21,12 @@ module Events = {
   [@bs.send] external onExitOnce: (t, [@bs.as "exit"] _, (. int) => unit) => t = "once";
   [@bs.send] external onCloseOnce: (t, [@bs.as "close"] _, (. int) => unit) => t = "once";
 
+  [@bs.send] external emitData: (t, [@bs.as "data"] _, . Buffer.t) => bool = "emit"
+  [@bs.send] external emitDisconnect: (t, [@bs.as "disconnect"] _) => bool = "emit";
+  [@bs.send] external emitError: (t, [@bs.as "error"] _, Js.Exn.t) => bool = "emit";
+  [@bs.send] external emitExit: (t, [@bs.as "exit"] _, int) => bool = "emit";
+  [@bs.send] external emitClose: (t, [@bs.as "close"] _, int) => bool = "emit";
+
 };
 include Events;
 
