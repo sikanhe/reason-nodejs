@@ -15,73 +15,40 @@ type subtype('data, 'a) = t('data, [> ] as 'a);
 type objectStream('data, 'a) = t('data, [> objectMode ] as 'a);
 
 module Base = {
-  module Impl = {
+  module Events = {
     [@bs.send] external onError: (t('data, [> ] as 'a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('data, 'a) = "on";
     [@bs.send] external onClose: (t('data, [> ] as 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "on";
+    [@bs.send] external offError: (t('data, [> ] as 'a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('data, 'a) = "off";
+    [@bs.send] external offClose: (t('data, [> ] as 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "off";
+    [@bs.send] external onErrorOnce: (t('data, [> ] as 'a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('data, 'a) = "once";
+    [@bs.send] external onCloseOnce: (t('data, [> ] as 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "once";
+  };
+  module Impl = {
+    include Events;
   };
   include Impl;
-  module Events = {
-    [@bs.send] external on: (
-      t('data, [> ] as 'a),
-      [@bs.string] [
-        | `error((. Js.Exn.t) => unit)
-        | `close((. unit) => unit)
-      ]
-    ) => t('data, 'a) = "on";
-    [@bs.send] external off: (
-      t('data, [> ] as 'a),
-      [@bs.string] [
-        | `error((. Js.Exn.t) => unit)
-        | `close((. unit) => unit)
-      ]
-    ) => t('data, 'a) = "off";
-    [@bs.send] external once: (
-      t('data, [> ] as 'a),
-      [@bs.string] [
-        | `error((. Js.Exn.t) => unit)
-        | `close((. unit) => unit)
-      ]
-    ) => t('data, 'a) = "once";
-  };
-  include Events;
 };
 
 module Readable = {
   type kind = [ readable ];
   type subtype('data, 'a) = t('data, [> kind ] as 'a);
   type supertype('data, 'a) = t('data, [< kind ] as 'a);
-  module Impl = {
-    include Base.Impl;
+  module Events = {
+    include Base.Events;
     [@bs.send] external onData: (subtype('data, 'a), [@bs.as "data"] _, (. 'data) => unit) => subtype('data, 'a) = "on";
     [@bs.send] external onEnd: (subtype('data, 'a), [@bs.as "end"] _, (. unit) => unit) => subtype('data, 'a) = "on";
+    [@bs.send] external offData: (subtype('data, 'a), [@bs.as "data"] _, (. 'data) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offEnd: (subtype('data, 'a), [@bs.as "end"] _, (. unit) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external onDataOnce: (subtype('data, 'a), [@bs.as "data"] _, (. 'data) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onEndOnce: (subtype('data, 'a), [@bs.as "end"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+  };
+  module Impl = {
+    include Base.Impl;
+    include Events;
     [@bs.send] external pipe: (subtype('data, 'a), t('data, [> writable ]) as 'ws) => 'ws = "pipe";
     [@bs.send] external unpipe: (subtype('data, 'a) as 'rs, t('data, [> writable ])) => 'rs = "unpipe";
   };
   include Impl;
-  module Events = {
-    [@bs.send] external on: (
-      subtype('data, 'a),
-      [@bs.string] [
-        | `data((. 'data) => unit)
-        | `end_((. unit) => unit)
-      ]
-    ) => subtype('data, 'a) = "on";
-    [@bs.send] external off: (
-      subtype('data, 'a),
-      [@bs.string] [
-        | `data((. 'data) => unit)
-        | `end_((. unit) => unit)
-      ]
-    ) => subtype('data, 'a) = "off";
-    [@bs.send] external once: (
-      subtype('data, 'a),
-      [@bs.string] [
-        | `data((. 'data) => unit)
-        | `end_((. unit) => unit)
-      ]
-    ) => subtype('data, 'a) = "once";
-  };
-  include Events;
   type nonrec t('data) = subtype('data, kind);
   type nonrec objectStream('data) = subtype('data, [ kind | objectMode ]);
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Readable";
@@ -91,12 +58,23 @@ module Writable = {
   type kind = [ writable ];
   type subtype('data, 'a) = t('data, [> kind ] as 'a);
   type supertype('data, 'a) = t('data, [< kind ] as 'a);
-  module Impl = {
-    include Base.Impl;
+  module Events = {
     [@bs.send] external onDrain: (subtype('data, 'a), [@bs.as "drain"] _, (. unit) => unit) => subtype('data, 'a) = "on";
     [@bs.send] external onFinish: (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) = "on";
     [@bs.send] external onPipe: (subtype('data, 'a), [@bs.as "pipe"] _, (. t('data, [> readable])) => unit) => subtype('data, 'a) = "on";
     [@bs.send] external onUnpipe: (subtype('data, 'a), [@bs.as "unpipe"] _, (. t('data, [> readable])) => unit) => subtype('data, 'a) = "on";
+    [@bs.send] external offDrain: (subtype('data, 'a), [@bs.as "drain"] _, (. unit) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offFinish: (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offPipe: (subtype('data, 'a), [@bs.as "pipe"] _, (. t('data, [> readable])) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offUnpipe: (subtype('data, 'a), [@bs.as "unpipe"] _, (. t('data, [> readable])) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external onDrainOnce: (subtype('data, 'a), [@bs.as "drain"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onFinishOnce: (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onPipeOnce: (subtype('data, 'a), [@bs.as "pipe"] _, (. t('data, [> readable])) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onUnpipeOnce: (subtype('data, 'a), [@bs.as "unpipe"] _, (. t('data, [> readable])) => unit) => subtype('data, 'a) = "once";
+  };
+  module Impl = {
+    include Base.Impl;
+    include Events;
     [@bs.send] external cork: subtype('data, 'a) => unit = "cork";
     [@bs.send] external uncork: subtype('data, 'a) => unit = "uncork";
     [@bs.send] external destroy: subtype('data, 'a) => unit = "destroy";
@@ -115,37 +93,6 @@ module Writable = {
 
   };
   include Impl;
-  module Events = {
-    [@bs.send] external on: (
-      subtype('data, 'a),
-      [@bs.string] [
-        | `drain((. unit) => unit)
-        | `finish((. unit) => unit)
-        | `pipe((. t('data, [> readable ])) => unit)
-        | `unpipe((. t('data, [> readable ])) => unit)
-      ]
-    ) => subtype('data, 'a) = "on";
-    [@bs.send] external off: (
-      subtype('data, 'a),
-      [@bs.string] [
-        | `drain((. unit) => unit)
-        | `finish((. unit) => unit)
-        | `pipe((. t('data, [> readable ])) => unit)
-        | `unpipe((. t('data, [> readable ])) => unit)
-      ]
-    ) => subtype('data, 'a) = "off";
-    [@bs.send] external once: (
-      subtype('data, 'a),
-      [@bs.string] [
-        | `drain((. unit) => unit)
-        | `finish((. unit) => unit)
-        | `pipe((. t('data, [> readable ])) => unit)
-        | `unpipe((. t('data, [> readable ])) => unit)
-      ]
-    ) => subtype('data, 'a) = "once";
-
-  };
-  include Events;
   type nonrec t('data) = subtype('data, kind);
   type nonrec objectStream('data) = subtype('data, [ kind | objectMode ]);
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Writable";
@@ -155,16 +102,16 @@ module Duplex = {
   type kind = [ duplex ];
   type subtype('data, 'a) = t('data, [> kind ] as 'a);
   type supertype('data, 'a) = t('data, [< kind ] as 'a);
-  module Impl = {
-    include Readable.Impl;
-    include Writable.Impl;
-  };
-  include Impl;
   module Events = {
     include Readable.Events;
     include Writable.Events;
   };
-  include Events;
+  module Impl = {
+    include Readable.Impl;
+    include Writable.Impl;
+    include Events;
+  };
+  include Impl;
   type nonrec t('data) = subtype('data, kind);
   type nonrec objectStream('data) = subtype('data, [ kind | objectMode ]);
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Duplex";
@@ -174,14 +121,14 @@ module Transform = {
   type kind = [ transform ];
   type subtype('data, 'a) = t('data, [> kind ] as 'a);
   type supertype('data, 'a) = t('data, [< kind ] as 'a);
-  module Impl = {
-    include Duplex.Impl;
-  };
-  include Impl;
   module Events = {
     include Duplex.Events;
   };
-  include Events;
+  module Impl = {
+    include Duplex.Impl;
+    include Events;
+  };
+  include Impl;
   type nonrec t('data) = subtype('data, kind);
   type nonrec objectStream('data) = subtype('data, [ kind | objectMode ]);
   type makeOptions;
@@ -200,30 +147,28 @@ module PassThrough = {
   type kind = [ passThrough ];
   type subtype('data, 'a) = t('data, [> kind ] as 'a);
   type supertype('data, 'a) = t('data, [< kind ] as 'a);
-  module Impl = {
-    include Transform.Impl;
-  };
-  include Impl;
   module Events = {
     include Transform.Events;
   };
-  include Events;
+  module Impl = {
+    include Transform.Impl;
+    include Events;
+  };
+  include Impl;
   type nonrec t('data) = subtype('data, kind);
   type nonrec objectStream('data) = subtype('data, [ kind | objectMode ]);
   [@bs.module "stream"] [@bs.new] external make: unit => t('data) = "PassThrough";
 };
 
-include Base.Impl;
-include Readable.Impl;
-include Writable.Impl;
 module Events = {
   include Base.Events;
   include Readable.Events;
   include Writable.Events;
 };
+include Base.Impl;
+include Readable.Impl;
+include Writable.Impl;
 include Events;
 
-[@bs.send] external onError: (t('data, [> ]), [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
-[@bs.send] external onClose: (t('data, [> ]), [@bs.as "close"] _, unit => unit) => unit = "on";
-[@unboxed] type cleanup = {unsubscribe: unit => unit};
-[@bs.module "stream"] [@bs.val] external finished: (t('data, [> ]), option(Js.Exn.t) => unit) => cleanup = "finished";
+type cleanupFn = unit => unit;
+[@bs.module "stream"] [@bs.val] external finished: (t('data, [> ]), option(Js.Exn.t) => unit) => cleanupFn = "finished";
