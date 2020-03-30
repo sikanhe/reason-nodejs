@@ -5,8 +5,18 @@ module IncomingMessage = {
   type subtype('data, 'a) = Stream.subtype('data, [> kind] as 'a);
   type supertype('data, 'a) = Stream.subtype('data, [< kind] as 'a);
   type t = subtype(Buffer.t, [ kind ]);
+  module Events = {
+    include Stream.Readable.Events;
+    [@bs.send] external onAborted: (subtype('data, 'a), [@bs.as "aborted"] _, (. unit) => unit) => subtype('data, 'a) = "on";
+    [@bs.send] external onClose: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "on";
+    [@bs.send] external offAborted: (subtype('data, 'a), [@bs.as "aborted"] _, (. unit) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offClose: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external onAbortedOnce: (subtype('data, 'a), [@bs.as "aborted"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onCloseOnce: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+  };
   module Impl = {
     include Stream.Readable.Impl;
+    include Events;
     [@bs.get] external method_: subtype('data, 'a) => string = "method";
     [@bs.get] external url: subtype('data, 'a) => string = "url";
     [@bs.get] external port: subtype('data, 'a) => int = "port";
@@ -33,19 +43,19 @@ module ClientRequest = {
   type subtype('data, 'a) = Stream.subtype('data, [> kind] as 'a);
   type supertype('data, 'a) = Stream.subtype('data, [< kind] as 'a);
   type t = subtype(Buffer.t, [ kind ]);
-  module Impl = {
-    include Stream.Duplex.Impl;
-    type information('a) = {
-      .
-      "httpVersion": string,
-      "httpVersionMajor": int,
-      "httpVersionMinor": int,
-      "statusCode": int,
-      "statusMessage": string,
-      "headers": Js.t({..} as 'a),
-      "rawHeaders": array(string),
-    };
-    [@bs.send] external onAbort: (subtype('data, 'a), [@bs.as "abort"] _, unit => unit) => unit = "on";
+  type information('a) = {
+    .
+    "httpVersion": string,
+    "httpVersionMajor": int,
+    "httpVersionMinor": int,
+    "statusCode": int,
+    "statusMessage": string,
+    "headers": Js.t({..} as 'a),
+    "rawHeaders": array(string),
+  };
+  module Events = {
+    include Stream.Duplex.Events;
+    [@bs.send] external onAbort: (subtype('data, 'a), [@bs.as "abort"] _, (. unit) => unit) => subtype('data, 'a) = "on";
     [@bs.send] external onConnect: (
         subtype('data, 'a),
         [@bs.as "connect"] _,
@@ -55,14 +65,56 @@ module ClientRequest = {
           Buffer.t
         ) => unit
       ) => unit = "on";
-    [@bs.send] external onContinue: (subtype('data, 'a), [@bs.as "continue"] _, unit => unit) => unit = "on";
-    [@bs.send] external onInformation: (subtype('data, 'a), [@bs.as "information"] _, information('b) => unit) => unit = "on";
-    [@bs.send] external onResponse: (subtype('data, 'a), [@bs.as "response"] _, IncomingMessage.subtype('data, 'b) => unit) => unit = "on";
-    [@bs.send] external onSocket: (subtype('data, 'a), [@bs.as "socket"] _, Net.TcpSocket.t => unit) => unit = "on";
-    [@bs.send] external onTimeout: (subtype('data, 'a), [@bs.as "timeout"] _, unit => unit) => unit = "on";
+    [@bs.send] external onContinue: (subtype('data, 'a), [@bs.as "continue"] _, (. unit) => unit) => subtype('data, 'a) = "on";
+    [@bs.send] external onInformation: (subtype('data, 'a), [@bs.as "information"] _, (. information('b)) => unit) => subtype('data, 'a) = "on";
+    [@bs.send] external onResponse: (subtype('data, 'a), [@bs.as "response"] _, (. IncomingMessage.subtype('data, 'b)) => unit) => subtype('data, 'a) = "on";
+    [@bs.send] external onSocket: (subtype('data, 'a), [@bs.as "socket"] _, (. Net.TcpSocket.t) => unit) => subtype('data, 'a) = "on";
+    [@bs.send] external onTimeout: (subtype('data, 'a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('data, 'a) = "on";
     [@bs.send] external onUpgrade:
-      (subtype('data, 'a), [@bs.as "upgrade"] _, (IncomingMessage.subtype('data, 'b), Net.TcpSocket.t, Buffer.t) => unit) => unit =
+      (subtype('data, 'a), [@bs.as "upgrade"] _, (. IncomingMessage.subtype('data, 'b), Net.TcpSocket.t, Buffer.t) => unit) => subtype('data, 'a) =
       "on";
+
+    [@bs.send] external offAbort: (subtype('data, 'a), [@bs.as "abort"] _, (. unit) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offConnect: (
+        subtype('data, 'a),
+        [@bs.as "connect"] _,
+        (
+          IncomingMessage.subtype('data, 'b),
+          Net.Socket.subtype('c),
+          Buffer.t
+        ) => unit
+      ) => unit = "off";
+    [@bs.send] external offContinue: (subtype('data, 'a), [@bs.as "continue"] _, (. unit) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offInformation: (subtype('data, 'a), [@bs.as "information"] _, (. information('b)) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offResponse: (subtype('data, 'a), [@bs.as "response"] _, (. IncomingMessage.subtype('data, 'b)) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offSocket: (subtype('data, 'a), [@bs.as "socket"] _, (. Net.TcpSocket.t) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offTimeout: (subtype('data, 'a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offUpgrade:
+      (subtype('data, 'a), [@bs.as "upgrade"] _, (. IncomingMessage.subtype('data, 'b), Net.TcpSocket.t, Buffer.t) => unit) => subtype('data, 'a) =
+      "off";
+
+    [@bs.send] external onAbortOnce: (subtype('data, 'a), [@bs.as "abort"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onConnectOnce: (
+        subtype('data, 'a),
+        [@bs.as "connect"] _,
+        (
+          IncomingMessage.subtype('data, 'b),
+          Net.Socket.subtype('c),
+          Buffer.t
+        ) => unit
+      ) => unit = "once";
+    [@bs.send] external onContinueOnce: (subtype('data, 'a), [@bs.as "continue"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onInformationOnce: (subtype('data, 'a), [@bs.as "information"] _, (. information('b)) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onResponseOnce: (subtype('data, 'a), [@bs.as "response"] _, (. IncomingMessage.subtype('data, 'b)) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onSocketOnce: (subtype('data, 'a), [@bs.as "socket"] _, (. Net.TcpSocket.t) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onTimeoutOnce: (subtype('data, 'a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onUpgradeOnce:
+      (subtype('data, 'a), [@bs.as "upgrade"] _, (. IncomingMessage.subtype('data, 'b), Net.TcpSocket.t, Buffer.t) => unit) => subtype('data, 'a) =
+      "once";
+  };
+  module Impl = {
+    include Stream.Duplex.Impl;
+    include Events;
     [@bs.send] external abort: subtype('data, 'a) => unit = "abort";
     [@bs.get] external aborted: subtype('data, 'a) => bool = "aborted";
     [@bs.send] external end_: subtype('data, 'a) => unit = "end";
@@ -96,8 +148,18 @@ module ServerResponse = {
   type subtype('data, 'a) = Stream.subtype('data, [> kind] as 'a);
   type supertype('data, 'a) = Stream.subtype('data, [< kind] as 'a);
   type t = subtype(Buffer.t, [ kind ]);
+  module Events = {
+    include Stream.Duplex.Events;
+    [@bs.send] external onClose: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "on";
+    [@bs.send] external onFinish: (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) = "on";
+    [@bs.send] external offClose: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external offFinish: (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) = "off";
+    [@bs.send] external onCloseOnce: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+    [@bs.send] external onFinishOnce: (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+  };
   module Impl = {
     include Stream.Duplex.Impl;
+    include Events;
     [@bs.get] external statusCode: subtype('data, 'a) => int = "statusCode";
     [@bs.set] external setStatusCode: (subtype('data, 'a), int) => unit = "statusCode";
     [@bs.send] external write: (subtype('data, 'a), Buffer.t) => bool = "write";
@@ -154,7 +216,36 @@ module Server = {
   type subtype('a) = Net.Server.subtype([> kind ] as 'a);
   type supertype('a) = Net.Server.subtype([< kind ] as 'a);
   type t = subtype(kind);
+  module Events = {
+    [@bs.send] external onCheckContinue: (subtype('a), [@bs.as "checkContinue"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "on";
+    [@bs.send] external onCheckExpectation: (subtype('a), [@bs.as "checkExpectation"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "on";
+    [@bs.send] external onClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "on";
+    [@bs.send] external onClientError: (subtype('a), [@bs.as "clientError"] _, (. Js.Exn.t, Net.TcpSocket.t) => unit) => subtype('a) = "on";
+    [@bs.send] external onConnect: (subtype('a), [@bs.as "connect"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "on";
+    [@bs.send] external onConnection: (subtype('a), [@bs.as "connection"] _, (. Net.TcpSocket.t) => unit) => subtype('a) = "on";
+    [@bs.send] external onRequest: (subtype('a), [@bs.as "request"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "on";
+    [@bs.send] external onUpgrade: (subtype('a), [@bs.as "upgrade"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "on";
+
+    [@bs.send] external offCheckContinue: (subtype('a), [@bs.as "checkContinue"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "off";
+    [@bs.send] external offCheckExpectation: (subtype('a), [@bs.as "checkExpectation"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "off";
+    [@bs.send] external offClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "off";
+    [@bs.send] external offClientError: (subtype('a), [@bs.as "clientError"] _, (. Js.Exn.t, Net.TcpSocket.t) => unit) => subtype('a) = "off";
+    [@bs.send] external offConnect: (subtype('a), [@bs.as "connect"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "off";
+    [@bs.send] external offConnection: (subtype('a), [@bs.as "connection"] _, (. Net.TcpSocket.t) => unit) => subtype('a) = "off";
+    [@bs.send] external offRequest: (subtype('a), [@bs.as "request"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "off";
+    [@bs.send] external offUpgrade: (subtype('a), [@bs.as "upgrade"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "off";
+
+    [@bs.send] external onCheckContinueOnce: (subtype('a), [@bs.as "checkContinue"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "once";
+    [@bs.send] external onCheckExpectationOnce: (subtype('a), [@bs.as "checkExpectation"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "once";
+    [@bs.send] external onCloseOnce: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "once";
+    [@bs.send] external onClientErrorOnce: (subtype('a), [@bs.as "clientError"] _, (. Js.Exn.t, Net.TcpSocket.t) => unit) => subtype('a) = "once";
+    [@bs.send] external onConnectOnce: (subtype('a), [@bs.as "connect"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "once";
+    [@bs.send] external onConnectionOnce: (subtype('a), [@bs.as "connection"] _, (. Net.TcpSocket.t) => unit) => subtype('a) = "once";
+    [@bs.send] external onRequestOnce: (subtype('a), [@bs.as "request"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "once";
+    [@bs.send] external onUpgradeOnce: (subtype('a), [@bs.as "upgrade"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "once";
+  };
   module Impl = (T: { type t; }) => {
+    include Events;
     [@bs.send] external setTimeout: (T.t, int) => T.t = "setTimeout";
     [@bs.send] external setTimeoutWithCallback: (T.t, int, unit => unit) => T.t = "setTimeout";
     [@bs.get] external timeout: T.t => int = "timeout";
