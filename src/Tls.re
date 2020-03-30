@@ -17,8 +17,8 @@ module TlsServer = {
   type subtype('a) = Net.Server.subtype([> kind ] as 'a);
   type supertype('a) = Net.Server.subtype([< kind ] as 'a);
   type t = subtype(kind);
-  module Impl = (T: { type t; }) => {
-    include Net.TcpServer.Impl(T);
+  module Impl = {
+    include Net.TcpServer.Impl;
   };
-  include Impl({ type nonrec t = t; });
+  include Impl;
 };

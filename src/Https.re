@@ -5,13 +5,10 @@ module HttpsServer = {
   type subtype('a) = Net.Socket.subtype([> kind ] as 'a);
   type supertype('a) = Net.Socket.subtype([< kind ] as 'a);
   type t = subtype(kind);
-
-  module Impl = (T: { type t; }) => {
-    include Tls.TlsServer.Impl(T);
+  module Impl = {
+    include Tls.TlsServer.Impl;
   };
-
-  include Impl({ type nonrec t = t; });
-
+  include Impl;
 };
 
 module Agent = {
