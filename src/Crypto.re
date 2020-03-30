@@ -55,9 +55,9 @@ module Hash = {
   type t = subtype(Buffer.t, kind);
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external copy: subtype('data, [> kind ]) => Stream.t('data, [> kind ]) = "copy"; 
-    [@bs.send] external digest: subtype('data, [> kind ]) => Buffer.t = "digest"; 
-    [@bs.send] external update: (subtype('data, [> kind ]), Buffer.t) => unit = "update";
+    [@bs.send] external copy: subtype('data, 'a) => Stream.t('data, 'a) = "copy"; 
+    [@bs.send] external digest: subtype('data, 'a) => Buffer.t = "digest"; 
+    [@bs.send] external update: (subtype('data, 'a), Buffer.t) => unit = "update";
   };
   include Impl;
 };
@@ -71,8 +71,8 @@ module Hmac = {
   type t = subtype(Buffer.t, [ kind ]);
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external digest: subtype('data, [> kind ]) => Buffer.t = "digest";
-    [@bs.send] external update: (subtype('data, [> kind ]), Buffer.t) => unit = "update";
+    [@bs.send] external digest: subtype('data, 'a) => Buffer.t = "digest";
+    [@bs.send] external update: (subtype('data, 'a), Buffer.t) => unit = "update";
   };
   include Impl;
 };
@@ -93,12 +93,12 @@ module Cipher = {
   type t = subtype(Buffer.t, [ kind ]);
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external final: (subtype('data, [> kind ]), string) => Buffer.t = "final";
-    [@bs.send] external setAAD: (subtype('data, [> kind ]), Buffer.t) => t = "setAAD";
-    [@bs.send] external setAADWith: (subtype('data, [> kind ]), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
-    [@bs.send] external getAuthTag: subtype('data, [> kind ]) => Buffer.t = "getAuthTag";
-    [@bs.send] external setAutoPadding: (subtype('data, [> kind ]), bool) => t = "setAutoPadding";
-    [@bs.send] external update: (subtype('data, [> kind ]), Buffer.t) => Buffer.t = "update";
+    [@bs.send] external final: (subtype('data, 'a), string) => Buffer.t = "final";
+    [@bs.send] external setAAD: (subtype('data, 'a), Buffer.t) => t = "setAAD";
+    [@bs.send] external setAADWith: (subtype('data, 'a), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
+    [@bs.send] external getAuthTag: subtype('data, 'a) => Buffer.t = "getAuthTag";
+    [@bs.send] external setAutoPadding: (subtype('data, 'a), bool) => t = "setAutoPadding";
+    [@bs.send] external update: (subtype('data, 'a), Buffer.t) => Buffer.t = "update";
   };
   include Impl;
   [@bs.module "crypto"] external make: (
@@ -120,12 +120,12 @@ module Decipher = {
   type supertype('data, 'a) = Stream.Transform.subtype('data, [< kind ] as 'a);
   type t = Stream.t(Buffer.t, [ kind ]);
   module Impl = {
-    [@bs.send] external final: (subtype('data, [> kind ]), string) => Buffer.t = "final";
-    [@bs.send] external setAAD: (subtype('data, [> kind ]), Buffer.t) => t = "setAAD";
-    [@bs.send] external setAADWith: (subtype('data, [> kind ]), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
-    [@bs.send] external setAuthTag: (subtype('data, [> kind ]), Buffer.t) => t = "setAuthTag";
-    [@bs.send] external setAutoPatting: (subtype('data, [> kind ]), bool) => t = "setAutoPadding";
-    [@bs.send] external update: (subtype('data, [> kind ]), Buffer.t) => Buffer.t = "update";
+    [@bs.send] external final: (subtype('data, 'a), string) => Buffer.t = "final";
+    [@bs.send] external setAAD: (subtype('data, 'a), Buffer.t) => t = "setAAD";
+    [@bs.send] external setAADWith: (subtype('data, 'a), Buffer.t, ~options: Stream.Transform.makeOptions) => t = "setAAD";
+    [@bs.send] external setAuthTag: (subtype('data, 'a), Buffer.t) => t = "setAuthTag";
+    [@bs.send] external setAutoPatting: (subtype('data, 'a), bool) => t = "setAutoPadding";
+    [@bs.send] external update: (subtype('data, 'a), Buffer.t) => Buffer.t = "update";
   };
   include Impl;
   [@bs.module "crypto"] external make: (
