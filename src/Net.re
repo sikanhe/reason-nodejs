@@ -164,7 +164,7 @@ module TcpSocket = {
   module Impl = {
     include Socket.Impl;
     [@bs.send] external connect: (
-      subtype([> kind ] as 'a),
+      subtype('a),
       ~port: int,
       ~host: string,
       unit => unit,
@@ -183,7 +183,7 @@ module IcpSocket = {
   module Impl = {
     include Socket.Impl;
     [@bs.send] external connect: (
-      subtype([> kind ] as 'a),
+      subtype('a),
       ~path: string,
       unit => unit,
     ) => subtype('a)
