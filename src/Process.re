@@ -65,25 +65,6 @@ module Events = {
   external onUnhandledRejectionOnce:
     ([@bs.as "unhandledRejection"] _, (. Js.Exn.t, Js.Promise.t('a)) => unit) => unit =
     "once";
-
-  [@bs.module "process"] external emitBeforeExit: ([@bs.as "beforeExit"] _, int) => bool = "emit";
-  [@bs.module "process"] external emitDisconnect: ([@bs.as "disconnect"] _) => bool = "emit";
-  [@bs.module "process"] external emitExit: ([@bs.as "exit"] _, int) => bool = "emit";
-  [@bs.module "process"]
-  external emitMultipleResolves:
-    ([@bs.as "multipleResolves"] _, [@bs.string] [ | `resolve | `reject], Js.Promise.t('a), 'a) =>
-    bool =
-    "emit";
-  [@bs.module "process"]
-  external emitRejectionHandled: ([@bs.as "rejectionHandled"] _, Js.Promise.t('a)) => bool =
-    "emit";
-  [@bs.module "process"]
-  external emitUncaughtException: ([@bs.as "uncaughtException"] _, Js.Exn.t, string) => bool =
-    "emit";
-  [@bs.module "process"]
-  external emitUnhandledRejection:
-    ([@bs.as "unhandledRejection"] _, Js.Exn.t, Js.Promise.t('a)) => bool =
-    "emit";
 };
 include Events;
 type warning = {
