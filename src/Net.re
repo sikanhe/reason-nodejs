@@ -13,10 +13,15 @@ module Socket = {
   type writable = [ Stream.writable | Stream.socket ];
   type duplex = [ Stream.duplex | Stream.socket ];
 
+  type kind = [ Stream.socket ];
+  type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
+  type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
+  type t = subtype(kind);
+
   module Base = {
-    type kind = [ Stream.socket ];
-    type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
-    type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
+    type nonrec kind = kind;
+    type nonrec subtype('a) = subtype('a);
+    type nonrec supertype('a) = supertype('a);
     type t = subtype(kind);
     type nonrec address = address;
 
@@ -141,11 +146,6 @@ module Socket = {
     include Impl;
     [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
   };
-
-  type kind = [ Stream.socket ];
-  type subtype('a) = Stream.subtype(Buffer.t, [> kind ] as 'a);
-  type supertype('a) = Stream.subtype(Buffer.t, [< kind ] as 'a);
-  type t = subtype(kind);
 
   module Impl = {
     include Base.Impl;
