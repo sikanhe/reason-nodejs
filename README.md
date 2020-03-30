@@ -4,6 +4,8 @@
 
 **Update (3/19/20):** `reason-node` is nearly ready for its first public release. Most of the important design decisions have been made & implemented, and most of the API surface is becoming relatively stable. There are still a few gaps here and there, and we intend to refine the API over time as new ideas emerge. Therefore, we will likely push an alpha release first, to give us some space to make breaking changes if needed, based on community feedback. We will post updates here and in the ReasonML Discord server.
 
+----
+
 This library is still under construction. Some of the core design details are still being ironed out. Therefore we cannot guarantee API stability at this time. We intend to achieve API stability very soon. We will make an announcement on the ReasonML [Discord server](https://discord.gg/7MgaPKW) when we reach that goal.
 
 ----
