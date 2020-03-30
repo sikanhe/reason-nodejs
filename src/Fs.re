@@ -1,3 +1,26 @@
+module Dirent = {
+  type t;
+  [@bs.send] external isBlockDevice: t => bool = "isBlockDevice";
+  [@bs.send] external isCharacterDevice: t => bool = "isCharacterDevice";
+  [@bs.send] external isDirectory: t => bool = "isDirectory";
+  [@bs.send] external isFIFO: t => bool = "isFIFO";
+  [@bs.send] external isFile: t => bool = "isFile";
+  [@bs.send] external isSocket: t => bool = "isSocket";
+  [@bs.send] external isSymbolicLink: t => bool = "isSymbolicLink";
+  [@bs.get] external name: t => string = "name";
+};
+
+module Dir = {
+  type t;
+  [@bs.send] external close: t => Js.Promise.t(unit) = "close";
+  [@bs.send] external closeWithCallback: (t, Js.nullable(Js.Exn.t) => unit) => unit = "close";
+  [@bs.send] external closeSync: t => unit = "closeSync";
+  [@bs.get] external path: t => string = "path";
+  [@bs.send] external read: t => Js.Promise.t(Js.nullable(Dirent.t)) = "read";
+  [@bs.send] external readWithCallback: (t, (Js.Exn.t, Js.nullable(Dirent.t)) => unit) => unit = "read";
+  [@bs.send] external readSync: t => Js.nullable(Dirent.t) = "readSync";
+};
+
 module Stats = {
   type t = {
     [@bs.as "dev"] dev: int,
@@ -196,7 +219,6 @@ type writeFileSyncOptions;
   "";
 
 [@bs.val] [@bs.module "fs"] external writeFileSync: (string, Buffer.t) => unit = "writeFileSync";
-
 [@bs.val] [@bs.module "fs"] external writeFileSyncWith: (string, Buffer.t, writeFileSyncOptions) => unit = "writeFileSync";
 
 module Handle = {
