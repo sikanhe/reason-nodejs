@@ -16,13 +16,13 @@ type objectStream('data, 'a) = t('data, [> objectMode ] as 'a);
 
 module Base = {
   module Events = {
-    [@bs.send] external onError: (subtype('data, [> ] as 'a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('data, 'a) = "on";
-    [@bs.send] external onClose: (subtype('data, [> ] as 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "on";
-    [@bs.send] external offError: (subtype('data, [> ] as 'a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('data, 'a) = "off";
-    [@bs.send] external offClose: (subtype('data, [> ] as 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "off";
-    [@bs.send] external onErrorOnce: (subtype('data, [> ] as 'a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('data, 'a) = "once";
-    [@bs.send] external onCloseOnce: (subtype('data, [> ] as 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "once";
-    [@bs.send] external removeAllListeners: subtype('data, [> ] as 'a) => t('data, 'a) = "removeAllListeners";
+    [@bs.send] external onError: (subtype('data, 'a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('data, 'a) = "on";
+    [@bs.send] external onClose: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "on";
+    [@bs.send] external offError: (subtype('data, 'a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('data, 'a) = "off";
+    [@bs.send] external offClose: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "off";
+    [@bs.send] external onErrorOnce: (subtype('data, 'a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('data, 'a) = "once";
+    [@bs.send] external onCloseOnce: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => t('data, 'a) = "once";
+    [@bs.send] external removeAllListeners: subtype('data, 'a) => t('data, 'a) = "removeAllListeners";
   };
   module Impl = {
     include Events;

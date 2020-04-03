@@ -242,13 +242,18 @@ module Server = {
     [@bs.send] external onError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "on";
     [@bs.send] external onConnection: (subtype('a), [@bs.as "connection"] _, (. Socket.t) => unit) => subtype('a) = "on";
     [@bs.send] external onListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) = "on";
+    [@bs.send] external offClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "off";
+    [@bs.send] external offError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "off";
+    [@bs.send] external offConnection: (subtype('a), [@bs.as "connection"] _, (. Socket.t) => unit) => subtype('a) = "off";
+    [@bs.send] external offListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) = "off";
+    [@bs.send] external onCloseOnce: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "once";
+    [@bs.send] external onErrorOnce: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "once";
+    [@bs.send] external onConnectionOnce: (subtype('a), [@bs.as "connection"] _, (. Socket.t) => unit) => subtype('a) = "once";
+    [@bs.send] external onListeningOnce: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) = "once";
   };
   module Impl = {
     include Events;
     [@bs.send] external close: (subtype('a), ~callback: Js.nullable(Js.Exn.t) => unit=?, unit) => subtype('a) = "close";
-    [@bs.send] external onClose: (subtype('a), [@bs.as "close"] _, unit => unit) => subtype('a) = "on";
-    [@bs.send] external onError: (subtype('a), [@bs.as "error"] _, unit => unit) => subtype('a) = "on";
-    [@bs.send] external onConnection: (subtype('a), [@bs.as "connection"] _, unit => unit) => subtype('a) = "on";
     [@bs.send] external getConnections: (subtype('a), (Js.nullable(Js.Exn.t), int) => unit) => subtype('a) = "getConnections";
     [@bs.set] external setMaxConnections: (subtype('a), int) => unit = "maxConnections";
     [@bs.get] external maxConnections: (subtype('a)) => int = "maxConnections";
@@ -271,6 +276,14 @@ module TcpServer = {
     [@bs.send] external onError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "on";
     [@bs.send] external onConnection: (subtype('a), [@bs.as "connection"] _, (. TcpSocket.t) => unit) => subtype('a) = "on";
     [@bs.send] external onListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) = "on";
+    [@bs.send] external offClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "off";
+    [@bs.send] external offError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "off";
+    [@bs.send] external offConnection: (subtype('a), [@bs.as "connection"] _, (. TcpSocket.t) => unit) => subtype('a) = "off";
+    [@bs.send] external offListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) = "off";
+    [@bs.send] external onCloseOnce: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "once";
+    [@bs.send] external onErrorOnce: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "once";
+    [@bs.send] external onConnectionOnce: (subtype('a), [@bs.as "connection"] _, (. TcpSocket.t) => unit) => subtype('a) = "once";
+    [@bs.send] external onListeningOnce: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) = "once";
   };
   module Impl = {
     include Events;
@@ -282,9 +295,7 @@ module TcpServer = {
     [@bs.send] external unref: (subtype('a)) => subtype('a) = "unref";
     [@bs.get] external listening: (subtype('a)) => bool = "listening"
   };
-
   include Impl;
-
   type listenOptions;
   [@bs.obj] external listenOptions: (
     ~port: int=?,
@@ -305,14 +316,22 @@ module IcpServer = {
   type subtype('a) = Server.subtype([> kind ] as 'a);
   type supertype('a) = Server.subtype([< kind ] as 'a);
   type t = subtype(kind);
-  module Events = (T: { type t; }) => {
+  module Events = {
     [@bs.send] external onClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "on";
     [@bs.send] external onError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "on";
     [@bs.send] external onConnection: (subtype('a), [@bs.as "connection"] _, (. IcpSocket.t) => unit) => subtype('a) = "on";
     [@bs.send] external onListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) = "on";
+    [@bs.send] external offClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "off";
+    [@bs.send] external offError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "off";
+    [@bs.send] external offConnection: (subtype('a), [@bs.as "connection"] _, (. IcpSocket.t) => unit) => subtype('a) = "off";
+    [@bs.send] external offListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) = "off";
+    [@bs.send] external onCloseOnce: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "once";
+    [@bs.send] external onErrorOnce: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "once";
+    [@bs.send] external onConnectionOnce: (subtype('a), [@bs.as "connection"] _, (. IcpSocket.t) => unit) => subtype('a) = "once";
+    [@bs.send] external onListeningOnce: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) = "once";
   };
-  module Impl = (T: { type t; }) => {
-    include Events(T);
+  module Impl = {
+    include Events;
     [@bs.send] external close: (subtype('a), ~callback: Js.nullable(Js.Exn.t) => unit=?, unit) => subtype('a) = "close";
     [@bs.send] external getConnections: (subtype('a), (Js.nullable(Js.Exn.t), int) => unit) => subtype('a) = "getConnections";
     [@bs.set] external setMaxConnections: (subtype('a), int) => unit = "maxConnections";
@@ -321,9 +340,7 @@ module IcpServer = {
     [@bs.send] external unref: (subtype('a)) => subtype('a) = "unref";
     [@bs.get] external listening: (subtype('a)) => bool = "listening"
   };
-
-  include Impl({ type nonrec t = t; });
-
+  include Impl;
   type listenOptions;
   [@bs.obj] external listenOptions: (
     ~path: string=?,
@@ -334,8 +351,8 @@ module IcpServer = {
     ~writableAll: bool=?,
     unit
   ) => listenOptions = "";
-  [@bs.send] external listen: (~path: string, ~callback: unit => unit=?, unit) => t = "listen";
-  [@bs.send] external listenWith: (~options: listenOptions, ~callback: unit => unit=?, unit) => t = "listen";
+  [@bs.send] external listen: (t, ~path: string, ~callback: unit => unit=?, unit) => t = "listen";
+  [@bs.send] external listenWith: (t, ~options: listenOptions, ~callback: unit => unit=?, unit) => t = "listen";
 
 };
 

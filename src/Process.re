@@ -1,70 +1,27 @@
 module Events = {
-  [@bs.module "process"]
-  external onBeforeExit: ([@bs.as "beforeExit"] _, (. int) => unit) => unit = "on";
-  [@bs.module "process"]
-  external onDisconnect: ([@bs.as "disconnect"] _, (. unit) => unit) => unit = "on";
+  [@bs.module "process"] external onBeforeExit: ([@bs.as "beforeExit"] _, (. int) => unit) => unit = "on";
+  [@bs.module "process"] external onDisconnect: ([@bs.as "disconnect"] _, (. unit) => unit) => unit = "on";
   [@bs.module "process"] external onExit: ([@bs.as "exit"] _, (. int) => unit) => unit = "on";
-  [@bs.module "process"]
-  external onMultipleResolves:
-    ([@bs.as "multipleResolves"] _, (. string, Js.Promise.t('a), 'a) => unit) => unit =
-    "on";
-  [@bs.module "process"]
-  external onRejectionHandled:
-    ([@bs.as "rejectionHandled"] _, (. Js.Promise.t('a)) => unit) => unit =
-    "on";
-  [@bs.module "process"]
-  external onUncaughtException:
-    ([@bs.as "uncaughtException"] _, (. Js.Exn.t, string) => unit) => unit =
-    "on";
-  [@bs.module "process"]
-  external onUnhandledRejection:
-    ([@bs.as "unhandledRejection"] _, (. Js.Exn.t, Js.Promise.t('a)) => unit) => unit =
-    "on";
+  [@bs.module "process"] external onMultipleResolves: ([@bs.as "multipleResolves"] _, (. string, Js.Promise.t('a), 'a) => unit) => unit = "on";
+  [@bs.module "process"] external onRejectionHandled: ([@bs.as "rejectionHandled"] _, (. Js.Promise.t('a)) => unit) => unit = "on";
+  [@bs.module "process"] external onUncaughtException: ([@bs.as "uncaughtException"] _, (. Js.Exn.t, string) => unit) => unit = "on";
+  [@bs.module "process"] external onUnhandledRejection: ([@bs.as "unhandledRejection"] _, (. Js.Exn.t, Js.Promise.t('a)) => unit) => unit = "on";
 
-  [@bs.module "process"]
-  external offBeforeExit: ([@bs.as "beforeExit"] _, (. int) => unit) => unit = "off";
-  [@bs.module "process"]
-  external offDisconnect: ([@bs.as "disconnect"] _, (. unit) => unit) => unit = "off";
+  [@bs.module "process"] external offBeforeExit: ([@bs.as "beforeExit"] _, (. int) => unit) => unit = "off";
+  [@bs.module "process"] external offDisconnect: ([@bs.as "disconnect"] _, (. unit) => unit) => unit = "off";
   [@bs.module "process"] external offExit: ([@bs.as "exit"] _, (. int) => unit) => unit = "off";
-  [@bs.module "process"]
-  external offMultipleResolves:
-    ([@bs.as "multipleResolves"] _, (. string, Js.Promise.t('a), 'a) => unit) => unit =
-    "off";
-  [@bs.module "process"]
-  external offRejectionHandled:
-    ([@bs.as "rejectionHandled"] _, (. Js.Promise.t('a)) => unit) => unit =
-    "off";
-  [@bs.module "process"]
-  external offUncaughtException:
-    ([@bs.as "uncaughtException"] _, (. Js.Exn.t, string) => unit) => unit =
-    "off";
-  [@bs.module "process"]
-  external offUnhandledRejection:
-    ([@bs.as "unhandledRejection"] _, (. Js.Exn.t, Js.Promise.t('a)) => unit) => unit =
-    "off";
+  [@bs.module "process"] external offMultipleResolves: ([@bs.as "multipleResolves"] _, (. string, Js.Promise.t('a), 'a) => unit) => unit = "off";
+  [@bs.module "process"] external offRejectionHandled: ([@bs.as "rejectionHandled"] _, (. Js.Promise.t('a)) => unit) => unit = "off";
+  [@bs.module "process"] external offUncaughtException: ([@bs.as "uncaughtException"] _, (. Js.Exn.t, string) => unit) => unit = "off";
+  [@bs.module "process"] external offUnhandledRejection: ([@bs.as "unhandledRejection"] _, (. Js.Exn.t, Js.Promise.t('a)) => unit) => unit = "off";
 
-  [@bs.module "process"]
-  external onBeforeExitOnce: ([@bs.as "beforeExit"] _, (. int) => unit) => unit = "once";
-  [@bs.module "process"]
-  external onDisconnectOnce: ([@bs.as "disconnect"] _, (. unit) => unit) => unit = "once";
-  [@bs.module "process"]
-  external onExitOnce: ([@bs.as "exit"] _, (. int) => unit) => unit = "once";
-  [@bs.module "process"]
-  external onMultipleResolvesOnce:
-    ([@bs.as "multipleResolves"] _, (. string, Js.Promise.t('a), 'a) => unit) => unit =
-    "once";
-  [@bs.module "process"]
-  external onRejectionHandledOnce:
-    ([@bs.as "rejectionHandled"] _, (. Js.Promise.t('a)) => unit) => unit =
-    "once";
-  [@bs.module "process"]
-  external onUncaughtExceptionOnce:
-    ([@bs.as "uncaughtException"] _, (. Js.Exn.t, string) => unit) => unit =
-    "once";
-  [@bs.module "process"]
-  external onUnhandledRejectionOnce:
-    ([@bs.as "unhandledRejection"] _, (. Js.Exn.t, Js.Promise.t('a)) => unit) => unit =
-    "once";
+  [@bs.module "process"] external onBeforeExitOnce: ([@bs.as "beforeExit"] _, (. int) => unit) => unit = "once";
+  [@bs.module "process"] external onDisconnectOnce: ([@bs.as "disconnect"] _, (. unit) => unit) => unit = "once";
+  [@bs.module "process"] external onExitOnce: ([@bs.as "exit"] _, (. int) => unit) => unit = "once";
+  [@bs.module "process"] external onMultipleResolvesOnce: ([@bs.as "multipleResolves"] _, (. string, Js.Promise.t('a), 'a) => unit) => unit = "once";
+  [@bs.module "process"] external onRejectionHandledOnce: ([@bs.as "rejectionHandled"] _, (. Js.Promise.t('a)) => unit) => unit = "once";
+  [@bs.module "process"] external onUncaughtExceptionOnce: ([@bs.as "uncaughtException"] _, (. Js.Exn.t, string) => unit) => unit = "once";
+  [@bs.module "process"] external onUnhandledRejectionOnce: ([@bs.as "unhandledRejection"] _, (. Js.Exn.t, Js.Promise.t('a)) => unit) => unit = "once";
 };
 include Events;
 type warning = {
@@ -88,12 +45,9 @@ type warning = {
 [@bs.module "process"] external nextTick: (unit => unit) => unit = "nextTick";
 [@bs.module "process"] external hrtime: unit => (int, int) = "hrtime";
 [@bs.module "process"] [@bs.scope "hrtime"] external hrtimeBigInt: unit => BigInt.t = "bigint";
-[@bs.module "process"]
-external stderr: Stream.subtype(Buffer.t, [< Net.Socket.kind | Stream.writable]) = "stderr";
-[@bs.module "process"]
-external stdin: Stream.subtype(Buffer.t, [< Net.Socket.kind | Stream.readable]) = "stdin";
-[@bs.module "process"]
-external stdout: Stream.subtype(Buffer.t, [< Net.Socket.kind | Stream.writable]) = "stdout";
+[@bs.module "process"] external stderr: Stream.Writable.subtype(Buffer.t, [< Stream.socket | Stream.writable]) = "stderr";
+[@bs.module "process"] external stdin: Stream.Readable.subtype(Buffer.t, [< Stream.socket | Stream.readable]) = "stdin";
+[@bs.module "process"] external stdout: Stream.Writable.subtype(Buffer.t, [< Stream.socket | Stream.writable]) = "stdout";
 [@bs.module "process"] external pid: int = "pid";
 [@bs.module "process"] external platform: string = "platform";
 [@bs.module "process"] external ppid: int = "ppid";
