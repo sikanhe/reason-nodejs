@@ -71,7 +71,6 @@ module Constants = {
 };
 
 type fd = pri int;
-type path = string;
 
 type writeFileOptions;
 [@bs.obj] external writeFileOptions: (~mode: int=?, ~flag: string=?, unit) => writeFileOptions = "";
@@ -147,11 +146,10 @@ type readFileOptions;
  */
 [@bs.module "fs"] external rmdirSync: string => unit = "rmdirSync";
 
-[@bs.module "fs"]
-external openSync:
-  (
-    path,
-    [@bs.string] [
+[@bs.module "fs"] external openSync: string => fd = "openSync";
+[@bs.module "fs"] external openSyncWith: (
+    string,
+    ~flag: [@bs.string] [
       | [@bs.as "r"] `Read
       | [@bs.as "r+"] `ReadWrite
       | [@bs.as "rs+"] `ReadWriteSync
@@ -163,37 +161,12 @@ external openSync:
       | [@bs.as "ax"] `AppendFailIfExists
       | [@bs.as "a+"] `AppendRead
       | [@bs.as "ax+"] `AppendReadFailIfExists
-    ]
-  ) =>
-  fd =
-  "openSync";
+    ]=?,
+    ~mode: int=?
+  ) => fd = "openSync";
 
-[@bs.module "fs"] [@bs.val]
-external openSyncMode:
-  (
-    path,
-    [@bs.string] [
-      | [@bs.as "r"] `Read
-      | [@bs.as "r+"] `ReadWrite
-      | [@bs.as "rs+"] `ReadWriteSync
-      | [@bs.as "w"] `Write
-      | [@bs.as "wx"] `WriteFailIfExists
-      | [@bs.as "w+"] `WriteRead
-      | [@bs.as "wx+"] `WriteReadFailIfExists
-      | [@bs.as "a"] `Append
-      | [@bs.as "ax"] `AppendFailIfExists
-      | [@bs.as "a+"] `AppendRead
-      | [@bs.as "ax+"] `AppendReadFailIfExists
-    ],
-    ~mode: int,
-    unit
-  ) =>
-  fd =
-  "openSync";
-
-[@bs.val] [@bs.module "fs"] external readFileSync: (string) => Buffer.t = "readFileSync";
-[@bs.val] [@bs.module "fs"] external readFileSyncWith: (string, readFileOptions) => Buffer.t = "readFileSync";
-[@bs.val] [@bs.module "fs"] external existsSync: (string) => bool = "existsSync";
+[@bs.module "fs"] external readFileSync: (string, ~options: readFileOptions=?, unit) => Buffer.t = "readFileSync";
+[@bs.module "fs"] external existsSync: (string) => bool = "existsSync";
 
 type writeFileSyncOptions;
 [@bs.obj] external writeFileSyncOptions:
@@ -374,7 +347,7 @@ external mkdtempWith: (string, mdktempOptions) => Js.Promise.t(unit) =
 [@bs.module "fs"] [@bs.scope "promises"]
 external open_:
   (
-    path,
+    string,
     [@bs.string] [
       | [@bs.as "r"] `Read
       | [@bs.as "r+"] `ReadWrite
@@ -395,7 +368,7 @@ external open_:
 [@bs.module "fs"] [@bs.scope "promises"]
 external openWithMode:
   (
-    path,
+    string,
     [@bs.string] [
       | [@bs.as "r"] `Read
       | [@bs.as "r+"] `ReadWrite
@@ -464,9 +437,9 @@ external createReadStreamOptions:
   "";
 
 [@bs.module "fs"]
-external createReadStream: path => ReadStream.t = "createReadStream";
+external createReadStream: string => ReadStream.t = "createReadStream";
 [@bs.module "fs"]
-external createReadStreamWith: (path, createReadStreamOptions) => ReadStream.t =
+external createReadStreamWith: (string, createReadStreamOptions) => ReadStream.t =
   "createReadStream";
 
 type createWriteStreamOptions;
@@ -485,7 +458,7 @@ external createWriteStreamOptions:
   createReadStreamOptions =
   "";
 [@bs.module "fs"]
-external createWriteStream: path => WriteStream.t = "createWriteStream";
+external createWriteStream: string => WriteStream.t = "createWriteStream";
 
 [@bs.module "fs"]
-external createWriteStreamWith: (path, createWriteStreamOptions) => WriteStream.t = "createWriteStream";
+external createWriteStreamWith: (string, createWriteStreamOptions) => WriteStream.t = "createWriteStream";
