@@ -389,8 +389,8 @@ external openWithMode:
 
 module WriteStream = {
   type kind = [ Stream.writable | `FileSystem ];
-  type subtype('data, 'a) = Stream.Writable.subtype('data, [> kind] as 'a);
-  type supertype('data, 'a) = Stream.Writable.subtype('data, [< kind] as 'a);
+  type subtype('data, 'a) = Stream.subtype('data, [> kind] as 'a);
+  type supertype('data, 'a) = Stream.subtype('data, [< kind] as 'a);
   type t = subtype(Buffer.t, [ kind ]);
   module Impl = {
     include Stream.Writable.Impl;
@@ -405,8 +405,8 @@ module WriteStream = {
 
 module ReadStream = {
   type kind = [ Stream.readable | `FileSystem ];
-  type subtype('data, 'a) = Stream.Readable.subtype('data, [> kind] as 'a);
-  type supertype('data, 'a) = Stream.Readable.subtype('data, [< kind] as 'a);
+  type subtype('data, 'a) = Stream.subtype('data, [> kind] as 'a);
+  type supertype('data, 'a) = Stream.subtype('data, [< kind] as 'a);
   type t = subtype(Buffer.t, [ kind ]);
   module Impl = {
     include Stream.Readable.Impl;
