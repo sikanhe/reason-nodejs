@@ -131,7 +131,7 @@ type readFileOptions;
  * Renames/moves the file located at `~oldPath` to `~newPath`. **Execution is
  * synchronous and blocking**.
  */
-[@bs.module "fs"] external renameSync: (~oldPath: string, ~newPath: string) => unit = "renameSync";
+[@bs.module "fs"] external renameSync: (~from: string, ~to_: string) => unit = "renameSync";
 [@bs.module "fs"] external ftruncateSync: (fd, int) => unit = "ftruncateSync";
 [@bs.module "fs"] external truncateSync: (string, int) => unit = "truncateSync";
 [@bs.module "fs"] external chownSync: (string, ~uid: int, ~gid: int) => unit = "chownSync";
