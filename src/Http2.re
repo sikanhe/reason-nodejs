@@ -18,7 +18,7 @@ type settingsObject;
 
 module Http2Stream = {
   type kind = [ Stream.duplex | `Http2Stream ];
-  type t = Stream.t(Buffer.t, [ kind ]);
+  type t = Stream.subtype(Buffer.t, kind);
   module Impl = {
     include Stream.Duplex.Impl;
 
@@ -28,7 +28,7 @@ module Http2Stream = {
 
 module ClientHttp2Stream = {
   type kind = [ Http2Stream.kind | `ClientHttp2Stream ];
-  type t = Stream.t(Buffer.t, [ kind ]);
+  type t = Stream.subtype(Buffer.t, kind);
   module Impl = {
     include Http2Stream.Impl;
 
@@ -38,7 +38,7 @@ module ClientHttp2Stream = {
 
 module ServerHttp2Stream = {
   type kind = [ Http2Stream.kind | `ServerHttp2Stream ];
-  type t = Stream.t(Buffer.t, [ kind ]);
+  type t = Stream.subtype(Buffer.t, kind);
   module Impl = {
     include Http2Stream.Impl;
 
@@ -49,7 +49,7 @@ module ServerHttp2Stream = {
 module Http2Session = {
   type t;
   [@bs.send] external onClose: (t, [@bs.as "close"] _, unit => unit) => unit = "on";
-  [@bs.send] external onConnect: (t, [@bs.as "connect"] _, (t, Stream.t(Buffer.t, [> Net.Socket.kind ])) => unit) => unit = "on";
+  [@bs.send] external onConnect: (t, [@bs.as "connect"] _, (t, Stream.subtype(Buffer.t, [> Net.Socket.kind ])) => unit) => unit = "on";
   [@bs.send] external onError: (t, [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
   [@bs.send] external onFrameError: (t, [@bs.as "frameError"] _, (~type_:int, ~errorCode:int, ~streamId:int) => unit) => unit = "on";
   [@bs.send] external onGoAway: (t, [@bs.as "goAway"] _, (~errorCode:int, ~lastStreamId:int, Buffer.t) => unit) => unit = "on";
@@ -60,7 +60,7 @@ module Http2Session = {
       t,
       [@bs.as "stream"] _,
       (
-        Stream.t(Buffer.t, [> Http2Stream.kind ]),
+        Stream.subtype(Buffer.t, [> Http2Stream.kind ]),
         Js.t({.. "status": string, "content-type": string}),
         int,
         array(Js.t({..}))
@@ -150,7 +150,7 @@ module ServerHttp2Session = {
 
 module Http2ServerRequest = {
   type kind = [ Stream.readable | `Http2ServerRequest ];
-  type t = Stream.t(Buffer.t, [ kind ]);
+  type t = Stream.subtype(Buffer.t, [ kind ]);
   module Impl = {
     include Stream.Readable.Impl;
     [@bs.send] external onAborted: (t, [@bs.as "aborted"] _, unit => unit) => unit = "on";
@@ -167,7 +167,7 @@ module Http2ServerRequest = {
     [@bs.get] external rawTrailers: t => array(string) = "rawTrailers";
     [@bs.get] external scheme: t => string = "scheme";
     [@bs.send] external setTimeout: (t, int, Http2Stream.t => unit) => Http2Stream.t = "setTimeout";
-    [@bs.get] external socket: t => Stream.t(Buffer.t, [ Stream.duplex | `Socket | `TLSSocket ]) = "socket";
+    [@bs.get] external socket: t => Stream.subtype(Buffer.t, [ Stream.duplex | `Socket | `TLSSocket ]) = "socket";
     [@bs.get] external stream: t => Http2Stream.t = "stream";
     [@bs.get] external trailers: t => Js.t({..}) = "trailers";
     [@bs.get] external url: t => string = "url";
@@ -176,43 +176,37 @@ module Http2ServerRequest = {
 };
 
 module Http2ServerResponse = {
-
   type kind = [ Stream.duplex | `Http2ServerResponse ];
-  type t = Stream.t(Buffer.t, [ kind ]);
-
+  type t = Stream.subtype(Buffer.t, [ kind ]);
   module Impl = {
-
     include Stream.Duplex.Impl;
-
-    [@bs.send] external onClose: (Stream.t(Buffer.t, [> kind ]), [@bs.as "close"] _, unit => unit) => unit = "on";
-    [@bs.send] external onFinish: (Stream.t(Buffer.t, [> kind ]), [@bs.as "finish"] _, unit => unit) => unit = "on";
-    [@bs.send] external setTrailers: (Stream.t(Buffer.t, [> kind ]), Js.t({..})) => unit = "setTrailers";
-    [@bs.send] external end_: Stream.t(Buffer.t, [> kind ]) => unit = "end";
-    [@bs.send] external endWith: ( Stream.t(Buffer.t, [> kind ]), ~data: Buffer.t=?, ~callback: unit => unit=?) => t = "end";
-    [@bs.send] external getHeader: (Stream.t(Buffer.t, [> kind ]), string) => string = "getHeader";
-    [@bs.send] external getHeaderNames: Stream.t(Buffer.t, [> kind ]) => array(string) = "getHeaderNames";
-    [@bs.send] external getHeaders: Stream.t(Buffer.t, [> kind ]) => Js.t({..}) = "getHeaders";
-    [@bs.send] external hasHeader: (Stream.t(Buffer.t, [> kind ]), string) => bool = "hasHeader";
-    [@bs.send] external headersSent: Stream.t(Buffer.t, [> kind ]) => bool = "headersSent";
-    [@bs.send] external removeHeader: (Stream.t(Buffer.t, [> kind ]), string) => unit = "removeHeader";
-    [@bs.send] external setHeader: (Stream.t(Buffer.t, [> kind ]), string) => unit = "setHeader";
-    [@bs.send] external setHeaderArray: (Stream.t(Buffer.t, [> kind ]), array(string)) => unit = "setHeader";
-    [@bs.send] external setTimeout: (Stream.t(Buffer.t, [> kind ]), int, Http2Stream.t => unit) => Http2Stream.t = "setTimeout";
-    [@bs.get] external socket: Stream.t(Buffer.t, [> kind ]) => Net.TcpSocket.t = "socket";
-    [@bs.get] external statusCode: Stream.t(Buffer.t, [> kind ]) => int = "statusCode";
-    [@bs.get] external statusMessage: Stream.t(Buffer.t, [> kind ]) => string = "statusMessage";
-    [@bs.get] external stream: Stream.t(Buffer.t, [> kind ]) => Http2Stream.t = "stream";
-    [@bs.get] external writableEnded: Stream.t(Buffer.t, [> kind ]) => bool = "writableEnded";
-    [@bs.send] external write: ( Stream.t(Buffer.t, [> kind ]), Buffer.t) => bool = "write";
-    [@bs.send] external writeWith: ( Stream.t(Buffer.t, [> kind ]), Buffer.t, ~callback: unit => unit=?) => bool = "write";
-    [@bs.send] external writeContinue: Stream.t(Buffer.t, [> kind ]) => unit = "writeContinue";
-    [@bs.send] external writeHead: (Stream.t(Buffer.t, [> kind ] as 'a), int) => Stream.t(Buffer.t, [> kind ] as 'a) = "writeHead";
-    [@bs.send] external writeHeadWith: (Stream.t(Buffer.t, [> kind ] as 'a), int, ~message: string=?, ~headers: Js.t({..})=?) => Stream.t(Buffer.t, [> kind ] as 'a) = "writeHead";
-    [@bs.send] external createPushResponse: (Stream.t(Buffer.t, [> kind ]), Js.t({..}), (Js.Exn.t, ServerHttp2Stream.t) => unit) => unit = "writeHead";
+    [@bs.send] external onClose: (t, [@bs.as "close"] _, unit => unit) => unit = "on";
+    [@bs.send] external onFinish: (t, [@bs.as "finish"] _, unit => unit) => unit = "on";
+    [@bs.send] external setTrailers: (t, Js.t({..})) => unit = "setTrailers";
+    [@bs.send] external end_: t => unit = "end";
+    [@bs.send] external endWith: ( t, ~data: Buffer.t=?, ~callback: unit => unit=?) => t = "end";
+    [@bs.send] external getHeader: (t, string) => string = "getHeader";
+    [@bs.send] external getHeaderNames: t => array(string) = "getHeaderNames";
+    [@bs.send] external getHeaders: t => Js.t({..}) = "getHeaders";
+    [@bs.send] external hasHeader: (t, string) => bool = "hasHeader";
+    [@bs.send] external headersSent: t => bool = "headersSent";
+    [@bs.send] external removeHeader: (t, string) => unit = "removeHeader";
+    [@bs.send] external setHeader: (t, string) => unit = "setHeader";
+    [@bs.send] external setHeaderArray: (t, array(string)) => unit = "setHeader";
+    [@bs.send] external setTimeout: (t, int, Http2Stream.t => unit) => Http2Stream.t = "setTimeout";
+    [@bs.get] external socket: t => Net.TcpSocket.t = "socket";
+    [@bs.get] external statusCode: t => int = "statusCode";
+    [@bs.get] external statusMessage: t => string = "statusMessage";
+    [@bs.get] external stream: t => Http2Stream.t = "stream";
+    [@bs.get] external writableEnded: t => bool = "writableEnded";
+    [@bs.send] external write: ( t, Buffer.t) => bool = "write";
+    [@bs.send] external writeWith: ( t, Buffer.t, ~callback: unit => unit=?) => bool = "write";
+    [@bs.send] external writeContinue: t => unit = "writeContinue";
+    [@bs.send] external writeHead: (t, int) => t = "writeHead";
+    [@bs.send] external writeHeadWith: (t, int, ~message: string=?, ~headers: Js.t({..})=?) => t = "writeHead";
+    [@bs.send] external createPushResponse: (t, Js.t({..}), (Js.Exn.t, ServerHttp2Stream.t) => unit) => unit = "writeHead";
 
   };
-
   include Impl;
-
 };
 

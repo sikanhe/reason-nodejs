@@ -55,7 +55,7 @@ module Hash = {
   type t = subtype(Buffer.t, kind);
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external copy: subtype('data, 'a) => Stream.t('data, 'a) = "copy"; 
+    [@bs.send] external copy: subtype('data, 'a) => Stream.subtype('data, 'a) = "copy"; 
     [@bs.send] external digest: subtype('data, 'a) => Buffer.t = "digest"; 
     [@bs.send] external update: (subtype('data, 'a), Buffer.t) => unit = "update";
   };
@@ -118,7 +118,7 @@ module Decipher = {
   type kind = [ Stream.transform | `Decipher ];
   type subtype('data, 'a) = Stream.Transform.subtype('data, [> kind ] as 'a);
   type supertype('data, 'a) = Stream.Transform.subtype('data, [< kind ] as 'a);
-  type t = Stream.t(Buffer.t, [ kind ]);
+  type t = subtype(Buffer.t, [ kind ]);
   module Impl = {
     [@bs.send] external final: (subtype('data, 'a), string) => Buffer.t = "final";
     [@bs.send] external setAAD: (subtype('data, 'a), Buffer.t) => t = "setAAD";

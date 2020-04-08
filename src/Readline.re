@@ -2,8 +2,8 @@ module Interface = {
   type t;
   type interfaceOptions;
   [@bs.obj] external interfaceOptions: (
-    ~input: Stream.t('data, [ Stream.readable ]),
-    ~output: Stream.t('data, [ Stream.writable ])=?,
+    ~input: Stream.subtype('data, [ Stream.readable ]),
+    ~output: Stream.subtype('data, [ Stream.writable ])=?,
     ~completer: (string, (string, (array(string), string)) => unit) => unit=?,
     ~terminal: bool=?,
     ~historySize: int=?,
@@ -44,16 +44,16 @@ module Interface = {
     ) => unit = "write";
   [@bs.get] [@bs.return nullable] external line: t => option(string) = "line";
   [@bs.get] [@bs.return nullable] external cursor: t => option(int) = "cursor";
-  [@bs.send] external clearLine: (t, Stream.t('data, [ Stream.writable ]), int) => bool = "clearLine";
-  [@bs.send] external clearScreenDown: (t, Stream.t('data, Stream.writable), unit => unit) => bool = "clearScreenDown";
+  [@bs.send] external clearLine: (t, Stream.subtype('data, [ Stream.writable ]), int) => bool = "clearLine";
+  [@bs.send] external clearScreenDown: (t, Stream.subtype('data, Stream.writable), unit => unit) => bool = "clearScreenDown";
   [@bs.send] external cursorTo: (
       t,
-      Stream.t('data, Stream.writable),
+      Stream.subtype('data, Stream.writable),
       int,
       Js.Undefined.t(int),
       Js.Undefined.t(unit => unit)
     ) => bool = "cursorTo";
-  [@bs.send] external moveCursor: (t, Stream.t('data, Stream.writable), int, int, Js.Undefined.t(unit => unit)) => bool = "moveCursor";
+  [@bs.send] external moveCursor: (t, Stream.subtype('data, Stream.writable), int, int, Js.Undefined.t(unit => unit)) => bool = "moveCursor";
   
 };
 
