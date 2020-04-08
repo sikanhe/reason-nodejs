@@ -27,6 +27,8 @@ module Events = {
   [@bs.send] external emitExit: (t, [@bs.as "exit"] _, int) => bool = "emit";
   [@bs.send] external emitClose: (t, [@bs.as "close"] _, int) => bool = "emit";
 
+  [@bs.send] external removeAllListeners: t => t = "removeAllListeners";
+
 };
 include Events;
 
