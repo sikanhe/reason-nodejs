@@ -29,7 +29,7 @@ type warning = {
   message: string,
   stack: string,
 };
-[@bs.module "process"] external onWarning: ([@bs.as "warning"] _, warning => unit) => unit = "on";
+[@bs.module "process"] external onWarning: ([@bs.as "warning"] _, (. warning) => unit) => unit = "on";
 [@bs.module "process"] external abort: unit => unit = "abort";
 [@bs.module "process"] external argv: array(string) = "argv";
 [@bs.module "process"] external argv0: string = "argv0";

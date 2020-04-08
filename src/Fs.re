@@ -397,8 +397,8 @@ module WriteStream = {
     [@bs.send] external bytesWritten: subtype('data, [> kind ]) => int = "bytesWritten";
     [@bs.send] external path: subtype('data, [> kind ]) => string = "path";
     [@bs.send] external pending: subtype('data, [> kind ]) => bool = "pending";
-    [@bs.send] external onOpen: (subtype('data, [> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
-    [@bs.send] external onReady: (subtype('data, [> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
+    [@bs.send] external onOpen: (subtype('data, [> kind ]) as 'stream', [@bs.as "open"] _, (. fd) => unit) => 'stream = "on";
+    [@bs.send] external onReady: (subtype('data, [> kind ]) as 'stream, [@bs.as "ready"] _, (. unit) => unit) => 'stream = "on";
   };
   include Impl;
 };
@@ -413,8 +413,8 @@ module ReadStream = {
     [@bs.send] external bytesRead: subtype('data, [> kind ]) => int = "bytesWritten";
     [@bs.send] external path: subtype('data, [> kind ]) => string = "path";
     [@bs.send] external pending: subtype('data, [> kind ]) => bool = "pending";
-    [@bs.send] external onOpen: (subtype('data, [> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
-    [@bs.send] external onReady: (subtype('data, [> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
+    [@bs.send] external onOpen: (subtype('data, [> kind ]) as 'stream, [@bs.as "open"] _, (. fd) => unit) =>'stream = "on";
+    [@bs.send] external onReady: (subtype('data, [> kind ]) as 'stream, [@bs.as "ready"] _, (. unit) => unit) => 'stream = "on";
   };
   include Impl;
 };

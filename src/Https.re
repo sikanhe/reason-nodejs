@@ -13,6 +13,6 @@ module HttpsServer = {
 
 module Agent = {
   type t;
-  [@bs.send] external onKeylog: (t, [@bs.as "keylog"]_, (Buffer.t, Tls.TlsSocket.t)) => unit = "on";
+  [@bs.send] external onKeylog: (t, [@bs.as "keylog"]_, (. Buffer.t, Tls.TlsSocket.t) => unit) => t = "on";
 };
 
