@@ -197,8 +197,12 @@ module TcpSocket = {
   type subtype('a) = Socket.Duplex.subtype([> kind ] as 'a);
   type supertype('a) = Socket.Duplex.subtype([< kind ] as 'a);
   type t = subtype(kind);
+  module Events = {
+    include Socket.Duplex.Events;
+  };
   module Impl = {
-    include Socket.Impl;
+    include Socket.Duplex.Impl;
+    include Events;
     [@bs.send] external connect: (
       subtype('a),
       ~port: int,
@@ -216,8 +220,11 @@ module IcpSocket = {
   type subtype('a) = Socket.Duplex.subtype([> kind ] as 'a);
   type supertype('a) = Socket.Duplex.subtype([< kind ] as 'a);
   type t = subtype(kind);
+  module Events = {
+    include Socket.Duplex.Events;
+  };
   module Impl = {
-    include Socket.Impl;
+    include Socket.Duplex.Impl;
     [@bs.send] external connect: (
       subtype('a),
       ~path: string,
