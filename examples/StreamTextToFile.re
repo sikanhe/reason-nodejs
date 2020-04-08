@@ -1,8 +1,9 @@
 
 let data = "Sample text to write to a file!" -> Buffer.fromString;
+let process = Process.process;
 
 let outputPath = Path.relative(
-  ~from= Process.cwd(),
+  ~from= Process.cwd(process),
   ~to_="example__output.txt"
 );
 
