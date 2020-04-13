@@ -10,6 +10,7 @@ module TlsSocket = {
   };
   module Impl = {
     include Net.TcpSocket.Impl;
+    include Events;
   };
   include Impl;
 };
@@ -25,6 +26,7 @@ module TlsServer = {
   };
   module Impl = {
     include Net.TcpServer.Impl;
+    include Events;
   };
   include Impl;
 };
