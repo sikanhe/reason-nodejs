@@ -11,11 +11,10 @@
  * We should revisit this with concrete tests to determine the best design.
  */
 
-
 module MessagePort = {
   type t('a);
-  [@bs.send] external onClose: (t('a), [@bs.as "close"] _, unit => unit) => unit = "on";
-  [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, 'a => unit) => unit = "on";
+  [@bs.send] external onClose: (t('a), [@bs.as "close"] _, (. unit) => unit) => t('a) = "on";
+  [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, (. 'a) => unit) => t('a) = "on";
   [@bs.send] external close: t('a) => unit = "close";
   [@bs.send] external postMessage: (t('a), 'a) => unit = "postMessage";
   [@bs.send] external ref: t('a) => unit = "ref";
@@ -26,8 +25,8 @@ module MessagePort = {
     type message;
   }) => {
     type nonrec t = t(T.message);
-    [@bs.send] external onClose: (t, [@bs.as "close"] _, unit => unit) => unit = "on";
-    [@bs.send] external onMessage: (t, [@bs.as "message"] _, T.message => unit) => unit = "on";
+    [@bs.send] external onClose: (t, [@bs.as "close"] _, (. unit) => unit) => t = "on";
+    [@bs.send] external onMessage: (t, [@bs.as "message"] _, (. T.message) => unit) => t = "on";
     [@bs.send] external close: t => unit = "close";
     [@bs.send] external postMessage: (t, T.message) => unit = "postMessage";
     [@bs.send] external ref: t => unit = "ref";
@@ -80,16 +79,16 @@ module Worker = {
   ) => makeOptions('a) = "";
 
   [@bs.module "worker_threads"] [@bs.new] external make: (~file: string, ~options: makeOptions('a)=?, unit) => t('a) = "Worker";
-  [@bs.send] external onError: (t('a), [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
-  [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, 'a => unit) => unit = "on";
-  [@bs.send] external onExit: (t('a), [@bs.as "exit"] _, int => unit) => unit = "on";
-  [@bs.send] external onOnline: (t('a), [@bs.as "online"] _, unit => unit) => unit = "on";
+  [@bs.send] external onError: (t('a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('a) = "on";
+  [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, (. 'a) => unit) => t('a) = "on";
+  [@bs.send] external onExit: (t('a), [@bs.as "exit"] _, (. int) => unit) => t('a) = "on";
+  [@bs.send] external onOnline: (t('a), [@bs.as "online"] _, (. unit) => unit) => t('a) = "on";
   [@bs.send] external postMessage: (t('a), 'a) => unit = "postMessage";
   [@bs.send] external ref: t('a) => unit = "ref";
   [@bs.send] external resourceLimits: t('a) => workerResourceLimits = "workerResourceLimits";
-  [@bs.get] external stderr: t('a) => Stream.t('a, Stream.readable) = "stderr";
-  [@bs.get] external stdin: t('a) => Stream.t('a, Stream.writable) = "stdin";
-  [@bs.get] external stdout: t('a) => Stream.t('a, Stream.readable) = "stdout";
+  [@bs.get] external stderr: t('a) => Stream.subtype('a, Stream.readable) = "stderr";
+  [@bs.get] external stdin: t('a) => Stream.subtype('a, Stream.writable) = "stdin";
+  [@bs.get] external stdout: t('a) => Stream.subtype('a, Stream.readable) = "stdout";
   [@bs.send] external terminate: t('a) => Js.Promise.t(int) = "terminate";
   [@bs.get] external threadId: t('a) => int = "threadId";
   [@bs.send] external unref: t('a) => unit = "unref";
@@ -115,16 +114,16 @@ module Worker = {
     ) => makeOptions = "";
 
     [@bs.module "worker_threads"] [@bs.new] external make: (~file: string, ~options: makeOptions=?, unit) => t = "Worker";
-    [@bs.send] external onError: (t, [@bs.as "error"] _, Js.Exn.t => unit) => unit = "on";
-    [@bs.send] external onMessage: (t, [@bs.as "message"] _, T.message => unit) => unit = "on";
-    [@bs.send] external onExit: (t, [@bs.as "exit"] _, int => unit) => unit = "on";
-    [@bs.send] external onOnline: (t, [@bs.as "online"] _, unit => unit) => unit = "on";
+    [@bs.send] external onError: (t, [@bs.as "error"] _, (. Js.Exn.t) => unit) => t = "on";
+    [@bs.send] external onMessage: (t, [@bs.as "message"] _, (. T.message) => unit) => t = "on";
+    [@bs.send] external onExit: (t, [@bs.as "exit"] _, (. int) => unit) => t = "on";
+    [@bs.send] external onOnline: (t, [@bs.as "online"] _, (. unit) => unit) => t = "on";
     [@bs.send] external postMessage: (t, T.message) => unit = "postMessage";
     [@bs.send] external ref: t => unit = "ref";
     [@bs.send] external resourceLimits: t => workerResourceLimits = "workerResourceLimits";
-    [@bs.get] external stderr: t => Stream.t('a, Stream.readable) = "stderr";
-    [@bs.get] external stdin: t => Stream.t('a, Stream.writable) = "stdin";
-    [@bs.get] external stdout: t => Stream.t('a, Stream.readable) = "stdout";
+    [@bs.get] external stderr: t => Stream.subtype('a, Stream.readable) = "stderr";
+    [@bs.get] external stdin: t => Stream.subtype('a, Stream.writable) = "stdin";
+    [@bs.get] external stdout: t => Stream.subtype('a, Stream.readable) = "stdout";
     [@bs.send] external terminate: t => Js.Promise.t(int) = "terminate";
     [@bs.get] external threadId: t => int = "threadId";
     [@bs.send] external unref: t => unit = "unref";

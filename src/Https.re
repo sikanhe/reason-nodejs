@@ -1,21 +1,24 @@
 type https = [ `Https ];
 
 module HttpsServer = {
-  type kind = [ Tls.TlsSocket.kind | https ];
-  type subtype('a) = Net.Socket.subtype([> kind ] as 'a);
-  type supertype('a) = Net.Socket.subtype([< kind ] as 'a);
+  type kind = [ Tls.TlsServer.kind | https ];
+  type subtype('a) = Net.Server.subtype([> kind ] as 'a);
+  type supertype('a) = Net.Server.subtype([< kind ] as 'a);
   type t = subtype(kind);
-
-  module Impl = (T: { type t; }) => {
-    include Tls.TlsServer.Impl(T);
+  module Events = {
+    include Tls.TlsServer.Events;
   };
-
-  include Impl({ type nonrec t = t; });
-
+  module Impl = {
+    include Tls.TlsServer.Impl;
+    include Events;
+  };
+  include Impl;
 };
 
 module Agent = {
   type t;
-  [@bs.send] external onKeylog: (t, [@bs.as "keylog"]_, (Buffer.t, Tls.TlsSocket.t)) => unit = "on";
+  [@bs.send] external onKeylog: (t, [@bs.as "keylog"]_, (. Buffer.t, Tls.TlsSocket.t) => unit) => t = "on";
+  [@bs.send] external onKeylogOnce: (t, [@bs.as "keylog"]_, (. Buffer.t, Tls.TlsSocket.t) => unit) => t = "once";
+  [@bs.send] external offKeylog: (t, [@bs.as "keylog"]_, (. Buffer.t, Tls.TlsSocket.t) => unit) => t = "off";
 };
 

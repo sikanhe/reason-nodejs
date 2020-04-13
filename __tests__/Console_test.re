@@ -1,14 +1,15 @@
 open Jest;
+let process = Process.process;
 
 describe("Console", () => {
 
   let c1 = Console.make(
     Console.consoleOptions(
-    ~stderr=Process.stderr,
+    ~stderr=Process.stderr(process),
     ~ignoreErrors=false,
     ~colorMode=true,
     ~inspectOptions=Util.inspectOptions(),
-    ~stdout=Process.stdout,
+    ~stdout=Process.stdout(process),
   ));
 
   let c2 = Console.make2({
@@ -16,7 +17,7 @@ describe("Console", () => {
     "ignoreErrors": Some(false),
     "colorMode": Some(true),
     "inspectOptions": Some(Util.inspectOptions()),
-    "stdout": Process.stdout,
+    "stdout": Process.stdout(process),
   });
 
   c1->Console.logMany([|"a", "b"|])

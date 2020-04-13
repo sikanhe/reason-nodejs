@@ -6,8 +6,8 @@ type consoleOptions;
 [@bs.obj]
 external consoleOptions:
   (
-    ~stdout: Stream.t('data, [> Stream.writable]),
-    ~stderr: Stream.t('data, [> Stream.writable])=?,
+    ~stdout: Stream.Writable.subtype('data, 'a),
+    ~stderr: Stream.Writable.subtype('data, 'a)=?,
     ~ignoreErrors: bool=?,
     ~colorMode: bool=?,
     ~inspectOptions: Util.inspectOptions=?,
@@ -20,7 +20,7 @@ external consoleOptions:
 external make2:
   {
     ..
-    "stdout": Stream.t('data, [> Stream.writable]),
+    "stdout": Stream.Writable.subtype('data, 'a),
   } =>
   t =
   "Console";

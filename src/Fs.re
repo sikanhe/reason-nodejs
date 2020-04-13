@@ -1,168 +1,25 @@
-type fd = pri int;
-type path = string;
-
-module Constants = {
-  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
-  external f_ok: int = "F_OK";
-  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
-  external w_ok: int = "W_OK";
-  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
-  external r_ok: int = "R_OK";
-  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
-  external x_ok: int = "X_OK";
+module Dirent = {
+  type t;
+  [@bs.send] external isBlockDevice: t => bool = "isBlockDevice";
+  [@bs.send] external isCharacterDevice: t => bool = "isCharacterDevice";
+  [@bs.send] external isDirectory: t => bool = "isDirectory";
+  [@bs.send] external isFIFO: t => bool = "isFIFO";
+  [@bs.send] external isFile: t => bool = "isFile";
+  [@bs.send] external isSocket: t => bool = "isSocket";
+  [@bs.send] external isSymbolicLink: t => bool = "isSymbolicLink";
+  [@bs.get] external name: t => string = "name";
 };
 
-[@bs.obj]
-external writeFileOption:
-  (
-    ~encoding: [@bs.string] [
-                 | `hex
-                 | `utf8
-                 | `ascii
-                 | `latin1
-                 | `base64
-                 | `ucs2
-                 | `base64
-                 | `binary
-                 | `utf16le
-               ]
-                 =?,
-    ~mode: int=?,
-    ~flag: string=?,
-    unit
-  ) =>
-  _ =
-  "";
-
-[@bs.obj]
-external mkdirOption: (~recursive: bool=?, ~mode: int=?, unit) => _ = "";
-
-type appendFileOptions;
-[@bs.obj]
-external appendFileOptions:
-  (
-    ~encoding: [@bs.string] [
-                 | `hex
-                 | `utf8
-                 | `ascii
-                 | `latin1
-                 | `base64
-                 | `ucs2
-                 | `base64
-                 | `binary
-                 | `utf16le
-               ],
-    ~mode: int=?,
-    ~flag: [@bs.string] [
-             | [@bs.as "r"] `Read
-             | [@bs.as "r+"] `ReadWrite
-             | [@bs.as "rs+"] `ReadWriteSync
-             | [@bs.as "w"] `Write
-             | [@bs.as "wx"] `WriteFailIfExists
-             | [@bs.as "w+"] `WriteRead
-             | [@bs.as "wx+"] `WriteReadFailIfExists
-             | [@bs.as "a"] `Append
-             | [@bs.as "ax"] `AppendFailIfExists
-             | [@bs.as "a+"] `AppendRead
-             | [@bs.as "ax+"] `AppendReadFailIfExists
-           ]
-             =?,
-    unit
-  ) =>
-  appendFileOptions =
-  "";
-
-type readFileOptions;
-[@bs.obj]
-external readFileOptions:
-  (
-    ~flag: [@bs.string] [
-             | [@bs.as "r"] `Read
-             | [@bs.as "r+"] `ReadWrite
-             | [@bs.as "rs+"] `ReadWriteSync
-             | [@bs.as "w"] `Write
-             | [@bs.as "wx"] `WriteFailIfExists
-             | [@bs.as "w+"] `WriteRead
-             | [@bs.as "wx+"] `WriteReadFailIfExists
-             | [@bs.as "a"] `Append
-             | [@bs.as "ax"] `AppendFailIfExists
-             | [@bs.as "a+"] `AppendRead
-             | [@bs.as "ax+"] `AppendReadFailIfExists
-           ]
-             =?,
-    unit
-  ) =>
-  readFileOptions =
-  "";
-
-type readFileStringOptions;
-[@bs.obj]
-external readFileStringOptions:
-  (
-    ~encoding: [@bs.string] [
-                 | `hex
-                 | `utf8
-                 | `ascii
-                 | `latin1
-                 | `base64
-                 | `ucs2
-                 | `base64
-                 | `binary
-                 | `utf16le
-               ],
-    ~flag: [@bs.string] [
-             | [@bs.as "r"] `Read
-             | [@bs.as "r+"] `ReadWrite
-             | [@bs.as "rs+"] `ReadWriteSync
-             | [@bs.as "w"] `Write
-             | [@bs.as "wx"] `WriteFailIfExists
-             | [@bs.as "w+"] `WriteRead
-             | [@bs.as "wx+"] `WriteReadFailIfExists
-             | [@bs.as "a"] `Append
-             | [@bs.as "ax"] `AppendFailIfExists
-             | [@bs.as "a+"] `AppendRead
-             | [@bs.as "ax+"] `AppendReadFailIfExists
-           ]
-             =?,
-    unit
-  ) =>
-  readFileStringOptions =
-  "";
-
-type writeFileUint8ArrayOptions;
-[@bs.obj]
-external writeFileUint8ArrayOptions:
-  (
-    ~encoding: [@bs.string] [
-                 | `hex
-                 | `utf8
-                 | `ascii
-                 | `latin1
-                 | `base64
-                 | `ucs2
-                 | `base64
-                 | `binary
-                 | `utf16le
-               ],
-    ~mode: int=?,
-    ~flag: [@bs.string] [
-             | [@bs.as "r"] `Read
-             | [@bs.as "r+"] `ReadWrite
-             | [@bs.as "rs+"] `ReadWriteSync
-             | [@bs.as "w"] `Write
-             | [@bs.as "wx"] `WriteFailIfExists
-             | [@bs.as "w+"] `WriteRead
-             | [@bs.as "wx+"] `WriteReadFailIfExists
-             | [@bs.as "a"] `Append
-             | [@bs.as "ax"] `AppendFailIfExists
-             | [@bs.as "a+"] `AppendRead
-             | [@bs.as "ax+"] `AppendReadFailIfExists
-           ]
-             =?,
-    unit
-  ) =>
-  writeFileUint8ArrayOptions =
-  "";
+module Dir = {
+  type t;
+  [@bs.send] external close: t => Js.Promise.t(unit) = "close";
+  [@bs.send] external closeWithCallback: (t, Js.nullable(Js.Exn.t) => unit) => unit = "close";
+  [@bs.send] external closeSync: t => unit = "closeSync";
+  [@bs.get] external path: t => string = "path";
+  [@bs.send] external read: t => Js.Promise.t(Js.nullable(Dirent.t)) = "read";
+  [@bs.send] external readWithCallback: (t, (Js.Exn.t, Js.nullable(Dirent.t)) => unit) => unit = "read";
+  [@bs.send] external readSync: t => Js.nullable(Dirent.t) = "readSync";
+};
 
 module Stats = {
   type t = {
@@ -202,6 +59,66 @@ module Stats = {
   [@bs.send] external isSocket: t => bool = "isSocket";
 };
 
+module Constants = {
+  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
+  external f_ok: int = "F_OK";
+  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
+  external w_ok: int = "W_OK";
+  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
+  external r_ok: int = "R_OK";
+  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
+  external x_ok: int = "X_OK";
+};
+
+type fd = pri int;
+
+type writeFileOptions;
+[@bs.obj] external writeFileOptions: (~mode: int=?, ~flag: string=?, unit) => writeFileOptions = "";
+
+type appendFileOptions;
+[@bs.obj] external appendFileOptions: (
+    ~mode: int=?,
+    ~flag: [@bs.string] [
+             | [@bs.as "r"] `Read
+             | [@bs.as "r+"] `ReadWrite
+             | [@bs.as "rs+"] `ReadWriteSync
+             | [@bs.as "w"] `Write
+             | [@bs.as "wx"] `WriteFailIfExists
+             | [@bs.as "w+"] `WriteRead
+             | [@bs.as "wx+"] `WriteReadFailIfExists
+             | [@bs.as "a"] `Append
+             | [@bs.as "ax"] `AppendFailIfExists
+             | [@bs.as "a+"] `AppendRead
+             | [@bs.as "ax+"] `AppendReadFailIfExists
+           ]
+             =?,
+    unit
+  ) =>
+  appendFileOptions =
+  "";
+
+type readFileOptions;
+[@bs.obj] external readFileOptions:
+  (
+    ~flag: [@bs.string] [
+             | [@bs.as "r"] `Read
+             | [@bs.as "r+"] `ReadWrite
+             | [@bs.as "rs+"] `ReadWriteSync
+             | [@bs.as "w"] `Write
+             | [@bs.as "wx"] `WriteFailIfExists
+             | [@bs.as "w+"] `WriteRead
+             | [@bs.as "wx+"] `WriteReadFailIfExists
+             | [@bs.as "a"] `Append
+             | [@bs.as "ax"] `AppendFailIfExists
+             | [@bs.as "a+"] `AppendRead
+             | [@bs.as "ax+"] `AppendReadFailIfExists
+           ]
+             =?,
+    unit
+  ) =>
+  readFileOptions =
+  "";
+
 /**
  * `readdirSync(path)`
  * Reads the contents of a directory, returning an array of strings representing
@@ -214,7 +131,7 @@ module Stats = {
  * Renames/moves the file located at `~oldPath` to `~newPath`. **Execution is
  * synchronous and blocking**.
  */
-[@bs.module "fs"] external renameSync: (~oldPath: string, ~newPath: string) => unit = "renameSync";
+[@bs.module "fs"] external renameSync: (~from: string, ~to_: string) => unit = "renameSync";
 [@bs.module "fs"] external ftruncateSync: (fd, int) => unit = "ftruncateSync";
 [@bs.module "fs"] external truncateSync: (string, int) => unit = "truncateSync";
 [@bs.module "fs"] external chownSync: (string, ~uid: int, ~gid: int) => unit = "chownSync";
@@ -229,88 +146,31 @@ module Stats = {
  */
 [@bs.module "fs"] external rmdirSync: string => unit = "rmdirSync";
 
-[@bs.module "fs"]
-external openSync:
-  (
-    path,
-    [@bs.string] [
-      | [@bs.as "r"] `Read
-      | [@bs.as "r+"] `ReadWrite
-      | [@bs.as "rs+"] `ReadWriteSync
-      | [@bs.as "w"] `Write
-      | [@bs.as "wx"] `WriteFailIfExists
-      | [@bs.as "w+"] `WriteRead
-      | [@bs.as "wx+"] `WriteReadFailIfExists
-      | [@bs.as "a"] `Append
-      | [@bs.as "ax"] `AppendFailIfExists
-      | [@bs.as "a+"] `AppendRead
-      | [@bs.as "ax+"] `AppendReadFailIfExists
-    ]
-  ) =>
-  unit =
-  "openSync";
-
-[@bs.module "fs"] [@bs.val]
-external openSyncMode:
-  (
-    path,
-    [@bs.string] [
-      | [@bs.as "r"] `Read
-      | [@bs.as "r+"] `ReadWrite
-      | [@bs.as "rs+"] `ReadWriteSync
-      | [@bs.as "w"] `Write
-      | [@bs.as "wx"] `WriteFailIfExists
-      | [@bs.as "w+"] `WriteRead
-      | [@bs.as "wx+"] `WriteReadFailIfExists
-      | [@bs.as "a"] `Append
-      | [@bs.as "ax"] `AppendFailIfExists
-      | [@bs.as "a+"] `AppendRead
-      | [@bs.as "ax+"] `AppendReadFailIfExists
-    ],
-    ~mode: int,
-    unit
-  ) =>
-  fd =
-  "openSync";
-
-[@bs.val] [@bs.module "fs"] external readFileSync: string => string = "readFileSync";
-
-[@bs.val] [@bs.module "fs"]
-external readFileSyncWithEncoding:
-  (
+[@bs.module "fs"] external openSync: string => fd = "openSync";
+[@bs.module "fs"] external openSyncWith: (
     string,
-    [@bs.string] [
-      | `hex
-      | `utf8
-      | `ascii
-      | `latin1
-      | `base64
-      | `ucs2
-      | `base64
-      | `binary
-      | `utf16le
-    ]
-  ) =>
-  string =
-  "readFileSync";
+    ~flag: [@bs.string] [
+      | [@bs.as "r"] `Read
+      | [@bs.as "r+"] `ReadWrite
+      | [@bs.as "rs+"] `ReadWriteSync
+      | [@bs.as "w"] `Write
+      | [@bs.as "wx"] `WriteFailIfExists
+      | [@bs.as "w+"] `WriteRead
+      | [@bs.as "wx+"] `WriteReadFailIfExists
+      | [@bs.as "a"] `Append
+      | [@bs.as "ax"] `AppendFailIfExists
+      | [@bs.as "a+"] `AppendRead
+      | [@bs.as "ax+"] `AppendReadFailIfExists
+    ]=?,
+    ~mode: int=?
+  ) => fd = "openSync";
 
-[@bs.val] [@bs.module "fs"] external existsSync: string => bool = "existsSync";
+[@bs.module "fs"] external readFileSync: (string, ~options: readFileOptions=?, unit) => Buffer.t = "readFileSync";
+[@bs.module "fs"] external existsSync: (string) => bool = "existsSync";
 
-/** create options for the `writeFileSyncOptions` */
 type writeFileSyncOptions;
 [@bs.obj] external writeFileSyncOptions:
   (
-    ~encoding: [@bs.string] [
-                 | `hex
-                 | `utf8
-                 | `ascii
-                 | `latin1
-                 | `base64
-                 | `ucs2
-                 | `base64
-                 | `binary
-                 | `utf16le
-               ],
     ~mode: int=?,
     ~flag: [@bs.string] [
              | [@bs.as "r"] `Read
@@ -332,7 +192,6 @@ type writeFileSyncOptions;
   "";
 
 [@bs.val] [@bs.module "fs"] external writeFileSync: (string, Buffer.t) => unit = "writeFileSync";
-
 [@bs.val] [@bs.module "fs"] external writeFileSyncWith: (string, Buffer.t, writeFileSyncOptions) => unit = "writeFileSync";
 
 module Handle = {
@@ -355,88 +214,20 @@ module Handle = {
   [@bs.send] external readFile: t => Js.Promise.t(Buffer.t) = "read";
   [@bs.send] external readFileWith: (t, readFileOptions) => Js.Promise.t(Buffer.t) = "read";
 
-  type readFileStringOptions;
-  [@bs.obj] external readFileStringOptions:
-    (
-      ~encoding: [@bs.string] [
-                   | `hex
-                   | `utf8
-                   | `ascii
-                   | `latin1
-                   | `base64
-                   | `ucs2
-                   | `base64
-                   | `binary
-                   | `utf16le
-                 ],
-      ~flag: [@bs.string] [
-               | [@bs.as "r"] `Read
-               | [@bs.as "r+"] `ReadWrite
-               | [@bs.as "rs+"] `ReadWriteSync
-               | [@bs.as "w"] `Write
-               | [@bs.as "wx"] `WriteFailIfExists
-               | [@bs.as "w+"] `WriteRead
-               | [@bs.as "wx+"] `WriteReadFailIfExists
-               | [@bs.as "a"] `Append
-               | [@bs.as "ax"] `AppendFailIfExists
-               | [@bs.as "a+"] `AppendRead
-               | [@bs.as "ax+"] `AppendReadFailIfExists
-             ]
-               =?,
-      unit
-    ) =>
-    readFileStringOptions =
-    "";
-
-  [@bs.send] external readFileString: (t, readFileStringOptions) => Js.Promise.t(string) = "read";
   [@bs.send] external stat: t => Js.Promise.t(Stats.t) = "stat";
   [@bs.send] external sync: t => Js.Promise.t(unit) = "sync";
   [@bs.send] external truncate: (t, ~length: int=?, unit) => Js.Promise.t(unit) = "truncate";
 
   type writeInfo = {bytesWritten: int};
 
-  [@bs.send] external writeBuffer: (t, Buffer.t) => Js.Promise.t(writeInfo) = "write";
-  [@bs.send] external writeBufferOffset: (t, Buffer.t, ~offset: int) => Js.Promise.t(writeInfo) = "write";
-  [@bs.send] external writeBufferRange: (t, Buffer.t, ~offset: int, ~length: int, ~position: int) => Js.Promise.t(writeInfo) = "write";
+  [@bs.send] external write: (t, Buffer.t) => Js.Promise.t(writeInfo) = "write";
+  [@bs.send] external writeOffset: (t, Buffer.t, ~offset: int) => Js.Promise.t(writeInfo) = "write";
+  [@bs.send] external writeRange: (t, Buffer.t, ~offset: int, ~length: int, ~position: int) => Js.Promise.t(writeInfo) = "write";
 
-  [@bs.send] external writeString: (t, string) => Js.Promise.t(writeInfo) = "write";
-  [@bs.send] external writeStringOffset: (t, string, ~offset: int) => Js.Promise.t(writeInfo) = "write";
-  [@bs.send] external writeStringRange: (t, string, ~offset: int, ~length: int, ~position: int) => Js.Promise.t(writeInfo) = "write";
-  [@bs.send] external writeStringPosition: (t, string, ~position: int) => Js.Promise.t(writeInfo) = "write";
-  [@bs.send] external writeStringPositionWithEncoding:
-    (
-      t,
-      string,
-      ~position: int,
-      ~encoding: [@bs.string] [
-                   | `hex
-                   | `utf8
-                   | `ascii
-                   | `latin1
-                   | `base64
-                   | `ucs2
-                   | `base64
-                   | `binary
-                   | `utf16le
-                 ]
-    ) =>
-    Js.Promise.t(writeInfo) =
-    "write";
 
-  type writeFileStringOptions;
-  [@bs.obj] external writeFileStringOptions:
+  type writeFileOptions;
+  [@bs.obj] external writeFileOptions:
     (
-      ~encoding: [@bs.string] [
-                   | `hex
-                   | `utf8
-                   | `ascii
-                   | `latin1
-                   | `base64
-                   | `ucs2
-                   | `base64
-                   | `binary
-                   | `utf16le
-                 ],
       ~mode: int=?,
       ~flag: [@bs.string] [
                | [@bs.as "r"] `Read
@@ -454,56 +245,12 @@ module Handle = {
                =?,
       unit
     ) =>
-    writeFileStringOptions =
+    writeFileOptions =
     "";
 
-  [@bs.send] external writeFileString: (t, string) => Js.Promise.t(unit) = "writeFile";
-  [@bs.send] external writeFileStringWith: (t, string, writeFileStringOptions) => Js.Promise.t(unit) = "writeFile";
+  [@bs.send] external writeFile: (t, Buffer.t) => Js.Promise.t(unit) = "writeFile";
+  [@bs.send] external writeFileWith: (t, Buffer.t, writeFileOptions) => Js.Promise.t(unit) = "writeFile";
 
-  type writeFileBufferOptions;
-  [@bs.obj] external writeFileBufferOptions:
-    (
-      ~encoding: [@bs.string] [
-                   | `hex
-                   | `utf8
-                   | `ascii
-                   | `latin1
-                   | `base64
-                   | `ucs2
-                   | `base64
-                   | `binary
-                   | `utf16le
-                 ],
-      ~mode: int=?,
-      ~flag: [@bs.string] [
-               | [@bs.as "r"] `Read
-               | [@bs.as "r+"] `ReadWrite
-               | [@bs.as "rs+"] `ReadWriteSync
-               | [@bs.as "w"] `Write
-               | [@bs.as "wx"] `WriteFailIfExists
-               | [@bs.as "w+"] `WriteRead
-               | [@bs.as "wx+"] `WriteReadFailIfExists
-               | [@bs.as "a"] `Append
-               | [@bs.as "ax"] `AppendFailIfExists
-               | [@bs.as "a+"] `AppendRead
-               | [@bs.as "ax+"] `AppendReadFailIfExists
-             ]
-               =?,
-      unit
-    ) =>
-    writeFileBufferOptions =
-    "";
-
-  [@bs.send] external writeFileBuffer: (t, Buffer.t) => Js.Promise.t(unit) = "writeFile";
-
-  [@bs.send] external writeFileBufferWith: (t, Buffer.t, writeFileBufferOptions) => Js.Promise.t(unit) = "writeFile";
-
-  [@bs.send] external writeFileUint8Array: (t, Js.TypedArray2.Uint8Array.t) => Js.Promise.t(unit) = "writeFile";
-
-  [@bs.send] external writeFileUint8ArrayWith:
-    (t, Js.TypedArray2.Uint8Array.t, writeFileUint8ArrayOptions) =>
-    Js.Promise.t(unit) =
-    "writeFile";
 };
 
 [@bs.module "fs"] [@bs.scope "promises"] external access: string => Js.Promise.t(unit) = "access";
@@ -519,17 +266,6 @@ module Handle = {
 type appendFileBufferOptions;
 [@bs.obj] external appendFileBufferOptions:
   (
-    ~encoding: [@bs.string] [
-                 | `hex
-                 | `utf8
-                 | `ascii
-                 | `latin1
-                 | `base64
-                 | `ucs2
-                 | `base64
-                 | `binary
-                 | `utf16le
-               ],
     ~mode: int=?,
     ~flag: [@bs.string] [
              | [@bs.as "r"] `Read
@@ -589,8 +325,7 @@ external lstatBigInt: (string, bool) => Js.Promise.t(Stats.t) = "lstat";
 
 type mkdirOptions;
 [@bs.obj]
-external mkdirOptions: (~recursive: bool=?, ~mode: int=?, unit) => mkdirOptions =
-  "";
+external mkdirOptions: (~recursive: bool=?, ~mode: int=?, unit) => mkdirOptions = "";
 
 [@bs.module "fs"] [@bs.scope "promises"]
 external mkdir: (string, mkdirOptions) => Js.Promise.t(unit) = "mkdir";
@@ -600,23 +335,7 @@ external mkdirWith: (string, mkdirOptions) => Js.Promise.t(unit) = "mkdir";
 
 type mdktempOptions;
 [@bs.obj]
-external mdktempOptions:
-  (
-    ~encoding: [@bs.string] [
-                 | `hex
-                 | `utf8
-                 | `ascii
-                 | `latin1
-                 | `base64
-                 | `ucs2
-                 | `base64
-                 | `binary
-                 | `utf16le
-               ],
-    unit
-  ) =>
-  mdktempOptions =
-  "";
+external mdktempOptions: (unit) => mdktempOptions = "";
 
 [@bs.module "fs"] [@bs.scope "promises"]
 external mkdtemp: (string, mdktempOptions) => Js.Promise.t(unit) = "mkddtemp";
@@ -628,7 +347,7 @@ external mkdtempWith: (string, mdktempOptions) => Js.Promise.t(unit) =
 [@bs.module "fs"] [@bs.scope "promises"]
 external open_:
   (
-    path,
+    string,
     [@bs.string] [
       | [@bs.as "r"] `Read
       | [@bs.as "r+"] `ReadWrite
@@ -649,7 +368,7 @@ external open_:
 [@bs.module "fs"] [@bs.scope "promises"]
 external openWithMode:
   (
-    path,
+    string,
     [@bs.string] [
       | [@bs.as "r"] `Read
       | [@bs.as "r+"] `ReadWrite
@@ -670,28 +389,32 @@ external openWithMode:
 
 module WriteStream = {
   type kind = [ Stream.writable | `FileSystem ];
-  type t = Stream.t(Buffer.t, [ kind ]);
+  type subtype('data, 'a) = Stream.subtype('data, [> kind] as 'a);
+  type supertype('data, 'a) = Stream.subtype('data, [< kind] as 'a);
+  type t = subtype(Buffer.t, [ kind ]);
   module Impl = {
     include Stream.Writable.Impl;
-    [@bs.send] external bytesWritten: Stream.t('data, [> kind ]) => int = "bytesWritten";
-    [@bs.send] external path: Stream.t('data, [> kind ]) => string = "path";
-    [@bs.send] external pending: Stream.t('data, [> kind ]) => bool = "pending";
-    [@bs.send] external onOpen: (Stream.t('data, [> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
-    [@bs.send] external onReady: (Stream.t('data, [> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
+    [@bs.send] external bytesWritten: subtype('data, [> kind ]) => int = "bytesWritten";
+    [@bs.send] external path: subtype('data, [> kind ]) => string = "path";
+    [@bs.send] external pending: subtype('data, [> kind ]) => bool = "pending";
+    [@bs.send] external onOpen: (subtype('data, [> kind ]) as 'stream', [@bs.as "open"] _, (. fd) => unit) => 'stream = "on";
+    [@bs.send] external onReady: (subtype('data, [> kind ]) as 'stream, [@bs.as "ready"] _, (. unit) => unit) => 'stream = "on";
   };
   include Impl;
 };
 
 module ReadStream = {
   type kind = [ Stream.readable | `FileSystem ];
-  type t = Stream.t(Buffer.t, [ kind ]);
+  type subtype('data, 'a) = Stream.subtype('data, [> kind] as 'a);
+  type supertype('data, 'a) = Stream.subtype('data, [< kind] as 'a);
+  type t = subtype(Buffer.t, [ kind ]);
   module Impl = {
     include Stream.Readable.Impl;
-    [@bs.send] external bytesRead: Stream.t('data, [> kind ]) => int = "bytesWritten";
-    [@bs.send] external path: Stream.t('data, [> kind ]) => string = "path";
-    [@bs.send] external pending: Stream.t('data, [> kind ]) => bool = "pending";
-    [@bs.send] external onOpen: (Stream.t('data, [> kind ]), [@bs.as "open"] _, fd => unit) => unit = "on";
-    [@bs.send] external onReady: (Stream.t('data, [> kind ]), [@bs.as "ready"] _, unit => unit) => unit = "on";
+    [@bs.send] external bytesRead: subtype('data, [> kind ]) => int = "bytesWritten";
+    [@bs.send] external path: subtype('data, [> kind ]) => string = "path";
+    [@bs.send] external pending: subtype('data, [> kind ]) => bool = "pending";
+    [@bs.send] external onOpen: (subtype('data, [> kind ]) as 'stream, [@bs.as "open"] _, (. fd) => unit) =>'stream = "on";
+    [@bs.send] external onReady: (subtype('data, [> kind ]) as 'stream, [@bs.as "ready"] _, (. unit) => unit) => 'stream = "on";
   };
   include Impl;
 };
@@ -701,7 +424,6 @@ type createReadStreamOptions;
 external createReadStreamOptions:
   (
     ~flags: string=?,
-    ~encoding: string=?,
     ~fd: fd=?,
     ~mode: int=?,
     ~autoClose: bool=?,
@@ -715,9 +437,9 @@ external createReadStreamOptions:
   "";
 
 [@bs.module "fs"]
-external createReadStream: path => ReadStream.t = "createReadStream";
+external createReadStream: string => ReadStream.t = "createReadStream";
 [@bs.module "fs"]
-external createReadStreamWith: (path, createReadStreamOptions) => ReadStream.t =
+external createReadStreamWith: (string, createReadStreamOptions) => ReadStream.t =
   "createReadStream";
 
 type createWriteStreamOptions;
@@ -725,7 +447,6 @@ type createWriteStreamOptions;
 external createWriteStreamOptions:
   (
     ~flags: string=?,
-    ~encoding: string=?,
     ~fd: fd=?,
     ~mode: int=?,
     ~autoClose: bool=?,
@@ -737,7 +458,7 @@ external createWriteStreamOptions:
   createReadStreamOptions =
   "";
 [@bs.module "fs"]
-external createWriteStream: path => WriteStream.t = "createWriteStream";
+external createWriteStream: string => WriteStream.t = "createWriteStream";
 
 [@bs.module "fs"]
-external createWriteStreamWith: (path, createWriteStreamOptions) => WriteStream.t = "createWriteStream";
+external createWriteStreamWith: (string, createWriteStreamOptions) => WriteStream.t = "createWriteStream";
