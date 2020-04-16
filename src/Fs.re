@@ -194,7 +194,7 @@ type writeFileSyncOptions;
 [@bs.val] [@bs.module "fs"] external writeFileSync: (string, Buffer.t) => unit = "writeFileSync";
 [@bs.val] [@bs.module "fs"] external writeFileSyncWith: (string, Buffer.t, writeFileSyncOptions) => unit = "writeFileSync";
 
-module Handle = {
+module FileHandle = {
   type t;
 
   [@bs.send] external appendFile: (t, Buffer.t, appendFileOptions) => Js.Promise.t(unit) = "appendFile";
@@ -362,7 +362,7 @@ external open_:
       | [@bs.as "ax+"] `AppendReadFailIfExists
     ]
   ) =>
-  Js.Promise.t(Handle.t) =
+  Js.Promise.t(FileHandle.t) =
   "open";
 
 [@bs.module "fs"] [@bs.scope "promises"]
@@ -384,7 +384,7 @@ external openWithMode:
     ],
     ~mode: int
   ) =>
-  Js.Promise.t(Handle.t) =
+  Js.Promise.t(FileHandle.t) =
   "open";
 
 module WriteStream = {
