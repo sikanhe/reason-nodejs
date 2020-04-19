@@ -16,7 +16,9 @@
 [@bs.module "assert"] external ifError: 'a => unit = "ifError";
 [@bs.module "assert"] external rejects: (unit => Js.Promise.t('a)) => unit = "rejects";
 [@bs.module "assert"] external rejectsError: (unit => Js.Promise.t('a), 'e) => unit = "rejects";
-[@bs.module "assert"] external doesNotReject: (unit => Js.Promise.t('a)) => unit = "doesNotReject";
-[@bs.module "assert"] external doesNotRejectError: (unit => Js.Promise.t('a), 'e) => unit = "doesNotReject";
+[@bs.module "assert"]
+external doesNotReject: (unit => Js.Promise.t('a)) => unit = "doesNotReject";
+[@bs.module "assert"]
+external doesNotRejectError: (unit => Js.Promise.t('a), 'e) => unit = "doesNotReject";
 
 module AssertionError = Errors.AssertionError;

@@ -3,153 +3,139 @@ open Js.TypedArray2;
 
 module Constants = {
   [@bs.module "buffer"] [@bs.scope "constants"] [@bs.val] external _MAX_LENGTH: int = "MAX_LENGTH";
-  [@bs.module "buffer"] [@bs.scope "constants"] [@bs.val] external _MAX_STRING_LENGTH: int = "MAX_STRING_LENGTH";
+  [@bs.module "buffer"] [@bs.scope "constants"] [@bs.val]
+  external _MAX_STRING_LENGTH: int = "MAX_STRING_LENGTH";
 };
 
 [@bs.val] external isBuffer: 'a => bool = "Buffer.isBuffer";
 [@bs.val] external fromString: string => t = "Buffer.from";
-[@bs.val] external fromStringWithEncoding:
+[@bs.val]
+external fromStringWithEncoding:
   (
     string,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ]
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
   ) =>
   t =
   "Buffer.from";
 
 /**
  * `fromArray(array)`
- * 
+ *
  * Constructs a new `Buffer` object from an array of integers.
  */
-[@bs.val] external fromArray: array(int) => t = "Buffer.from";
+[@bs.val]
+external fromArray: array(int) => t = "Buffer.from";
 
 /**
  * `fromArrayBuffer(arrayBuffer)`
- * 
+ *
  * Constructs a new `Buffer` object from an `ArrayBuffer` object.
- * 
+ *
  * **Note:** This does not copy the data from the `ArrayBuffer` instance, but instead creates
  * a "view" over the existing data in memory. Mutations of the underlying `ArrayBuffer`
  * will be reflected in the `Buffer` view, and vice versa.
  */
-[@bs.val] external fromArrayBuffer: ArrayBuffer.t => t = "Buffer.from";
+[@bs.val]
+external fromArrayBuffer: ArrayBuffer.t => t = "Buffer.from";
 
 /**
  * `fromArrayBufferOffset(arrayBuffer, ~offset)`
- * 
+ *
  * Constructs a new `Buffer` object from an `ArrayBuffer` object, starting at index
  * `offset`.
- * 
+ *
  * **Note:** This does not copy the data from the `ArrayBuffer` instance, but instead creates
  * a "view" over the existing data in memory. Mutations of the underlying `ArrayBuffer`
  * will be reflected in the `Buffer` view, and vice versa.
  */
-[@bs.val] external fromArrayBufferOffset: (ArrayBuffer.t, ~offset: int) => t = "Buffer.from";
+[@bs.val]
+external fromArrayBufferOffset: (ArrayBuffer.t, ~offset: int) => t = "Buffer.from";
 
 /**
  * `fromArrayBufferRange(arrayBuffer, ~offset, ~length)`
- * 
+ *
  * Constructs a new `Buffer` object from an `ArrayBuffer` object, starting at index
  * `~offset`, and ending at index `~length`.
- * 
+ *
  * **Note:** This does not copy the data from the `ArrayBuffer` instance, but instead creates
  * a "view" over the existing data in memory. Mutations of the underlying `ArrayBuffer`
  * will be reflected in the `Buffer` view, and vice versa.
  */
-[@bs.val] external fromArrayBufferRange: (ArrayBuffer.t, ~offset: int, ~length: int) => t = "Buffer.from";
+[@bs.val]
+external fromArrayBufferRange: (ArrayBuffer.t, ~offset: int, ~length: int) => t = "Buffer.from";
 
 /**
  * `fromBuffer(buffer)`
- * 
+ *
  * Constructs a new `Buffer` object from an existing `Buffer` object, creating a **copy** of
  * its internal data.
  */
-[@bs.val] external fromBuffer: t => t = "Buffer.from";
+[@bs.val]
+external fromBuffer: t => t = "Buffer.from";
 
 /**
  * `alloc(size)`
- * 
+ *
  * Allocates a new `Buffer` object with a length specified by `size`, setting each element
  * to zero.
  */
-[@bs.val] external alloc: int => t = "Buffer.alloc";
+[@bs.val]
+external alloc: int => t = "Buffer.alloc";
 
 /**
  * `allocFillInt(size, ~fill)`
- * 
+ *
  * Allocates a new `Buffer` object with a length specified by `size`, and fills each element
  * with the value of `~fill`.
  */
-[@bs.val] external allocFillInt: (int, ~fill: int) => t = "Buffer.alloc";
+[@bs.val]
+external allocFillInt: (int, ~fill: int) => t = "Buffer.alloc";
 
 /**
  * `allocFillString(size, ~fill)`
- * 
+ *
  * Allocates a new `Buffer` object with a length specified by `size`, and fills each element
  * with the value of `~fill`.
  */
-[@bs.val] external allocFillString: (int, ~fill: string) => t = "Buffer.alloc";
+[@bs.val]
+external allocFillString: (int, ~fill: string) => t = "Buffer.alloc";
 
 /**
  * `allocFillStringEncoding(size, ~fill, encoding)`
- * 
+ *
  * Allocates a new `Buffer` object with a length specified by `size`, fills each element
  * with the value of `~fill`, and sets the string encoding to `encoding`.
  */
-[@bs.val] external allocFillStringWithEncoding:
+[@bs.val]
+external allocFillStringWithEncoding:
   (
     int,
     ~fill: string,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ]
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
   ) =>
   t =
   "Buffer.alloc";
 
 /**
  * `allocFillBuffer(size, ~fill)
- * 
+ *
  * Allocates a new `Buffer` object with a length specified by `size`, copying the data
  * from the `Buffer` object passed to the `~fill` parameter.
  */
-[@bs.val] external allocFillBuffer: (int, ~fill: t) => t = "Buffer.alloc";
+[@bs.val]
+external allocFillBuffer: (int, ~fill: t) => t = "Buffer.alloc";
 [@bs.val] external allocUnsafe: int => t = "Buffer.allocUnsafe";
 [@bs.val] external allocUnsafeSlow: int => t = "Buffer.allocUnsafeSlow";
 
-[@bs.get_index] external unsafeGet: (t, int) => int = "";
-[@bs.set_index] external unsafeSet: (t, int, int) => unit = "";
+[@bs.get_index] external unsafeGet: (t, int) => int;
+[@bs.set_index] external unsafeSet: (t, int, int) => unit;
 
 [@bs.val] external byteLengthString: string => int = "Buffer.byteLength";
-[@bs.val] external byteLengthStringWithEncoding:
+[@bs.val]
+external byteLengthStringWithEncoding:
   (
     string,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ]
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
   ) =>
   int =
   "Buffer.byteLength";
@@ -180,12 +166,20 @@ type bufferClass;
 
 [@bs.send] external copy: (t, t) => int = "copy";
 [@bs.send] external copyOffset: (t, t, ~offset: int) => int = "copy";
-[@bs.send] external copyOffsetFromOffset: (t, t, ~targetStart: int, ~sourceStart: int) => int = "copy";
-[@bs.send] external copyOffsetFromRange: (t, t, ~targetStart: int, ~sourceStart: int, ~sourceEnd: int) => int = "copy";
+[@bs.send]
+external copyOffsetFromOffset: (t, t, ~targetStart: int, ~sourceStart: int) => int = "copy";
+[@bs.send]
+external copyOffsetFromRange: (t, t, ~targetStart: int, ~sourceStart: int, ~sourceEnd: int) => int =
+  "copy";
 [@bs.send] external copyToUint8Array: (t, Uint8Array.t) => int = "copy";
 [@bs.send] external copyToUint8ArrayOffset: (t, Uint8Array.t, ~targetStart: int) => int = "copy";
-[@bs.send] external copyToUint8ArrayFrom: (t, Uint8Array.t, ~targetStart: int, ~sourceStart: int) => int = "copy";
-[@bs.send] external copyToUint8ArrayFromRange: (t, Uint8Array.t, ~targetStart: int, ~sourceStart: int, ~sourceEnd: int) => int = "copy";
+[@bs.send]
+external copyToUint8ArrayFrom: (t, Uint8Array.t, ~targetStart: int, ~sourceStart: int) => int =
+  "copy";
+[@bs.send]
+external copyToUint8ArrayFromRange:
+  (t, Uint8Array.t, ~targetStart: int, ~sourceStart: int, ~sourceEnd: int) => int =
+  "copy";
 
 /* FIXME after iterators support */
 /* external entries : t -> Iterator = "" [@@bs.get] */
@@ -195,22 +189,14 @@ type bufferClass;
 [@bs.send] external fillString: (t, string) => t = "fill";
 [@bs.send] external fillStringOffset: (t, string, ~offset: int) => t = "fill";
 [@bs.send] external fillStringRange: (t, string, ~offset: int, ~end_: int) => t = "fill";
-[@bs.send] external fillStringRangeWithEncoding:
+[@bs.send]
+external fillStringRangeWithEncoding:
   (
     t,
     string,
     ~offset: int,
     ~end_: int,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ]
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
   ) =>
   t =
   "fill";
@@ -223,21 +209,13 @@ type bufferClass;
 
 [@bs.send] external includesString: (t, string) => bool = "includes";
 [@bs.send] external includesStringFrom: (t, string, ~offset: int) => bool = "includes";
-[@bs.send] external includesStringWithEncodingFrom:
+[@bs.send]
+external includesStringWithEncodingFrom:
   (
     t,
     string,
     ~offset: int,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ]
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
   ) =>
   bool =
   "includes";
@@ -248,21 +226,13 @@ type bufferClass;
 
 [@bs.send] external indexOfString: (t, string) => int = "indexOf";
 [@bs.send] external indexOfStringFrom: (t, string, ~offset: int) => int = "indexOf";
-[@bs.send] external indexOfStringWithEncodingFrom:
+[@bs.send]
+external indexOfStringWithEncodingFrom:
   (
     t,
     string,
     ~offset: int,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ]
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
   ) =>
   int =
   "indexOf";
@@ -276,21 +246,13 @@ type bufferClass;
 
 [@bs.send] external lastIndexOfString: (t, string) => int = "lastIndexOf";
 [@bs.send] external lastIndexOfStringFrom: (t, string, ~offset: int) => int = "lastIndexOf";
-[@bs.send] external lastIndexOfStringWithEncodingFrom:
+[@bs.send]
+external lastIndexOfStringWithEncodingFrom:
   (
     t,
     string,
     ~offset: int,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ]
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
   ) =>
   int =
   "lastIndexOf";
@@ -339,52 +301,25 @@ type bufferClass;
 [@bs.send] external toJSON: t => Js.Json.t = "toJSON";
 
 [@bs.send] external toString: t => string = "toString";
-[@bs.send] external toStringWithEncoding:
-  (
-    t,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ]
-  ) =>
+[@bs.send]
+external toStringWithEncoding:
+  (t, [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]) =>
   string =
   "toString";
-[@bs.send] external toStringWithEncodingOffset:
+[@bs.send]
+external toStringWithEncodingOffset:
   (
     t,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ],
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex],
     ~start: int
   ) =>
   string =
   "toString";
-[@bs.send] external toStringWithEncodingRange:
+[@bs.send]
+external toStringWithEncodingRange:
   (
     t,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ],
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex],
     ~start: int,
     ~end_: int
   ) =>
@@ -392,39 +327,25 @@ type bufferClass;
   "toString";
 
 [@bs.send] external write: (t, string) => int = "write";
-[@bs.send] external writeWithEncoding:
+[@bs.send]
+external writeWithEncoding:
   (
     t,
     string,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ]
-  ) => int = "write";
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
+  ) =>
+  int =
+  "write";
 [@bs.send] external writeOffset: (t, string, ~offset: int) => int = "write";
 [@bs.send] external writeRange: (t, string, ~offset: int, ~length: int) => int = "write";
-[@bs.send] external writeRangeWithEncoding:
+[@bs.send]
+external writeRangeWithEncoding:
   (
     t,
     string,
     ~offset: int,
     ~length: int,
-    [@bs.string] [
-      | `ascii
-      | `utf8
-      | `utf16le
-      | `usc2
-      | `base64
-      | `latin1
-      | `binary
-      | `hex
-    ]
+    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
   ) =>
   int =
   "write";
@@ -442,7 +363,7 @@ type bufferClass;
 [@bs.send] external writeIntLE: (t, int, ~offset: int, ~length: int) => float = "writeIntLE";
 [@bs.send] external writeUint8: (t, int, ~offset: int) => float = "writeUint8";
 [@bs.send] external writeUint16BE: (t, int, ~offset: int) => float = "writeUint16BE";
-[@bs.send] external writeUint16LE: (t, int, ~offset: int) => float = "writeUint16LE"; 
+[@bs.send] external writeUint16LE: (t, int, ~offset: int) => float = "writeUint16LE";
 [@bs.send] external writeUint32BE: (t, int, ~offset: int) => float = "writeUint32BE";
 [@bs.send] external writeUint32LE: (t, int, ~offset: int) => float = "writeUint32LE";
 [@bs.send] external writeUintBE: (t, int, ~offset: int, ~length: int) => float = "writeUintBE";
@@ -451,7 +372,8 @@ type bufferClass;
 [@bs.get] external _INSPECT_MAX_BYTES: t => int = "INSPECT_MAX_BYTES";
 [@bs.get] external kMaxLength: t => int = "kMaxLength";
 
-[@bs.send] external transcode:
+[@bs.send]
+external transcode:
   (
     t,
     ~source: t,
