@@ -1,19 +1,86 @@
-/**
- * TODO: add EventEmitter functions for both
- * Cluster and Cluster.Worker.
- */
+
+module Address = {
+  type t = pri {
+    [@bs.as "address"] address: string,
+    [@bs.as "port"] port: string,
+  };
+  type internalView('a) = pri {
+    [@bs.as "address"] address: string,
+    [@bs.as "port"] port: string,
+    [@bs.as "addressType"] addressType: 'a,
+  };
+  type case =
+    | TcpV4(t)
+    | TcpV6(t)
+    | UnixDomainSocket(t)
+    | Udp4(t)
+    | Udp6(t)
+    | Unknown(t)
+  ;
+  let classify: t => case = fun
+    | address => {
+      let internalReturn: internalView('a) = Obj.magic(address);
+      let addressType = internalReturn.addressType;
+      let intOrString = Js.typeof(addressType);
+      switch (intOrString) {
+        | ("number") => {
+          switch (Obj.magic(addressType): int) {
+            | 4 => TcpV4(address)
+            | 6 => TcpV6(address)
+            | -1 => UnixDomainSocket(address)
+            | _ => Unknown(address)
+          };
+        };
+        | ("string") => {
+          switch (Obj.magic(addressType): string) {
+            | "udp4" => Udp4(address)
+            | "udp6" => Udp6(address)
+            | _ => Unknown(address)
+          };
+        };
+        | _ => Unknown(address);
+      };
+    };
+};
+
+module Message = {
+  type t('a) = Js.t('a);
+};
 
 module Worker = {
   type t;
+  module Events = {
+    [@bs.send] external onDisconnect: (t, [@bs.as "disconnect"] (. unit) => unit) => t = "on";
+    [@bs.send] external onError: (t, [@bs.as "error"] (. Js.Exn.t) => unit) => t = "on";
+    [@bs.send] external onExit: (t, [@bs.as "exit"] (. Js.nullable(int), Js.nullable(string)) => unit) => t = "on";
+    [@bs.send] external onListening: (t, [@bs.as "listening"] (. Address.t) => unit) => t = "on";
+    [@bs.send] external onMessage: (t, [@bs.as "message"] (. Message.t('a), Js.nullable(Js.t('a))) => unit) => t = "on";
+    [@bs.send] external onOnline: (t, [@bs.as "online"] (. unit) => unit) => t = "on";
+
+    [@bs.send] external offDisconnect: (t, [@bs.as "disconnect"] (. unit) => unit) => t = "off";
+    [@bs.send] external offError: (t, [@bs.as "error"] (. Js.Exn.t) => unit) => t = "off";
+    [@bs.send] external offExit: (t, [@bs.as "exit"] (. Js.nullable(int), Js.nullable(string)) => unit) => t = "off";
+    [@bs.send] external offListening: (t, [@bs.as "listening"] (. Address.t) => unit) => t = "off";
+    [@bs.send] external offMessage: (t, [@bs.as "message"] (. Message.t('a), Js.nullable(Js.t('a))) => unit) => t = "off";
+    [@bs.send] external offOnline: (t, [@bs.as "online"] (. unit) => unit) => t = "off";
+
+    [@bs.send] external onDisconnectOnce: (t, [@bs.as "disconnect"] (. unit) => unit) => t = "once";
+    [@bs.send] external onErrorOnce: (t, [@bs.as "error"] (. Js.Exn.t) => unit) => t = "once";
+    [@bs.send] external onExitOnce: (t, [@bs.as "exit"] (. Js.nullable(int), Js.nullable(string)) => unit) => t = "once";
+    [@bs.send] external onListeningOnce: (t, [@bs.as "listening"] (. Address.t) => unit) => t = "once";
+    [@bs.send] external onMessageOnce: (t, [@bs.as "message"] (. Message.t('a), Js.nullable(Js.t('a))) => unit) => t = "once";
+    [@bs.send] external onOnlineOnce: (t, [@bs.as "online"] (. unit) => unit) => t = "once";
+  };
   [@bs.send] external disconnect: t => unit = "disconnect";
   [@bs.send] external exitedAfterDisconnect: t => bool = "exitedAfterDisconnect";
   [@bs.send] external id: t => int = "id";
   [@bs.send] external isConnected: t => bool = "isConnected";
   [@bs.send] external isDead: t => bool = "isConnected";
-  [@bs.send] external kill: (t, option(string)) => unit = "kill";
-  let kill = (~signal=?, worker) => kill(worker, signal);
+  [@bs.send] external kill: (t) => unit = "kill";
+  [@bs.send] external killWith: (t, ~signal: string) => unit = "kill";
   [@bs.send] external process: t => ChildProcess.t = "process";
   [@bs.send] external send: string => unit = "send";
+
   [@bs.send] external sendHttpServerHandle: (string, Http.Server.t, Js.nullable(Js.t({..}))) => unit = "send";
   let sendHttpServerHandle = (~options=?, msg, handle) => sendHttpServerHandle(msg, handle, Js.Nullable.fromOption(options));
   [@bs.send] external sendSocketHandle: (string, Net.Socket.subtype('a), Js.nullable(Js.t({..}))) => unit = "send";
@@ -21,18 +88,17 @@ module Worker = {
 };
 
 type clusterSettings = {
-  .
-  "execArgv": Js.Nullable.t(array(string)),
-  "exec": Js.Nullable.t(string),
-  "args": Js.Nullable.t(array(string)),
-  "cwd": Js.Nullable.t(string),
-  "serialization": Js.Nullable.t(string),
-  "silent": Js.Nullable.t(bool),
-  "stdio": Js.Nullable.t(array(string)),
-  "uid": Js.Nullable.t(int),
-  "gid": Js.Nullable.t(int),
-  "inspectPort": Js.Nullable.t(int),
-  "windowsHide": Js.Nullable.t(bool)
+  execArgv: Js.nullable(array(string)),
+  exec: Js.nullable(string),
+  args: Js.nullable(array(string)),
+  cwd: Js.nullable(string),
+  serialization: Js.nullable(string),
+  silent: Js.nullable(bool),
+  stdio: Js.nullable(array(string)),
+  uid: Js.nullable(int),
+  gid: Js.nullable(int),
+  inspectPort: Js.nullable(int),
+  windowsHide: Js.nullable(bool)
 };
 
 [@bs.obj] external clusterSettings: (
@@ -71,11 +137,3 @@ let decodeSchedulingPolicy =
 [@bs.module "cluster"] external workers: Js.Dict.t(Worker.t) = "workers";
 let getWorker: (Js.Dict.t(Worker.t), int) => option(Worker.t) = (_workers, id) =>
   Js.Dict.get(_workers, Js.Int.toString(id));
-
-module Test = {
-  Js.log([%bs.raw {|Cluster|}]);
-  let () = switch (isMaster) {
-    | true => schedulingPolicy |> Js.log;
-    | false => worker->Js.log;
-  }
-};
