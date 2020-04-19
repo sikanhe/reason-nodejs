@@ -2,6 +2,8 @@
 // For global console.log and others, use the existing Js.Console.* provided by BuckleScript out of the box
 
 type t;
+[@bs.val] external console: t = "console";
+
 type consoleOptions;
 [@bs.obj]
 external consoleOptions:
@@ -15,7 +17,6 @@ external consoleOptions:
   consoleOptions = "";
 
 [@bs.new][@bs.module "console"] external make: consoleOptions => t = "Console";
-
 [@bs.new][@bs.module "console"]
 external make2:
   {
