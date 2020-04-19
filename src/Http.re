@@ -1,18 +1,36 @@
-type http = [ `Http ];
+type http = [ | `Http];
 
 module IncomingMessage = {
-  type kind = [ Stream.readable | `IncomingMessage ];
+  type kind = [ Stream.readable | `IncomingMessage];
   type subtype('data, 'a) = Stream.subtype('data, [> kind] as 'a);
   type supertype('data, 'a) = Stream.subtype('data, [< kind] as 'a);
-  type t = subtype(Buffer.t, [ kind ]);
+  type t = subtype(Buffer.t, [ kind]);
   module Events = {
     include Stream.Readable.Events;
-    [@bs.send] external onAborted: (subtype('data, 'a), [@bs.as "aborted"] _, (. unit) => unit) => subtype('data, 'a) = "on";
-    [@bs.send] external onClose: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "on";
-    [@bs.send] external offAborted: (subtype('data, 'a), [@bs.as "aborted"] _, (. unit) => unit) => subtype('data, 'a) = "off";
-    [@bs.send] external offClose: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "off";
-    [@bs.send] external onAbortedOnce: (subtype('data, 'a), [@bs.as "aborted"] _, (. unit) => unit) => subtype('data, 'a) = "once";
-    [@bs.send] external onCloseOnce: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+    [@bs.send]
+    external onAborted:
+      (subtype('data, 'a), [@bs.as "aborted"] _, (. unit) => unit) => subtype('data, 'a) =
+      "on";
+    [@bs.send]
+    external onClose:
+      (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) =
+      "on";
+    [@bs.send]
+    external offAborted:
+      (subtype('data, 'a), [@bs.as "aborted"] _, (. unit) => unit) => subtype('data, 'a) =
+      "off";
+    [@bs.send]
+    external offClose:
+      (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) =
+      "off";
+    [@bs.send]
+    external onAbortedOnce:
+      (subtype('data, 'a), [@bs.as "aborted"] _, (. unit) => unit) => subtype('data, 'a) =
+      "once";
+    [@bs.send]
+    external onCloseOnce:
+      (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) =
+      "once";
   };
   module Impl = {
     include Stream.Readable.Impl;
@@ -28,8 +46,12 @@ module IncomingMessage = {
     [@bs.get] external complete: subtype('data, 'a) => bool = "complete";
     [@bs.send] external destroy: subtype('data, 'a) => unit = "destroy";
     [@bs.send] external destroyWithError: (subtype('data, 'a), Js.Exn.t) => bool = "destroy";
-    [@bs.send] external setTimeout: (subtype('data, 'a), int) => subtype('data, 'a) = "setTimeout";
-    [@bs.send] external setTimeoutWithCallback: (subtype('data, 'a), int, subtype('data, 'a) => unit) => subtype('data, 'a) = "setTimeout";
+    [@bs.send]
+    external setTimeout: (subtype('data, 'a), int) => subtype('data, 'a) = "setTimeout";
+    [@bs.send]
+    external setTimeoutWithCallback:
+      (subtype('data, 'a), int, subtype('data, 'a) => unit) => subtype('data, 'a) =
+      "setTimeout";
     [@bs.get] external socket: subtype('data, 'a) => Net.Socket.subtype('b) = "socket";
     [@bs.get] external statusCode: subtype('data, 'a) => int = "statusCode";
     [@bs.get] external statusMessage: subtype('data, 'a) => string = "statusMessage";
@@ -39,10 +61,10 @@ module IncomingMessage = {
 };
 
 module ClientRequest = {
-  type kind = [ Stream.duplex | `ClientRequest ];
+  type kind = [ Stream.duplex | `ClientRequest];
   type subtype('data, 'a) = Stream.subtype('data, [> kind] as 'a);
   type supertype('data, 'a) = Stream.subtype('data, [< kind] as 'a);
-  type t = subtype(Buffer.t, [ kind ]);
+  type t = subtype(Buffer.t, [ kind]);
   type information('a) = {
     .
     "httpVersion": string,
@@ -55,61 +77,154 @@ module ClientRequest = {
   };
   module Events = {
     include Stream.Duplex.Events;
-    [@bs.send] external onAbort: (subtype('data, 'a), [@bs.as "abort"] _, (. unit) => unit) => subtype('data, 'a) = "on";
-    [@bs.send] external onConnect: (
+    [@bs.send]
+    external onAbort:
+      (subtype('data, 'a), [@bs.as "abort"] _, (. unit) => unit) => subtype('data, 'a) =
+      "on";
+    [@bs.send]
+    external onConnect:
+      (
         subtype('data, 'a),
         [@bs.as "connect"] _,
-        (
-          IncomingMessage.subtype('data, 'b),
-          Net.Socket.subtype('c),
-          Buffer.t
-        ) => unit
-      ) => unit = "on";
-    [@bs.send] external onContinue: (subtype('data, 'a), [@bs.as "continue"] _, (. unit) => unit) => subtype('data, 'a) = "on";
-    [@bs.send] external onInformation: (subtype('data, 'a), [@bs.as "information"] _, (. information('b)) => unit) => subtype('data, 'a) = "on";
-    [@bs.send] external onResponse: (subtype('data, 'a), [@bs.as "response"] _, (. IncomingMessage.subtype('data, 'b)) => unit) => subtype('data, 'a) = "on";
-    [@bs.send] external onSocket: (subtype('data, 'a), [@bs.as "socket"] _, (. Net.TcpSocket.t) => unit) => subtype('data, 'a) = "on";
-    [@bs.send] external onTimeout: (subtype('data, 'a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('data, 'a) = "on";
-    [@bs.send] external onUpgrade:
-      (subtype('data, 'a), [@bs.as "upgrade"] _, (. IncomingMessage.subtype('data, 'b), Net.TcpSocket.t, Buffer.t) => unit) => subtype('data, 'a) =
+        (IncomingMessage.subtype('data, 'b), Net.Socket.subtype('c), Buffer.t) => unit
+      ) =>
+      unit =
+      "on";
+    [@bs.send]
+    external onContinue:
+      (subtype('data, 'a), [@bs.as "continue"] _, (. unit) => unit) => subtype('data, 'a) =
+      "on";
+    [@bs.send]
+    external onInformation:
+      (subtype('data, 'a), [@bs.as "information"] _, (. information('b)) => unit) =>
+      subtype('data, 'a) =
+      "on";
+    [@bs.send]
+    external onResponse:
+      (
+        subtype('data, 'a),
+        [@bs.as "response"] _,
+        (. IncomingMessage.subtype('data, 'b)) => unit
+      ) =>
+      subtype('data, 'a) =
+      "on";
+    [@bs.send]
+    external onSocket:
+      (subtype('data, 'a), [@bs.as "socket"] _, (. Net.TcpSocket.t) => unit) =>
+      subtype('data, 'a) =
+      "on";
+    [@bs.send]
+    external onTimeout:
+      (subtype('data, 'a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('data, 'a) =
+      "on";
+    [@bs.send]
+    external onUpgrade:
+      (
+        subtype('data, 'a),
+        [@bs.as "upgrade"] _,
+        (. IncomingMessage.subtype('data, 'b), Net.TcpSocket.t, Buffer.t) => unit
+      ) =>
+      subtype('data, 'a) =
       "on";
 
-    [@bs.send] external offAbort: (subtype('data, 'a), [@bs.as "abort"] _, (. unit) => unit) => subtype('data, 'a) = "off";
-    [@bs.send] external offConnect: (
+    [@bs.send]
+    external offAbort:
+      (subtype('data, 'a), [@bs.as "abort"] _, (. unit) => unit) => subtype('data, 'a) =
+      "off";
+    [@bs.send]
+    external offConnect:
+      (
         subtype('data, 'a),
         [@bs.as "connect"] _,
-        (
-          IncomingMessage.subtype('data, 'b),
-          Net.Socket.subtype('c),
-          Buffer.t
-        ) => unit
-      ) => unit = "off";
-    [@bs.send] external offContinue: (subtype('data, 'a), [@bs.as "continue"] _, (. unit) => unit) => subtype('data, 'a) = "off";
-    [@bs.send] external offInformation: (subtype('data, 'a), [@bs.as "information"] _, (. information('b)) => unit) => subtype('data, 'a) = "off";
-    [@bs.send] external offResponse: (subtype('data, 'a), [@bs.as "response"] _, (. IncomingMessage.subtype('data, 'b)) => unit) => subtype('data, 'a) = "off";
-    [@bs.send] external offSocket: (subtype('data, 'a), [@bs.as "socket"] _, (. Net.TcpSocket.t) => unit) => subtype('data, 'a) = "off";
-    [@bs.send] external offTimeout: (subtype('data, 'a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('data, 'a) = "off";
-    [@bs.send] external offUpgrade:
-      (subtype('data, 'a), [@bs.as "upgrade"] _, (. IncomingMessage.subtype('data, 'b), Net.TcpSocket.t, Buffer.t) => unit) => subtype('data, 'a) =
+        (IncomingMessage.subtype('data, 'b), Net.Socket.subtype('c), Buffer.t) => unit
+      ) =>
+      unit =
+      "off";
+    [@bs.send]
+    external offContinue:
+      (subtype('data, 'a), [@bs.as "continue"] _, (. unit) => unit) => subtype('data, 'a) =
+      "off";
+    [@bs.send]
+    external offInformation:
+      (subtype('data, 'a), [@bs.as "information"] _, (. information('b)) => unit) =>
+      subtype('data, 'a) =
+      "off";
+    [@bs.send]
+    external offResponse:
+      (
+        subtype('data, 'a),
+        [@bs.as "response"] _,
+        (. IncomingMessage.subtype('data, 'b)) => unit
+      ) =>
+      subtype('data, 'a) =
+      "off";
+    [@bs.send]
+    external offSocket:
+      (subtype('data, 'a), [@bs.as "socket"] _, (. Net.TcpSocket.t) => unit) =>
+      subtype('data, 'a) =
+      "off";
+    [@bs.send]
+    external offTimeout:
+      (subtype('data, 'a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('data, 'a) =
+      "off";
+    [@bs.send]
+    external offUpgrade:
+      (
+        subtype('data, 'a),
+        [@bs.as "upgrade"] _,
+        (. IncomingMessage.subtype('data, 'b), Net.TcpSocket.t, Buffer.t) => unit
+      ) =>
+      subtype('data, 'a) =
       "off";
 
-    [@bs.send] external onAbortOnce: (subtype('data, 'a), [@bs.as "abort"] _, (. unit) => unit) => subtype('data, 'a) = "once";
-    [@bs.send] external onConnectOnce: (
+    [@bs.send]
+    external onAbortOnce:
+      (subtype('data, 'a), [@bs.as "abort"] _, (. unit) => unit) => subtype('data, 'a) =
+      "once";
+    [@bs.send]
+    external onConnectOnce:
+      (
         subtype('data, 'a),
         [@bs.as "connect"] _,
-        (
-          IncomingMessage.subtype('data, 'b),
-          Net.Socket.subtype('c),
-          Buffer.t
-        ) => unit
-      ) => unit = "once";
-    [@bs.send] external onContinueOnce: (subtype('data, 'a), [@bs.as "continue"] _, (. unit) => unit) => subtype('data, 'a) = "once";
-    [@bs.send] external onInformationOnce: (subtype('data, 'a), [@bs.as "information"] _, (. information('b)) => unit) => subtype('data, 'a) = "once";
-    [@bs.send] external onResponseOnce: (subtype('data, 'a), [@bs.as "response"] _, (. IncomingMessage.subtype('data, 'b)) => unit) => subtype('data, 'a) = "once";
-    [@bs.send] external onSocketOnce: (subtype('data, 'a), [@bs.as "socket"] _, (. Net.TcpSocket.t) => unit) => subtype('data, 'a) = "once";
-    [@bs.send] external onTimeoutOnce: (subtype('data, 'a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('data, 'a) = "once";
-    [@bs.send] external onUpgradeOnce:
-      (subtype('data, 'a), [@bs.as "upgrade"] _, (. IncomingMessage.subtype('data, 'b), Net.TcpSocket.t, Buffer.t) => unit) => subtype('data, 'a) =
+        (IncomingMessage.subtype('data, 'b), Net.Socket.subtype('c), Buffer.t) => unit
+      ) =>
+      unit =
+      "once";
+    [@bs.send]
+    external onContinueOnce:
+      (subtype('data, 'a), [@bs.as "continue"] _, (. unit) => unit) => subtype('data, 'a) =
+      "once";
+    [@bs.send]
+    external onInformationOnce:
+      (subtype('data, 'a), [@bs.as "information"] _, (. information('b)) => unit) =>
+      subtype('data, 'a) =
+      "once";
+    [@bs.send]
+    external onResponseOnce:
+      (
+        subtype('data, 'a),
+        [@bs.as "response"] _,
+        (. IncomingMessage.subtype('data, 'b)) => unit
+      ) =>
+      subtype('data, 'a) =
+      "once";
+    [@bs.send]
+    external onSocketOnce:
+      (subtype('data, 'a), [@bs.as "socket"] _, (. Net.TcpSocket.t) => unit) =>
+      subtype('data, 'a) =
+      "once";
+    [@bs.send]
+    external onTimeoutOnce:
+      (subtype('data, 'a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('data, 'a) =
+      "once";
+    [@bs.send]
+    external onUpgradeOnce:
+      (
+        subtype('data, 'a),
+        [@bs.as "upgrade"] _,
+        (. IncomingMessage.subtype('data, 'b), Net.TcpSocket.t, Buffer.t) => unit
+      ) =>
+      subtype('data, 'a) =
       "once";
   };
   module Impl = {
@@ -120,42 +235,67 @@ module ClientRequest = {
     [@bs.send] external end_: subtype('data, 'a) => unit = "end";
     [@bs.send] external endWithData: (subtype('data, 'a), Buffer.t) => unit = "end";
     [@bs.send] external endWithCallback: (subtype('data, 'a), unit => unit) => unit = "end";
-    [@bs.send] external endWithDataCallback: (subtype('data, 'a), Buffer.t, unit => unit) => unit = "end";
+    [@bs.send]
+    external endWithDataCallback: (subtype('data, 'a), Buffer.t, unit => unit) => unit = "end";
     [@bs.send] external flushHeaders: subtype('data, 'a) => unit = "flushHeaders";
     [@bs.send] external getHeader: (subtype('data, 'a), string) => 'any = "getHeader";
     [@bs.send] external maxHeadersCount: subtype('data, 'a) => int = "maxHeadersCount";
     [@bs.send] external path: subtype('data, 'a) => string = "path";
     [@bs.send] external reusedSocket: subtype('data, 'a) => bool = "reusedSocket";
     [@bs.send] external setHeader: (subtype('data, 'a), string, 'any) => unit = "setHeader";
-    [@bs.send] external setHeaderArray: (subtype('data, 'a), string, array('any)) => unit = "setHeader";
+    [@bs.send]
+    external setHeaderArray: (subtype('data, 'a), string, array('any)) => unit = "setHeader";
     [@bs.send] external setNoDelay: (subtype('data, 'a), bool) => unit = "setNoDelay";
-    [@bs.send] external setSocketKeepAlive: (subtype('data, 'a), bool) => unit = "setSocketKeepAlive";
-    [@bs.send] external setSocketKeepAliveWithDelay: (subtype('data, 'a), bool, int) => unit = "setSocketKeepAlive";
+    [@bs.send]
+    external setSocketKeepAlive: (subtype('data, 'a), bool) => unit = "setSocketKeepAlive";
+    [@bs.send]
+    external setSocketKeepAliveWithDelay: (subtype('data, 'a), bool, int) => unit =
+      "setSocketKeepAlive";
     [@bs.send] external setTimeout: (subtype('data, 'a), int) => unit = "setTimeout";
-    [@bs.send] external setTimeoutWithCallback: (subtype('data, 'a), int, unit => unit) => unit = "setTimeout";
+    [@bs.send]
+    external setTimeoutWithCallback: (subtype('data, 'a), int, unit => unit) => unit =
+      "setTimeout";
     [@bs.send] external socket: subtype('data, 'a) => Net.TcpSocket.t = "socket";
     [@bs.send] external writableEnded: subtype('data, 'a) => bool = "writableEnded";
     [@bs.send] external write: (subtype('data, 'a), Buffer.t) => bool = "write";
-    [@bs.send] external writeWithCallback: (subtype('data, 'a), Buffer.t, unit => unit) => bool = "write";
+    [@bs.send]
+    external writeWithCallback: (subtype('data, 'a), Buffer.t, unit => unit) => bool = "write";
   };
 
   include Impl;
-
 };
 
 module ServerResponse = {
-  type kind = [ Stream.duplex | `ServerResponse ];
+  type kind = [ Stream.duplex | `ServerResponse];
   type subtype('data, 'a) = Stream.subtype('data, [> kind] as 'a);
   type supertype('data, 'a) = Stream.subtype('data, [< kind] as 'a);
-  type t = subtype(Buffer.t, [ kind ]);
+  type t = subtype(Buffer.t, [ kind]);
   module Events = {
     include Stream.Duplex.Events;
-    [@bs.send] external onClose: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "on";
-    [@bs.send] external onFinish: (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) = "on";
-    [@bs.send] external offClose: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "off";
-    [@bs.send] external offFinish: (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) = "off";
-    [@bs.send] external onCloseOnce: (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) = "once";
-    [@bs.send] external onFinishOnce: (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) = "once";
+    [@bs.send]
+    external onClose:
+      (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) =
+      "on";
+    [@bs.send]
+    external onFinish:
+      (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) =
+      "on";
+    [@bs.send]
+    external offClose:
+      (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) =
+      "off";
+    [@bs.send]
+    external offFinish:
+      (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) =
+      "off";
+    [@bs.send]
+    external onCloseOnce:
+      (subtype('data, 'a), [@bs.as "close"] _, (. unit) => unit) => subtype('data, 'a) =
+      "once";
+    [@bs.send]
+    external onFinishOnce:
+      (subtype('data, 'a), [@bs.as "finish"] _, (. unit) => unit) => subtype('data, 'a) =
+      "once";
   };
   module Impl = {
     include Stream.Duplex.Impl;
@@ -163,13 +303,16 @@ module ServerResponse = {
     [@bs.get] external statusCode: subtype('data, 'a) => int = "statusCode";
     [@bs.set] external setStatusCode: (subtype('data, 'a), int) => unit = "statusCode";
     [@bs.send] external write: (subtype('data, 'a), Buffer.t) => bool = "write";
-    [@bs.send] external writeWithEncodingCallback: ( subtype('data, 'a), Buffer.t, unit => unit) => bool = "write";
+    [@bs.send]
+    external writeWithEncodingCallback: (subtype('data, 'a), Buffer.t, unit => unit) => bool =
+      "write";
     [@bs.send] external writeStatus: (subtype('data, 'a), int) => unit = "writeHead";
     [@bs.send] external cork: subtype('data, 'a) => unit = "cork";
     [@bs.send] external end_: subtype('data, 'a) => unit = "end";
     [@bs.send] external endWithData: (subtype('data, 'a), Buffer.t) => unit = "end";
     [@bs.send] external endWithCallback: (subtype('data, 'a), unit => unit) => unit = "end";
-    [@bs.send] external endWithDataCallback: ( subtype('data, 'a), Buffer.t, unit => unit) => unit = "end";
+    [@bs.send]
+    external endWithDataCallback: (subtype('data, 'a), Buffer.t, unit => unit) => unit = "end";
     [@bs.send] external uncork: subtype('data, 'a) => unit = "uncork";
     [@bs.send] external flushHeaders: subtype('data, 'a) => unit = "flushHeaders";
     [@bs.send] external getHeader: (subtype('data, 'a), string) => 'any = "getHeader";
@@ -180,16 +323,24 @@ module ServerResponse = {
     [@bs.send] external removeHeader: (subtype('data, 'a), string) => unit = "removeHeader";
     [@bs.get] external sendDate: subtype('data, 'a) => bool = "sendDate";
     [@bs.send] external setHeader: (subtype('data, 'a), string, 'any) => unit = "setHeader";
-    [@bs.send] external setHeaderArray: (subtype('data, 'a), string, array('any)) => unit = "setHeader";
+    [@bs.send]
+    external setHeaderArray: (subtype('data, 'a), string, array('any)) => unit = "setHeader";
     [@bs.send] external setTimeout: (subtype('data, 'a), int) => unit = "setTimeout";
-    [@bs.send] external setTimeoutWithCallback: (subtype('data, 'a), int, unit => unit) => unit = "setTimeout";
+    [@bs.send]
+    external setTimeoutWithCallback: (subtype('data, 'a), int, unit => unit) => unit =
+      "setTimeout";
     [@bs.get] external socket: subtype('data, 'a) => Net.TcpSocket.t = "socket";
     [@bs.get] external statusMessage: subtype('data, 'a) => string = "statusMessage";
     [@bs.get] external writableEnded: subtype('data, 'a) => bool = "writableEnded";
     [@bs.get] external writableFinished: subtype('data, 'a) => bool = "writableFinished";
     [@bs.send] external writeContinue: subtype('data, 'a) => unit = "writeContinue";
-    [@bs.send] external writeHead: (subtype('data, 'a), int, Js.t({..})) => subtype('data, 'a) = "writeHead";
-    [@bs.send] external writeHeadWithMessage: (subtype('data, 'a), int, string, Js.t({..})) => subtype('data, 'a) = "writeHead";
+    [@bs.send]
+    external writeHead: (subtype('data, 'a), int, Js.t({..})) => subtype('data, 'a) =
+      "writeHead";
+    [@bs.send]
+    external writeHeadWithMessage:
+      (subtype('data, 'a), int, string, Js.t({..})) => subtype('data, 'a) =
+      "writeHead";
     [@bs.send] external writeProcessing: subtype('data, 'a) => unit = "writeProcessing";
   };
 
@@ -199,7 +350,9 @@ module ServerResponse = {
 module Agent = {
   type t;
   [@bs.send] external createConnection: (t, Js.t({..})) => Net.TcpSocket.t = "createConnection";
-  [@bs.send] external createConnectionWithCallback: (t, Js.t({..}), unit => unit) => Net.TcpSocket.t = "createConnection";
+  [@bs.send]
+  external createConnectionWithCallback: (t, Js.t({..}), unit => unit) => Net.TcpSocket.t =
+    "createConnection";
   [@bs.send] external keepSocketAlive: (t, Net.TcpSocket.t) => unit = "keepSocketAlive";
   [@bs.send] external reuseSocket: (t, Net.TcpSocket.t, ClientRequest.t) => unit = "reuseSocket";
   [@bs.send] external destroy: t => unit = "destroy";
@@ -212,37 +365,167 @@ module Agent = {
 };
 
 module Server = {
-  type kind = [ Net.TcpServer.kind | http ];
-  type subtype('a) = Net.Server.subtype([> kind ] as 'a);
-  type supertype('a) = Net.Server.subtype([< kind ] as 'a);
+  type kind = [ Net.TcpServer.kind | http];
+  type subtype('a) = Net.Server.subtype([> kind] as 'a);
+  type supertype('a) = Net.Server.subtype([< kind] as 'a);
   type t = subtype(kind);
   module Events = {
     include Net.TcpServer.Events;
-    [@bs.send] external onCheckContinue: (subtype('a), [@bs.as "checkContinue"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "on";
-    [@bs.send] external onCheckExpectation: (subtype('a), [@bs.as "checkExpectation"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "on";
-    [@bs.send] external onClientError: (subtype('a), [@bs.as "clientError"] _, (. Js.Exn.t, Net.TcpSocket.t) => unit) => subtype('a) = "on";
-    [@bs.send] external onConnect: (subtype('a), [@bs.as "connect"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "on";
-    [@bs.send] external onRequest: (subtype('a), [@bs.as "request"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "on";
-    [@bs.send] external onUpgrade: (subtype('a), [@bs.as "upgrade"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "on";
-    [@bs.send] external onTimeout: (subtype('a), [@bs.as "timeout"] _, (. Net.TcpSocket.t) => unit) => subtype('a) = "on";
-    [@bs.send] external offCheckContinue: (subtype('a), [@bs.as "checkContinue"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "off";
-    [@bs.send] external offCheckExpectation: (subtype('a), [@bs.as "checkExpectation"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "off";
-    [@bs.send] external offClientError: (subtype('a), [@bs.as "clientError"] _, (. Js.Exn.t, Net.TcpSocket.t) => unit) => subtype('a) = "off";
-    [@bs.send] external offConnect: (subtype('a), [@bs.as "connect"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "off";
-    [@bs.send] external offRequest: (subtype('a), [@bs.as "request"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "off";
-    [@bs.send] external offUpgrade: (subtype('a), [@bs.as "upgrade"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "off";
-    [@bs.send] external offTimeout: (subtype('a), [@bs.as "timeout"] _, (. Net.TcpSocket.t) => unit) => subtype('a) = "off";
-    [@bs.send] external onCheckContinueOnce: (subtype('a), [@bs.as "checkContinue"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "once";
-    [@bs.send] external onCheckExpectationOnce: (subtype('a), [@bs.as "checkExpectation"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "once";
-    [@bs.send] external onClientErrorOnce: (subtype('a), [@bs.as "clientError"] _, (. Js.Exn.t, Net.TcpSocket.t) => unit) => subtype('a) = "once";
-    [@bs.send] external onConnectOnce: (subtype('a), [@bs.as "connect"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "once";
-    [@bs.send] external onRequestOnce: (subtype('a), [@bs.as "request"] _, (. IncomingMessage.t, ServerResponse.t) => unit) => subtype('a) = "once";
-    [@bs.send] external onUpgradeOnce: (subtype('a), [@bs.as "upgrade"] _, (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit) => subtype('a) = "once";
-    [@bs.send] external onTimeoutOnce: (subtype('a), [@bs.as "timeout"] _, (. Net.TcpSocket.t) => unit) => subtype('a) = "once";
+    [@bs.send]
+    external onCheckContinue:
+      (
+        subtype('a),
+        [@bs.as "checkContinue"] _,
+        (. IncomingMessage.t, ServerResponse.t) => unit
+      ) =>
+      subtype('a) =
+      "on";
+    [@bs.send]
+    external onCheckExpectation:
+      (
+        subtype('a),
+        [@bs.as "checkExpectation"] _,
+        (. IncomingMessage.t, ServerResponse.t) => unit
+      ) =>
+      subtype('a) =
+      "on";
+    [@bs.send]
+    external onClientError:
+      (subtype('a), [@bs.as "clientError"] _, (. Js.Exn.t, Net.TcpSocket.t) => unit) =>
+      subtype('a) =
+      "on";
+    [@bs.send]
+    external onConnect:
+      (
+        subtype('a),
+        [@bs.as "connect"] _,
+        (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+      ) =>
+      subtype('a) =
+      "on";
+    [@bs.send]
+    external onRequest:
+      (subtype('a), [@bs.as "request"] _, (. IncomingMessage.t, ServerResponse.t) => unit) =>
+      subtype('a) =
+      "on";
+    [@bs.send]
+    external onUpgrade:
+      (
+        subtype('a),
+        [@bs.as "upgrade"] _,
+        (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+      ) =>
+      subtype('a) =
+      "on";
+    [@bs.send]
+    external onTimeout:
+      (subtype('a), [@bs.as "timeout"] _, (. Net.TcpSocket.t) => unit) => subtype('a) =
+      "on";
+    [@bs.send]
+    external offCheckContinue:
+      (
+        subtype('a),
+        [@bs.as "checkContinue"] _,
+        (. IncomingMessage.t, ServerResponse.t) => unit
+      ) =>
+      subtype('a) =
+      "off";
+    [@bs.send]
+    external offCheckExpectation:
+      (
+        subtype('a),
+        [@bs.as "checkExpectation"] _,
+        (. IncomingMessage.t, ServerResponse.t) => unit
+      ) =>
+      subtype('a) =
+      "off";
+    [@bs.send]
+    external offClientError:
+      (subtype('a), [@bs.as "clientError"] _, (. Js.Exn.t, Net.TcpSocket.t) => unit) =>
+      subtype('a) =
+      "off";
+    [@bs.send]
+    external offConnect:
+      (
+        subtype('a),
+        [@bs.as "connect"] _,
+        (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+      ) =>
+      subtype('a) =
+      "off";
+    [@bs.send]
+    external offRequest:
+      (subtype('a), [@bs.as "request"] _, (. IncomingMessage.t, ServerResponse.t) => unit) =>
+      subtype('a) =
+      "off";
+    [@bs.send]
+    external offUpgrade:
+      (
+        subtype('a),
+        [@bs.as "upgrade"] _,
+        (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+      ) =>
+      subtype('a) =
+      "off";
+    [@bs.send]
+    external offTimeout:
+      (subtype('a), [@bs.as "timeout"] _, (. Net.TcpSocket.t) => unit) => subtype('a) =
+      "off";
+    [@bs.send]
+    external onCheckContinueOnce:
+      (
+        subtype('a),
+        [@bs.as "checkContinue"] _,
+        (. IncomingMessage.t, ServerResponse.t) => unit
+      ) =>
+      subtype('a) =
+      "once";
+    [@bs.send]
+    external onCheckExpectationOnce:
+      (
+        subtype('a),
+        [@bs.as "checkExpectation"] _,
+        (. IncomingMessage.t, ServerResponse.t) => unit
+      ) =>
+      subtype('a) =
+      "once";
+    [@bs.send]
+    external onClientErrorOnce:
+      (subtype('a), [@bs.as "clientError"] _, (. Js.Exn.t, Net.TcpSocket.t) => unit) =>
+      subtype('a) =
+      "once";
+    [@bs.send]
+    external onConnectOnce:
+      (
+        subtype('a),
+        [@bs.as "connect"] _,
+        (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+      ) =>
+      subtype('a) =
+      "once";
+    [@bs.send]
+    external onRequestOnce:
+      (subtype('a), [@bs.as "request"] _, (. IncomingMessage.t, ServerResponse.t) => unit) =>
+      subtype('a) =
+      "once";
+    [@bs.send]
+    external onUpgradeOnce:
+      (
+        subtype('a),
+        [@bs.as "upgrade"] _,
+        (. IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+      ) =>
+      subtype('a) =
+      "once";
+    [@bs.send]
+    external onTimeoutOnce:
+      (subtype('a), [@bs.as "timeout"] _, (. Net.TcpSocket.t) => unit) => subtype('a) =
+      "once";
   };
   module Impl = {
     include Events;
-    [@bs.send] external setTimeout: (subtype('a), int, (. Net.TcpSocket.t) => unit) => unit = "setTimeout";
+    [@bs.send]
+    external setTimeout: (subtype('a), int, (. Net.TcpSocket.t) => unit) => unit = "setTimeout";
     [@bs.get] external timeout: subtype('a) => int = "timeout";
     [@bs.send] external keepAliveTimeout: (subtype('a), int) => unit = "keepAliveTimeout";
     include Net.TcpServer.Impl;
@@ -260,8 +543,7 @@ external createServerOptions:
     ~maxHeaderSize: int=?,
     unit
   ) =>
-  createServerOptions =
-  "";
+  createServerOptions;
 
 [@bs.module "http"]
 external createServer: ((IncomingMessage.t, ServerResponse.t) => unit) => Server.t =
@@ -298,27 +580,44 @@ external requestOptions:
     ~socketPath: string=?,
     ~timeout: int=?
   ) =>
-  requestOptions =
-  "";
+  requestOptions;
 
 [@bs.module "http"] external request: string => ClientRequest.t = "request";
-[@bs.module "http"] external requestWithCallback: (string, IncomingMessage.t => unit) => ClientRequest.t = "request";
-[@bs.module "http"] external requestWithOptions: (string, requestOptions) => ClientRequest.t = "request";
-[@bs.module "http"] external requestWithOptionsCallback: (string, requestOptions, IncomingMessage.t => unit) => ClientRequest.t = "request";
+[@bs.module "http"]
+external requestWithCallback: (string, IncomingMessage.t => unit) => ClientRequest.t = "request";
+[@bs.module "http"]
+external requestWithOptions: (string, requestOptions) => ClientRequest.t = "request";
+[@bs.module "http"]
+external requestWithOptionsCallback:
+  (string, requestOptions, IncomingMessage.t => unit) => ClientRequest.t =
+  "request";
 [@bs.module "http"] external requestUrl: Url.t => ClientRequest.t = "request";
-[@bs.module "http"] external requestUrlWithCallback: (Url.t, IncomingMessage.t => unit) => ClientRequest.t = "request";
-[@bs.module "http"] external requestUrlWithOptions: (Url.t, requestOptions) => ClientRequest.t = "request";
-[@bs.module "http"] external requestUrlWithOptionsCallback: (Url.t, requestOptions, IncomingMessage.t => unit) => ClientRequest.t = "request";
+[@bs.module "http"]
+external requestUrlWithCallback: (Url.t, IncomingMessage.t => unit) => ClientRequest.t = "request";
+[@bs.module "http"]
+external requestUrlWithOptions: (Url.t, requestOptions) => ClientRequest.t = "request";
+[@bs.module "http"]
+external requestUrlWithOptionsCallback:
+  (Url.t, requestOptions, IncomingMessage.t => unit) => ClientRequest.t =
+  "request";
 
 [@bs.module "http"] external get: string => ClientRequest.t = "get";
-[@bs.module "http"] external getWithCallback: (string, IncomingMessage.t => unit) => ClientRequest.t = "get";
+[@bs.module "http"]
+external getWithCallback: (string, IncomingMessage.t => unit) => ClientRequest.t = "get";
 [@bs.module "http"] external getWithOptions: (string, requestOptions) => ClientRequest.t = "get";
-[@bs.module "http"] external getWithOptionsCallback: (string, requestOptions, IncomingMessage.t => unit) => ClientRequest.t = "get";
+[@bs.module "http"]
+external getWithOptionsCallback:
+  (string, requestOptions, IncomingMessage.t => unit) => ClientRequest.t =
+  "get";
 
 [@bs.module "http"] external getUrl: Url.t => ClientRequest.t = "get";
-[@bs.module "http"] external getUrlWithCallback: (Url.t, IncomingMessage.t => unit) => ClientRequest.t = "get";
+[@bs.module "http"]
+external getUrlWithCallback: (Url.t, IncomingMessage.t => unit) => ClientRequest.t = "get";
 [@bs.module "http"] external getUrlWithOptions: (Url.t, requestOptions) => ClientRequest.t = "get";
-[@bs.module "http"] external getUrlWithOptionsCallback: (Url.t, requestOptions, IncomingMessage.t => unit) => ClientRequest.t = "get";
+[@bs.module "http"]
+external getUrlWithOptionsCallback:
+  (Url.t, requestOptions, IncomingMessage.t => unit) => ClientRequest.t =
+  "get";
 
 [@bs.module "http"] external globalAgent: Agent.t = "globalAgent";
 [@bs.module "http"] external maxHeaderSize: int = "maxHeaderSize";
@@ -328,4 +627,3 @@ type statusCodes = Js.Dict.t(string);
 
 type methods = array(string);
 [@bs.module "http"] external _METHODS: methods = "METHODS";
-

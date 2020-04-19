@@ -103,5 +103,3 @@ let format = (~auth=?, ~fragment=?, ~search=?, ~unicode=?, url) =>
   );
 
 [@bs.module "url"] external pathToFileURL: string => t = "pathToFileURL";
-
-

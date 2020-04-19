@@ -19,12 +19,10 @@ type cpu = {
 [@bs.module "os"] [@bs.val] external getPriority: int => int = "getPriority";
 [@bs.module "os"] [@bs.val] external homedir: unit => string = "homedir";
 [@bs.module "os"] [@bs.val] external hostname: unit => string = "hostname";
-[@bs.module "os"] [@bs.val]
-external loadavg: unit => array(float) = "loadavg";
+[@bs.module "os"] [@bs.val] external loadavg: unit => array(float) = "loadavg";
 [@bs.module "os"] [@bs.val] external platform: unit => string = "platform";
 [@bs.module "os"] [@bs.val] external release: unit => string = "release";
-[@bs.module "os"] [@bs.val]
-external setPriority: (int, int) => unit = "setPriority";
+[@bs.module "os"] [@bs.val] external setPriority: (int, int) => unit = "setPriority";
 [@bs.module "os"] [@bs.val] external tmpdir: unit => string = "tmpdir";
 [@bs.module "os"] [@bs.val] external totalmem: unit => int = "totalmem";
 [@bs.module "os"] [@bs.val] external type_: unit => string = "type";

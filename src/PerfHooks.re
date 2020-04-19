@@ -39,7 +39,8 @@ module Performance = {
   [@bs.send] external clearMarksByName: (t, string) => unit = "clearMarks";
   [@bs.send] external mark: (t, unit) => unit = "mark";
   [@bs.send] external markWithName: (t, string) => unit = "mark";
-  [@bs.send] external measure: (t, string, ~startMark: string, ~endMark: string) => unit = "measure";
+  [@bs.send]
+  external measure: (t, string, ~startMark: string, ~endMark: string) => unit = "measure";
   [@bs.get] external nodeTiming: t => PerformanceNodeTiming.t = "nodeTiming";
   [@bs.send] external now: t => float = "now";
   [@bs.send] external timerify: (unit => unit, unit) => unit = "timerify";

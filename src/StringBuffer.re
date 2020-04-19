@@ -1,4 +1,3 @@
-
 type t;
 
 external string: string => t = "%identity";
@@ -8,16 +7,16 @@ type case =
   | String(string)
   | Buffer(Buffer.t);
 
-let classifyOpt = (value) =>
+let classifyOpt = value =>
   if (Js.typeof(value) === "string") {
     Some(String(Obj.magic(value)));
   } else if (Buffer.isBuffer(value)) {
-    Some(Buffer(Obj.magic(value)))
+    Some(Buffer(Obj.magic(value)));
   } else {
     None;
   };
 
-let classifyExn = (value) =>
+let classifyExn = value =>
   if (Js.typeof(value) === "string") {
     String(Obj.magic(value));
   } else if (Buffer.isBuffer(value)) {
@@ -26,7 +25,7 @@ let classifyExn = (value) =>
     failwith("Unknown data type");
   };
 
-let classify = (value) =>
+let classify = value =>
   if (Js.typeof(value) === "string") {
     Ok(String(Obj.magic(value)));
   } else if (Buffer.isBuffer(value)) {

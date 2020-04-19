@@ -1,14 +1,15 @@
-
-[@bs.val] [@bs.scope "Error"] external captureStackTrace: Js.t({..}) => unit = "captureStackTrace";
+[@bs.val] [@bs.scope "Error"]
+external captureStackTrace: Js.t({..}) => unit = "captureStackTrace";
 [@bs.val] [@bs.scope "Error"] external stackTraceLimit: int = "captureStackTrace";
-[%%bs.raw {|
+%bs.raw
+{|
   function setStackTraceLimit(n) {
     Error.stackTraceLimit = n;
     return undefined;
   }
-|}];
+|};
 [@bs.val] external setStackTraceLimit: int => Js.Undefined.t('a) = "setStackTraceLimit";
-let setStackTraceLimit: int => unit = (n) => setStackTraceLimit(n)->ignore;
+let setStackTraceLimit: int => unit = n => setStackTraceLimit(n)->ignore;
 
 module Error = {
   type t;
@@ -19,17 +20,14 @@ module Error = {
   [@bs.get] external code: t => string = "code";
   [@bs.get] external message: t => string = "message";
   [@bs.get] external stack: t => string = "stack";
-  let instanceOf = (x) => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
-  let isError: 'a => bool = (x) =>
-    JsTypeReflection.constructorName(x) == "Error"
-    && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let instanceOf = x => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let isError: 'a => bool =
+    x =>
+      JsTypeReflection.constructorName(x) == "Error"
+      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
-  let fromJsExn: Js.Exn.t => option(t) = (exn) =>
-    switch (isError(exn)) {
-      | true => Some(fromJsExn(exn))
-      | false => None
-    };
+  let fromJsExn: Js.Exn.t => option(t) = exn => isError(exn) ? Some(fromJsExn(exn)) : None;
 };
 
 module AssertionError = {
@@ -43,11 +41,10 @@ module AssertionError = {
       ~actual: 'actual=?,
       ~expected: 'expected=?,
       ~operator: string=?,
-      ~stackStartFn: ('a => 'b)=?,
+      ~stackStartFn: 'a => 'b=?,
       unit
     ) =>
-    makeOptions =
-    "";
+    makeOptions;
   [@bs.module "assert"] external constructor: constructor = "AssertionError";
   [@bs.module "assert"] [@bs.new] external make: makeOptions => t = "AssertionError";
   [@bs.get] external actual: t => 'a = "actual";
@@ -58,17 +55,15 @@ module AssertionError = {
   [@bs.get] external message: t => string = "message";
   [@bs.get] external operator: t => string = "operator";
   [@bs.get] external stack: t => string = "stack";
-  let instanceOf = (x) => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
-  let isAssertionError: 'a => bool = (x) =>
-    JsTypeReflection.constructorName(x) == "AssertionError"
-    && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let instanceOf = x => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let isAssertionError: 'a => bool =
+    x =>
+      JsTypeReflection.constructorName(x) == "AssertionError"
+      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
-  let fromJsExn: Js.Exn.t => option(t) = (exn) =>
-    switch (isAssertionError(exn)) {
-      | true => Some(fromJsExn(exn))
-      | false => None
-    };
+  let fromJsExn: Js.Exn.t => option(t) =
+    exn => isAssertionError(exn) ? Some(fromJsExn(exn)) : None;
 };
 
 module EvalError = {
@@ -79,17 +74,14 @@ module EvalError = {
   [@bs.get] external message: t => string = "message";
   [@bs.get] external name: t => string = "name";
   [@bs.get] external stack: t => string = "stack";
-  let instanceOf = (x) => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
-  let isEvalError: 'a => bool = (x) =>
-    JsTypeReflection.constructorName(x) == "EvalError"
-    && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let instanceOf = x => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let isEvalError: 'a => bool =
+    x =>
+      JsTypeReflection.constructorName(x) == "EvalError"
+      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
-  let fromJsExn: Js.Exn.t => option(t) = (exn) =>
-    switch (isEvalError(exn)) {
-      | true => Some(fromJsExn(exn))
-      | false => None
-    };
+  let fromJsExn: Js.Exn.t => option(t) = exn => isEvalError(exn) ? Some(fromJsExn(exn)) : None;
 };
 
 module RangeError = {
@@ -101,17 +93,15 @@ module RangeError = {
   [@bs.get] external code: t => string = "code";
   [@bs.get] external message: t => string = "message";
   [@bs.get] external stack: t => string = "stack";
-  let instanceOf = (x) => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
-  let isRangeError: 'a => bool = (x) =>
-    JsTypeReflection.constructorName(x) == "RangeError"
-    && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let instanceOf = x => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let isRangeError: 'a => bool =
+    x =>
+      JsTypeReflection.constructorName(x) == "RangeError"
+      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
-  let fromJsExn: Js.Exn.t => option(t) = (exn) =>
-    switch (isRangeError(exn)) {
-      | true => Some(fromJsExn(exn))
-      | false => None
-    };
+  let fromJsExn: Js.Exn.t => option(t) =
+    exn => isRangeError(exn) ? Some(fromJsExn(exn)) : None;
 };
 
 module ReferenceError = {
@@ -123,17 +113,15 @@ module ReferenceError = {
   [@bs.get] external code: t => string = "code";
   [@bs.get] external message: t => string = "message";
   [@bs.get] external stack: t => string = "stack";
-  let instanceOf = (x) => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
-  let isReferenceError: 'a => bool = (x) =>
-    JsTypeReflection.constructorName(x) == "ReferenceError"
-    && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let instanceOf = x => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let isReferenceError: 'a => bool =
+    x =>
+      JsTypeReflection.constructorName(x) == "ReferenceError"
+      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
-  let fromJsExn: Js.Exn.t => option(t) = (exn) =>
-    switch (isReferenceError(exn)) {
-      | true => Some(fromJsExn(exn))
-      | false => None
-    };
+  let fromJsExn: Js.Exn.t => option(t) =
+    exn => isReferenceError(exn) ? Some(fromJsExn(exn)) : None;
 };
 
 module SyntaxError = {
@@ -145,17 +133,15 @@ module SyntaxError = {
   [@bs.get] external code: t => string = "code";
   [@bs.get] external message: t => string = "message";
   [@bs.get] external stack: t => string = "stack";
-  let instanceOf = (x) => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
-  let isSyntaxError: 'a => bool = (x) =>
-    JsTypeReflection.constructorName(x) == "SyntaxError"
-    && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let instanceOf = x => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let isSyntaxError: 'a => bool =
+    x =>
+      JsTypeReflection.constructorName(x) == "SyntaxError"
+      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
-  let fromJsExn: Js.Exn.t => option(t) = (exn) =>
-    switch (isSyntaxError(exn)) {
-      | true => Some(fromJsExn(exn))
-      | false => None
-    };
+  let fromJsExn: Js.Exn.t => option(t) =
+    exn => isSyntaxError(exn) ? Some(fromJsExn(exn)) : None;
 };
 
 // It's not clear that SystemError works as expressed in the Node API.
@@ -186,16 +172,13 @@ module TypeError = {
   [@bs.get] external message: t => string = "message";
   [@bs.get] external stack: t => string = "stack";
   external toJsExn: t => Js.Exn.t = "%identity";
-  let instanceOf = (x) => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
-  let isTypeError: 'a => bool = (x) =>
-    JsTypeReflection.constructorName(x) == "TypeError"
-    && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let instanceOf = x => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let isTypeError: 'a => bool =
+    x =>
+      JsTypeReflection.constructorName(x) == "TypeError"
+      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
   external fromJsExn: Js.Exn.t => t = "%identity";
-  let fromJsExn: Js.Exn.t => option(t) = (exn) =>
-    switch (isTypeError(exn)) {
-      | true => Some(fromJsExn(exn))
-      | false => None
-    };
+  let fromJsExn: Js.Exn.t => option(t) = exn => isTypeError(exn) ? Some(fromJsExn(exn)) : None;
 };
 
 module URIError = {
@@ -206,17 +189,14 @@ module URIError = {
   [@bs.get] external message: t => string = "message";
   [@bs.get] external name: t => string = "name";
   [@bs.get] external stack: t => string = "stack";
-  let instanceOf = (x) => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
-  let isURIError: 'a => bool = (x) =>
-    JsTypeReflection.constructorName(x) == "URIError"
-    && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let instanceOf = x => JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+  let isURIError: 'a => bool =
+    x =>
+      JsTypeReflection.constructorName(x) == "URIError"
+      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
-  let fromJsExn: Js.Exn.t => option(t) = (exn) =>
-    switch (isURIError(exn)) {
-      | true => Some(fromJsExn(exn))
-      | false => None
-    };
+  let fromJsExn: Js.Exn.t => option(t) = exn => isURIError(exn) ? Some(fromJsExn(exn)) : None;
 };
 
 type case =
@@ -229,37 +209,40 @@ type case =
   | TypeError(TypeError.t)
   | URIError(URIError.t);
 
-let classifyOpt: 'a => option(case) = (value) =>
-  if (AssertionError.isAssertionError(value)) {
-    Some(AssertionError(Obj.magic(value)));
-  } else if (EvalError.isEvalError(value)) {
-    Some(EvalError(Obj.magic(value)))
-  } else if (RangeError.isRangeError(value)) {
-    Some(RangeError(Obj.magic(value)));
-  } else if (ReferenceError.isReferenceError(value)) {
-    Some(ReferenceError(Obj.magic(value)));
-  } else if (SyntaxError.isSyntaxError(value)) {
-    Some(SyntaxError(Obj.magic(value)));
-  } else if (TypeError.isTypeError(value)) {
-    Some(TypeError(Obj.magic(value)));
-  } else if (URIError.isURIError(value)) {
-    Some(URIError(Obj.magic(value)))
-  } else if (Error.isError(value)) {
-    Some(Error(Obj.magic(value)));
-  } else {
-    None;
-  };
+let classifyOpt: 'a => option(case) =
+  value =>
+    if (AssertionError.isAssertionError(value)) {
+      Some(AssertionError(Obj.magic(value)));
+    } else if (EvalError.isEvalError(value)) {
+      Some(EvalError(Obj.magic(value)));
+    } else if (RangeError.isRangeError(value)) {
+      Some(RangeError(Obj.magic(value)));
+    } else if (ReferenceError.isReferenceError(value)) {
+      Some(ReferenceError(Obj.magic(value)));
+    } else if (SyntaxError.isSyntaxError(value)) {
+      Some(SyntaxError(Obj.magic(value)));
+    } else if (TypeError.isTypeError(value)) {
+      Some(TypeError(Obj.magic(value)));
+    } else if (URIError.isURIError(value)) {
+      Some(URIError(Obj.magic(value)));
+    } else if (Error.isError(value)) {
+      Some(Error(Obj.magic(value)));
+    } else {
+      None;
+    };
 
-let classifyExn: 'a => case = (value) =>
-  switch (classifyOpt(value)) {
-    | None => failwith("Unknown data type");
-    | Some(err) => err;
-  };
+let classifyExn: 'a => case =
+  value =>
+    switch (classifyOpt(value)) {
+    | None => failwith("Unknown data type")
+    | Some(err) => err
+    };
 
-let classify: 'a => Belt.Result.t(case, 'a) = (value) =>
-  switch (classifyOpt(value)) {
+let classify: 'a => Belt.Result.t(case, 'a) =
+  value =>
+    switch (classifyOpt(value)) {
     | None => Error(value)
-    | Some(err) => Ok(err);
-  };
+    | Some(err) => Ok(err)
+    };
 
-module ErrorCodes = { };
+module ErrorCodes = {};

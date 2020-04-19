@@ -12,19 +12,13 @@ external consoleOptions:
     ~stderr: Stream.Writable.subtype('data, 'a)=?,
     ~ignoreErrors: bool=?,
     ~colorMode: bool=?,
-    ~inspectOptions: Util.inspectOptions=?,
+    ~inspectOptions: Util.inspectOptions=?
   ) =>
-  consoleOptions = "";
+  consoleOptions;
 
-[@bs.new][@bs.module "console"] external make: consoleOptions => t = "Console";
-[@bs.new][@bs.module "console"]
-external make2:
-  {
-    ..
-    "stdout": Stream.Writable.subtype('data, 'a),
-  } =>
-  t =
-  "Console";
+[@bs.new] [@bs.module "console"] external make: consoleOptions => t = "Console";
+[@bs.new] [@bs.module "console"]
+external make2: {.. "stdout": Stream.Writable.subtype('data, 'a)} => t = "Console";
 
 [@bs.send] external assert_: (t, bool) => unit = "assert";
 // TODO: reconsider naming
