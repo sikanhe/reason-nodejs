@@ -70,6 +70,8 @@ module Worker = {
     [@bs.send] external onListeningOnce: (t, [@bs.as "listening"] (. Address.t) => unit) => t = "once";
     [@bs.send] external onMessageOnce: (t, [@bs.as "message"] (. Message.t('a), Js.nullable(Js.t('a))) => unit) => t = "once";
     [@bs.send] external onOnlineOnce: (t, [@bs.as "online"] (. unit) => unit) => t = "once";
+
+    [@bs.send] external removeAllListeners: t => unit = "removeAllListeners";
   };
   [@bs.send] external disconnect: t => unit = "disconnect";
   [@bs.send] external exitedAfterDisconnect: t => bool = "exitedAfterDisconnect";
