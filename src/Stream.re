@@ -73,6 +73,11 @@ module Readable = {
       subtype('data, 'a) =
       "on";
     [@bs.send]
+    external onResume:
+      (subtype('data, [> kind] as 'a), [@bs.as "resume"] _, (. unit) => unit) =>
+      subtype('data, 'a) =
+      "on";
+    [@bs.send]
     external offData:
       (subtype('data, [> kind] as 'a), [@bs.as "data"] _, (. 'data) => unit) =>
       subtype('data, 'a) =
@@ -92,6 +97,11 @@ module Readable = {
       subtype('data, 'a) =
       "off";
     [@bs.send]
+    external offResume:
+      (subtype('data, [> kind] as 'a), [@bs.as "resume"] _, (. unit) => unit) =>
+      subtype('data, 'a) =
+      "off";
+    [@bs.send]
     external onDataOnce:
       (subtype('data, [> kind] as 'a), [@bs.as "data"] _, (. 'data) => unit) =>
       subtype('data, 'a) =
@@ -108,6 +118,11 @@ module Readable = {
     [@bs.send]
     external onReadableOnce:
       (subtype('data, [> kind] as 'a), [@bs.as "readable"] _, (. unit) => unit) =>
+      subtype('data, 'a) =
+      "once";
+    [@bs.send]
+    external onResumeOnce:
+      (subtype('data, [> kind] as 'a), [@bs.as "resume"] _, (. unit) => unit) =>
       subtype('data, 'a) =
       "once";
   };
