@@ -11,8 +11,7 @@ type passThrough = [ stream | transform | `PassThrough];
 type socket = [ stream | `Socket];
 type objectMode = [ stream | `ObjectMode];
 
-type subtype('data, 'a) constraint 'a = [> ];
-type objectStream('data, 'a) constraint 'a = [> ];
+type subtype('data, 'a) constraint 'a = [> stream];
 type t('data) = subtype('data, stream);
 
 module Base = {
@@ -126,7 +125,6 @@ module Readable = {
   type nonrec subtype('data, 'a) = subtype('data, [> kind] as 'a);
   type nonrec supertype('data, 'a) = subtype('data, [< kind] as 'a);
   type nonrec t('data) = subtype('data, kind);
-  type nonrec objectStream('data) = subtype('data, [ kind | objectMode]);
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Readable";
 };
 
@@ -255,7 +253,6 @@ module Writable = {
   type nonrec subtype('data, 'a) = subtype('data, [> kind] as 'a);
   type nonrec supertype('data, 'a) = subtype('data, [< kind] as 'a);
   type nonrec t('data) = subtype('data, kind);
-  type nonrec objectStream('data) = subtype('data, [ kind | objectMode]);
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Writable";
 };
 
@@ -274,7 +271,6 @@ module Duplex = {
   type nonrec subtype('data, 'a) = subtype('data, [> kind] as 'a);
   type nonrec supertype('data, 'a) = subtype('data, [< kind] as 'a);
   type nonrec t('data) = subtype('data, kind);
-  type nonrec objectStream('data) = subtype('data, [ kind | objectMode]);
   [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Duplex";
 };
 
@@ -291,7 +287,6 @@ module Transform = {
   type nonrec subtype('data, 'a) = subtype('data, [> kind] as 'a);
   type nonrec supertype('data, 'a) = subtype('data, [< kind] as 'a);
   type nonrec t('data) = subtype('data, kind);
-  type nonrec objectStream('data) = subtype('data, [ kind | objectMode]);
   type makeOptions;
   [@bs.obj]
   external makeOptions:
@@ -318,7 +313,6 @@ module PassThrough = {
   type nonrec subtype('data, 'a) = subtype('data, [> kind] as 'a);
   type nonrec supertype('data, 'a) = subtype('data, [< kind] as 'a);
   type nonrec t('data) = subtype('data, kind);
-  type nonrec objectStream('data) = subtype('data, [ kind | objectMode]);
   [@bs.module "stream"] [@bs.new] external make: unit => t('data) = "PassThrough";
 };
 
