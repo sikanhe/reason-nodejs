@@ -128,9 +128,7 @@ module Readable = {
     [@bs.send]
     external pipe: (subtype('data, [> kind]), subtype('data, [> writable]) as 'ws) => 'ws =
       "pipe";
-    [@bs.send]
-    external unpipe: (subtype('data, [> kind]) as 'rs, subtype('data, [> writable])) => 'rs =
-      "unpipe";
+    [@bs.send] external push: (subtype('data, [> kind]), 'data) => unit = "push";
     [@bs.send] external read: subtype('data, [> kind]) => Js.nullable('data) = "read";
     [@bs.send] external readSize: (subtype('data, [> kind]), int) => Js.nullable('data) = "read";
     [@bs.get] external readable: subtype('data, [> kind]) => bool = "readable";
@@ -145,6 +143,9 @@ module Readable = {
     [@bs.get]
     external readableObjectMode: subtype('data, [> kind]) => bool = "readableObjectMode";
     [@bs.send] external resume: (subtype('data, [> kind]) as 'rs) => 'rs = "resume";
+    [@bs.send]
+    external unpipe: (subtype('data, [> kind]) as 'rs, subtype('data, [> writable])) => 'rs =
+      "unpipe";
     [@bs.send] external unshift: (subtype('data, [> kind]), 'data) => unit = "unshift";
   };
   include Impl;
@@ -313,7 +314,9 @@ module Transform = {
                     ) =>
                     unit
                   ),
-      ~flush: [@bs.this] ((t(Buffer.t), Js.nullable(Js.Exn.t), Buffer.t) => unit)
+      ~flush: [@bs.this] (
+                (t(Buffer.t), (. Js.nullable(Js.Exn.t), Js.nullable(Buffer.t)) => unit) => unit
+              )
     ) =>
     makeOptions;
   [@bs.module "stream"] [@bs.new]
