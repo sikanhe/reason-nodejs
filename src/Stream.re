@@ -309,7 +309,6 @@ module Transform = {
       ~flush: (option(Js.Exn.t), Buffer.t) => unit
     ) =>
     makeOptions;
-  [@bs.module "stream"] [@bs.new] external make: unit => t(Buffer.t) = "Transform";
   [@bs.module "stream"] [@bs.new]
   external makeWith: (~options: makeOptions) => t(Buffer.t) = "Transform";
 };
@@ -355,7 +354,7 @@ external pipeline0:
 external pipeline1:
   (
     Readable.subtype(Buffer.t, 'src),
-    Duplex.subtype(Buffer.t, 'x1),
+    Duplex.subtype(Buffer.t, 'kind1),
     Writable.subtype(Buffer.t, 'dest),
     Js.nullable(Js.Exn.t) => unit
   ) =>
@@ -366,8 +365,8 @@ external pipeline1:
 external pipeline2:
   (
     Readable.subtype(Buffer.t, 'src),
-    Duplex.subtype(Buffer.t, 'x1),
-    Duplex.subtype(Buffer.t, 'x2),
+    Duplex.subtype(Buffer.t, 'kind1),
+    Duplex.subtype(Buffer.t, 'kind2),
     Writable.subtype(Buffer.t, 'dest),
     Js.nullable(Js.Exn.t) => unit
   ) =>
@@ -378,9 +377,9 @@ external pipeline2:
 external pipeline3:
   (
     Readable.subtype(Buffer.t, 'src),
-    Duplex.subtype(Buffer.t, 'x1),
-    Duplex.subtype(Buffer.t, 'x2),
-    Duplex.subtype(Buffer.t, 'x3),
+    Duplex.subtype(Buffer.t, 'kind1),
+    Duplex.subtype(Buffer.t, 'kind2),
+    Duplex.subtype(Buffer.t, 'kind3),
     Writable.subtype(Buffer.t, 'dest),
     Js.nullable(Js.Exn.t) => unit
   ) =>
@@ -391,41 +390,10 @@ external pipeline3:
 external pipeline4:
   (
     Readable.subtype(Buffer.t, 'src),
-    Duplex.subtype(Buffer.t, 'x1),
-    Duplex.subtype(Buffer.t, 'x2),
-    Duplex.subtype(Buffer.t, 'x3),
-    Duplex.subtype(Buffer.t, 'x4),
-    Writable.subtype(Buffer.t, 'dest),
-    Js.nullable(Js.Exn.t) => unit
-  ) =>
-  Writable.subtype(Buffer.t, 'dest) =
-  "pipeline";
-
-[@bs.module "stream"]
-external pipeline5:
-  (
-    Readable.subtype(Buffer.t, 'src),
-    Duplex.subtype(Buffer.t, 'x1),
-    Duplex.subtype(Buffer.t, 'x2),
-    Duplex.subtype(Buffer.t, 'x3),
-    Duplex.subtype(Buffer.t, 'x4),
-    Duplex.subtype(Buffer.t, 'x5),
-    Writable.subtype(Buffer.t, 'dest),
-    Js.nullable(Js.Exn.t) => unit
-  ) =>
-  Writable.subtype(Buffer.t, 'dest) =
-  "pipeline";
-
-[@bs.module "stream"]
-external pipeline6:
-  (
-    Readable.subtype(Buffer.t, 'src),
-    Duplex.subtype(Buffer.t, 'x1),
-    Duplex.subtype(Buffer.t, 'x2),
-    Duplex.subtype(Buffer.t, 'x3),
-    Duplex.subtype(Buffer.t, 'x4),
-    Duplex.subtype(Buffer.t, 'x5),
-    Duplex.subtype(Buffer.t, 'x6),
+    Duplex.subtype(Buffer.t, 'kind1),
+    Duplex.subtype(Buffer.t, 'kind2),
+    Duplex.subtype(Buffer.t, 'kind3),
+    Duplex.subtype(Buffer.t, 'kind4),
     Writable.subtype(Buffer.t, 'dest),
     Js.nullable(Js.Exn.t) => unit
   ) =>
