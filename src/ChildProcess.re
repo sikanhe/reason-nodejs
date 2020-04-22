@@ -1,26 +1,26 @@
 type t;
 
 module Events = {
-  [@bs.send] external onData: (t, [@bs.as "data"] _, (. Buffer.t) => unit) => t = "on";
-  [@bs.send] external onDisconnect: (t, [@bs.as "disconnect"] _, (. unit) => unit) => t = "on";
-  [@bs.send] external onError: (t, [@bs.as "error"] _, (. Js.Exn.t) => unit) => t = "on";
-  [@bs.send] external onExit: (t, [@bs.as "exit"] _, (. int) => unit) => t = "on";
-  [@bs.send] external onClose: (t, [@bs.as "close"] _, (. int) => unit) => t = "on";
+  [@bs.send] external onData: (t, [@bs.as "data"] _, [@bs.uncurry] (Buffer.t) => unit) => t = "on";
+  [@bs.send] external onDisconnect: (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit) => unit) => t = "on";
+  [@bs.send] external onError: (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t = "on";
+  [@bs.send] external onExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t = "on";
+  [@bs.send] external onClose: (t, [@bs.as "close"] _, [@bs.uncurry] (int) => unit) => t = "on";
 
-  [@bs.send] external offData: (t, [@bs.as "data"] _, (. Buffer.t) => unit) => t = "off";
-  [@bs.send] external offDisconnect: (t, [@bs.as "disconnect"] _, (. unit) => unit) => t = "off";
-  [@bs.send] external offError: (t, [@bs.as "error"] _, (. Js.Exn.t) => unit) => t = "off";
-  [@bs.send] external offExit: (t, [@bs.as "exit"] _, (. int) => unit) => t = "off";
-  [@bs.send] external offClose: (t, [@bs.as "close"] _, (. int) => unit) => t = "off";
+  [@bs.send] external offData: (t, [@bs.as "data"] _, [@bs.uncurry] (Buffer.t) => unit) => t = "off";
+  [@bs.send] external offDisconnect: (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit) => unit) => t = "off";
+  [@bs.send] external offError: (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t = "off";
+  [@bs.send] external offExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t = "off";
+  [@bs.send] external offClose: (t, [@bs.as "close"] _, [@bs.uncurry] (int) => unit) => t = "off";
 
-  [@bs.send] external onDataOnce: (t, [@bs.as "data"] _, (. Buffer.t) => unit) => t = "once";
+  [@bs.send] external onDataOnce: (t, [@bs.as "data"] _, [@bs.uncurry] (Buffer.t) => unit) => t = "once";
   [@bs.send]
-  external onDisconnectOnce: (t, [@bs.as "disconnect"] _, (. unit) => unit) => t = "once";
-  [@bs.send] external onErrorOnce: (t, [@bs.as "error"] _, (. Js.Exn.t) => unit) => t = "once";
-  [@bs.send] external onExitOnce: (t, [@bs.as "exit"] _, (. int) => unit) => t = "once";
-  [@bs.send] external onCloseOnce: (t, [@bs.as "close"] _, (. int) => unit) => t = "once";
+  external onDisconnectOnce: (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit) => unit) => t = "once";
+  [@bs.send] external onErrorOnce: (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t = "once";
+  [@bs.send] external onExitOnce: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t = "once";
+  [@bs.send] external onCloseOnce: (t, [@bs.as "close"] _, [@bs.uncurry] (int) => unit) => t = "once";
 
-  [@bs.send] external emitData: (t, [@bs.as "data"] _) => (. Buffer.t) => bool = "emit";
+  [@bs.send] external emitData: (t, [@bs.as "data"] _, Buffer.t) => bool = "emit";
   [@bs.send] external emitDisconnect: (t, [@bs.as "disconnect"] _) => bool = "emit";
   [@bs.send] external emitError: (t, [@bs.as "error"] _, Js.Exn.t) => bool = "emit";
   [@bs.send] external emitExit: (t, [@bs.as "exit"] _, int) => bool = "emit";

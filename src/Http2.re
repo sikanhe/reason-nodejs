@@ -47,12 +47,12 @@ module ServerHttp2Stream = {
 
 module Http2Session = {
   type t;
-  [@bs.send] external onClose: (t, [@bs.as "close"] _, (. unit) => unit) => t = "on";
+  [@bs.send] external onClose: (t, [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => t = "on";
   [@bs.send]
   external onConnect:
-    (t, [@bs.as "connect"] _, (. t, Stream.subtype(Buffer.t, [> Net.Socket.kind])) => unit) => t =
+    (t, [@bs.as "connect"] _, [@bs.uncurry] (t, Stream.subtype(Buffer.t, [> Net.Socket.kind])) => unit) => t =
     "on";
-  [@bs.send] external onError: (t, [@bs.as "error"] _, (. Js.Exn.t) => unit) => t = "on";
+  [@bs.send] external onError: (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t = "on";
   /** TODO: uncurry after release of bs-platform v7.3 */
   [@bs.send]
   external onFrameError:
@@ -64,11 +64,11 @@ module Http2Session = {
     (t, [@bs.as "goAway"] _, (~errorCode: int, ~lastStreamId: int, Buffer.t) => unit) => t =
     "on";
   [@bs.send]
-  external onLocalSettings: (t, [@bs.as "localSettings"] _, (. settingsObject) => unit) => t =
+  external onLocalSettings: (t, [@bs.as "localSettings"] _, [@bs.uncurry] (settingsObject) => unit) => t =
     "on";
-  [@bs.send] external onPing: (t, [@bs.as "ping"] _, (. Buffer.t) => unit) => t = "on";
+  [@bs.send] external onPing: (t, [@bs.as "ping"] _, [@bs.uncurry] (Buffer.t) => unit) => t = "on";
   [@bs.send]
-  external onRemoteSettings: (t, [@bs.as "remoteSettings"] _, (. settingsObject) => unit) => t =
+  external onRemoteSettings: (t, [@bs.as "remoteSettings"] _, [@bs.uncurry] (settingsObject) => unit) => t =
     "on";
   [@bs.send]
   external onStream:
@@ -89,7 +89,7 @@ module Http2Session = {
     ) =>
     t =
     "on";
-  [@bs.send] external onTimeout: (t, [@bs.as "timeout"] _, (. unit) => unit) => t = "on";
+  [@bs.send] external onTimeout: (t, [@bs.as "timeout"] _, [@bs.uncurry] (unit) => unit) => t = "on";
   [@bs.get] [@bs.return nullable] external alpnProtocol: t => option(string) = "alpnProtocol";
   [@bs.send] external close: t => unit = "close";
   [@bs.get] external closed: t => bool = "closed";
@@ -194,8 +194,8 @@ module Http2ServerRequest = {
   type t = Stream.subtype(Buffer.t, [ kind]);
   module Impl = {
     include Stream.Readable.Impl;
-    [@bs.send] external onAborted: (t, [@bs.as "aborted"] _, (. unit) => unit) => t = "on";
-    [@bs.send] external onClose: (t, [@bs.as "close"] _, (. unit) => unit) => t = "on";
+    [@bs.send] external onAborted: (t, [@bs.as "aborted"] _, [@bs.uncurry] (unit) => unit) => t = "on";
+    [@bs.send] external onClose: (t, [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => t = "on";
     [@bs.get] external aborted: t => bool = "aborted";
     [@bs.get] external authority: t => string = "authority";
     [@bs.get] external complete: t => bool = "complete";
@@ -224,8 +224,8 @@ module Http2ServerResponse = {
   type t = Stream.subtype(Buffer.t, [ kind]);
   module Impl = {
     include Stream.Duplex.Impl;
-    [@bs.send] external onClose: (t, [@bs.as "close"] _, (. unit) => unit) => t = "on";
-    [@bs.send] external onFinish: (t, [@bs.as "finish"] _, (. unit) => unit) => t = "on";
+    [@bs.send] external onClose: (t, [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => t = "on";
+    [@bs.send] external onFinish: (t, [@bs.as "finish"] _, [@bs.uncurry] (unit) => unit) => t = "on";
     [@bs.send] external setTrailers: (t, Js.t({..})) => unit = "setTrailers";
     [@bs.send] external end_: t => unit = "end";
     [@bs.send] external endWith: (t, ~data: Buffer.t=?, ~callback: unit => unit=?) => t = "end";

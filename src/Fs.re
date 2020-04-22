@@ -430,11 +430,11 @@ module WriteStream = {
     [@bs.send] external pending: subtype('data, [> kind]) => bool = "pending";
     [@bs.send]
     external onOpen:
-      (subtype('data, [> kind]) as 'stream', [@bs.as "open"] _, (. fd) => unit) => 'stream =
+      (subtype('data, [> kind]) as 'stream', [@bs.as "open"] _, [@bs.uncurry] (fd) => unit) => 'stream =
       "on";
     [@bs.send]
     external onReady:
-      (subtype('data, [> kind]) as 'stream, [@bs.as "ready"] _, (. unit) => unit) => 'stream =
+      (subtype('data, [> kind]) as 'stream, [@bs.as "ready"] _, [@bs.uncurry] (unit) => unit) => 'stream =
       "on";
   };
   include Impl;
@@ -452,11 +452,11 @@ module ReadStream = {
     [@bs.send] external pending: subtype('data, [> kind]) => bool = "pending";
     [@bs.send]
     external onOpen:
-      (subtype('data, [> kind]) as 'stream, [@bs.as "open"] _, (. fd) => unit) => 'stream =
+      (subtype('data, [> kind]) as 'stream, [@bs.as "open"] _, [@bs.uncurry] (fd) => unit) => 'stream =
       "on";
     [@bs.send]
     external onReady:
-      (subtype('data, [> kind]) as 'stream, [@bs.as "ready"] _, (. unit) => unit) => 'stream =
+      (subtype('data, [> kind]) as 'stream, [@bs.as "ready"] _, [@bs.uncurry] (unit) => unit) => 'stream =
       "on";
   };
   include Impl;

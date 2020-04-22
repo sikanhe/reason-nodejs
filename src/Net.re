@@ -29,88 +29,88 @@ module Socket = {
 
     module Events = {
       [@bs.send]
-      external onClose: (subtype('a), [@bs.as "close"] _, (. bool) => unit) => subtype('a) =
+      external onClose: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (bool) => unit) => subtype('a) =
         "on";
       [@bs.send]
-      external onConnect: (subtype('a), [@bs.as "connect"] _, (. unit) => unit) => subtype('a) =
+      external onConnect: (subtype('a), [@bs.as "connect"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "on";
       [@bs.send]
-      external onData: (subtype('a), [@bs.as "data"] _, (. Buffer.t) => unit) => subtype('a) =
+      external onData: (subtype('a), [@bs.as "data"] _, [@bs.uncurry] (Buffer.t) => unit) => subtype('a) =
         "on";
       [@bs.send]
-      external onDrain: (subtype('a), [@bs.as "drain"] _, (. unit) => unit) => subtype('a) =
+      external onDrain: (subtype('a), [@bs.as "drain"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "on";
       [@bs.send]
-      external onEnd: (subtype('a), [@bs.as "end"] _, (. unit) => unit) => subtype('a) = "on";
+      external onEnd: (subtype('a), [@bs.as "end"] _, [@bs.uncurry] (unit) => unit) => subtype('a) = "on";
       [@bs.send]
-      external onError: (subtype('a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => subtype('a) =
+      external onError: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => subtype('a) =
         "on";
       [@bs.send]
-      external onLookup: (subtype('a), [@bs.as "lookup"] _, (. unit) => unit) => subtype('a) =
+      external onLookup: (subtype('a), [@bs.as "lookup"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "on";
       [@bs.send]
-      external onReady: (subtype('a), [@bs.as "ready"] _, (. unit) => unit) => subtype('a) =
+      external onReady: (subtype('a), [@bs.as "ready"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "on";
       [@bs.send]
       external onTimeout: (subtype('a), [@bs.as "timeout"] _, unit => unit) => subtype('a) =
         "on";
 
       [@bs.send]
-      external offClose: (subtype('a), [@bs.as "close"] _, (. bool) => unit) => subtype('a) =
+      external offClose: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (bool) => unit) => subtype('a) =
         "off";
       [@bs.send]
-      external offConnect: (subtype('a), [@bs.as "connect"] _, (. unit) => unit) => subtype('a) =
+      external offConnect: (subtype('a), [@bs.as "connect"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "off";
       [@bs.send]
-      external offData: (subtype('a), [@bs.as "data"] _, (. Buffer.t) => unit) => subtype('a) =
+      external offData: (subtype('a), [@bs.as "data"] _, [@bs.uncurry] (Buffer.t) => unit) => subtype('a) =
         "off";
       [@bs.send]
-      external offDrain: (subtype('a), [@bs.as "drain"] _, (. unit) => unit) => subtype('a) =
+      external offDrain: (subtype('a), [@bs.as "drain"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "off";
       [@bs.send]
-      external offEnd: (subtype('a), [@bs.as "end"] _, (. unit) => unit) => subtype('a) = "off";
+      external offEnd: (subtype('a), [@bs.as "end"] _, [@bs.uncurry] (unit) => unit) => subtype('a) = "off";
       [@bs.send]
-      external offError: (subtype('a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => subtype('a) =
+      external offError: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => subtype('a) =
         "off";
       [@bs.send]
-      external offLookup: (subtype('a), [@bs.as "lookup"] _, (. unit) => unit) => subtype('a) =
+      external offLookup: (subtype('a), [@bs.as "lookup"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "off";
       [@bs.send]
-      external offReady: (subtype('a), [@bs.as "ready"] _, (. unit) => unit) => subtype('a) =
+      external offReady: (subtype('a), [@bs.as "ready"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "off";
       [@bs.send]
-      external offTimeout: (subtype('a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('a) =
+      external offTimeout: (subtype('a), [@bs.as "timeout"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "off";
 
       [@bs.send]
-      external onCloseOnce: (subtype('a), [@bs.as "close"] _, (. bool) => unit) => subtype('a) =
+      external onCloseOnce: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (bool) => unit) => subtype('a) =
         "once";
       [@bs.send]
       external onConnectOnce:
-        (subtype('a), [@bs.as "connect"] _, (. unit) => unit) => subtype('a) =
+        (subtype('a), [@bs.as "connect"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "once";
       [@bs.send]
-      external onDataOnce: (subtype('a), [@bs.as "data"] _, (. Buffer.t) => unit) => subtype('a) =
+      external onDataOnce: (subtype('a), [@bs.as "data"] _, [@bs.uncurry] (Buffer.t) => unit) => subtype('a) =
         "once";
       [@bs.send]
-      external onDrainOnce: (subtype('a), [@bs.as "drain"] _, (. unit) => unit) => subtype('a) =
+      external onDrainOnce: (subtype('a), [@bs.as "drain"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "once";
       [@bs.send]
-      external onEndOnce: (subtype('a), [@bs.as "end"] _, (. unit) => unit) => subtype('a) =
+      external onEndOnce: (subtype('a), [@bs.as "end"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "once";
       [@bs.send]
       external onErrorOnce:
-        (subtype('a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => subtype('a) =
+        (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => subtype('a) =
         "once";
       [@bs.send]
-      external onLookupOnce: (subtype('a), [@bs.as "lookup"] _, (. unit) => unit) => subtype('a) =
+      external onLookupOnce: (subtype('a), [@bs.as "lookup"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "once";
       [@bs.send]
-      external onReadyOnce: (subtype('a), [@bs.as "ready"] _, (. unit) => unit) => subtype('a) =
+      external onReadyOnce: (subtype('a), [@bs.as "ready"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "once";
       [@bs.send]
       external onTimeoutOnce:
-        (subtype('a), [@bs.as "timeout"] _, (. unit) => unit) => subtype('a) =
+        (subtype('a), [@bs.as "timeout"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
         "once";
     };
 
@@ -289,42 +289,42 @@ module Server = {
   type t = subtype(kind);
   module Events = {
     [@bs.send]
-    external onClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "on";
+    external onClose: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => subtype('a) = "on";
     [@bs.send]
-    external onError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "on";
+    external onError: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit) => unit) => subtype('a) = "on";
     [@bs.send]
     external onConnection:
-      (subtype('a), [@bs.as "connection"] _, (. Socket.t) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (Socket.t) => unit) => subtype('a) =
       "on";
     [@bs.send]
-    external onListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) =
+    external onListening: (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "on";
     [@bs.send]
-    external offClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) =
+    external offClose: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "off";
     [@bs.send]
-    external offError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) =
+    external offError: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "off";
     [@bs.send]
     external offConnection:
-      (subtype('a), [@bs.as "connection"] _, (. Socket.t) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (Socket.t) => unit) => subtype('a) =
       "off";
     [@bs.send]
-    external offListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) =
+    external offListening: (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "off";
     [@bs.send]
-    external onCloseOnce: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) =
+    external onCloseOnce: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "once";
     [@bs.send]
-    external onErrorOnce: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) =
+    external onErrorOnce: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "once";
     [@bs.send]
     external onConnectionOnce:
-      (subtype('a), [@bs.as "connection"] _, (. Socket.t) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (Socket.t) => unit) => subtype('a) =
       "once";
     [@bs.send]
     external onListeningOnce:
-      (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "once";
   };
   module Impl = {
@@ -353,42 +353,42 @@ module TcpServer = {
   type t = subtype(kind);
   module Events = {
     [@bs.send]
-    external onClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "on";
+    external onClose: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => subtype('a) = "on";
     [@bs.send]
-    external onError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "on";
+    external onError: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit) => unit) => subtype('a) = "on";
     [@bs.send]
     external onConnection:
-      (subtype('a), [@bs.as "connection"] _, (. TcpSocket.t) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (TcpSocket.t) => unit) => subtype('a) =
       "on";
     [@bs.send]
-    external onListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) =
+    external onListening: (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "on";
     [@bs.send]
-    external offClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) =
+    external offClose: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "off";
     [@bs.send]
-    external offError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) =
+    external offError: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "off";
     [@bs.send]
     external offConnection:
-      (subtype('a), [@bs.as "connection"] _, (. TcpSocket.t) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (TcpSocket.t) => unit) => subtype('a) =
       "off";
     [@bs.send]
-    external offListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) =
+    external offListening: (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "off";
     [@bs.send]
-    external onCloseOnce: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) =
+    external onCloseOnce: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "once";
     [@bs.send]
-    external onErrorOnce: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) =
+    external onErrorOnce: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "once";
     [@bs.send]
     external onConnectionOnce:
-      (subtype('a), [@bs.as "connection"] _, (. TcpSocket.t) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (TcpSocket.t) => unit) => subtype('a) =
       "once";
     [@bs.send]
     external onListeningOnce:
-      (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "once";
   };
   module Impl = {
@@ -433,42 +433,42 @@ module IcpServer = {
   type t = subtype(kind);
   module Events = {
     [@bs.send]
-    external onClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) = "on";
+    external onClose: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => subtype('a) = "on";
     [@bs.send]
-    external onError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) = "on";
+    external onError: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit) => unit) => subtype('a) = "on";
     [@bs.send]
     external onConnection:
-      (subtype('a), [@bs.as "connection"] _, (. IcpSocket.t) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (IcpSocket.t) => unit) => subtype('a) =
       "on";
     [@bs.send]
-    external onListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) =
+    external onListening: (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "on";
     [@bs.send]
-    external offClose: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) =
+    external offClose: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "off";
     [@bs.send]
-    external offError: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) =
+    external offError: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "off";
     [@bs.send]
     external offConnection:
-      (subtype('a), [@bs.as "connection"] _, (. IcpSocket.t) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (IcpSocket.t) => unit) => subtype('a) =
       "off";
     [@bs.send]
-    external offListening: (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) =
+    external offListening: (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "off";
     [@bs.send]
-    external onCloseOnce: (subtype('a), [@bs.as "close"] _, (. unit) => unit) => subtype('a) =
+    external onCloseOnce: (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "once";
     [@bs.send]
-    external onErrorOnce: (subtype('a), [@bs.as "error"] _, (. unit) => unit) => subtype('a) =
+    external onErrorOnce: (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "once";
     [@bs.send]
     external onConnectionOnce:
-      (subtype('a), [@bs.as "connection"] _, (. IcpSocket.t) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (IcpSocket.t) => unit) => subtype('a) =
       "once";
     [@bs.send]
     external onListeningOnce:
-      (subtype('a), [@bs.as "listening"] _, (. unit) => unit) => subtype('a) =
+      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit) => unit) => subtype('a) =
       "once";
   };
   module Impl = {

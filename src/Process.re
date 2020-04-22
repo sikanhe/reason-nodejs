@@ -8,70 +8,70 @@ type warning = {
 };
 
 module Events = {
-  [@bs.send] external onBeforeExit: (t, [@bs.as "beforeExit"] _, (. int) => unit) => t = "on";
-  [@bs.send] external onDisconnect: (t, [@bs.as "disconnect"] _, (. unit) => unit) => t = "on";
-  [@bs.send] external onExit: (t, [@bs.as "exit"] _, (. int) => unit) => t = "on";
+  [@bs.send] external onBeforeExit: (t, [@bs.as "beforeExit"] _, [@bs.uncurry] (int) => unit) => t = "on";
+  [@bs.send] external onDisconnect: (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit) => unit) => t = "on";
+  [@bs.send] external onExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t = "on";
   [@bs.send]
   external onMultipleResolves:
-    (t, [@bs.as "multipleResolves"] _, (. string, Js.Promise.t('a), 'a) => unit) => t =
+    (t, [@bs.as "multipleResolves"] _, [@bs.uncurry] (string, Js.Promise.t('a), 'a) => unit) => t =
     "on";
   [@bs.send]
   external onRejectionHandled:
-    (t, [@bs.as "rejectionHandled"] _, (. Js.Promise.t('a)) => unit) => t =
+    (t, [@bs.as "rejectionHandled"] _, [@bs.uncurry] (Js.Promise.t('a)) => unit) => t =
     "on";
   [@bs.send]
   external onUncaughtException:
-    (t, [@bs.as "uncaughtException"] _, (. Js.Exn.t, string) => unit) => t =
+    (t, [@bs.as "uncaughtException"] _, [@bs.uncurry] (Js.Exn.t, string) => unit) => t =
     "on";
   [@bs.send]
   external onUnhandledRejection:
-    (t, [@bs.as "unhandledRejection"] _, (. Js.Exn.t, Js.Promise.t('a)) => unit) => t =
+    (t, [@bs.as "unhandledRejection"] _, [@bs.uncurry] (Js.Exn.t, Js.Promise.t('a)) => unit) => t =
     "on";
-  [@bs.send] external onWarning: (t, [@bs.as "warning"] _, (. warning) => unit) => t = "on";
+  [@bs.send] external onWarning: (t, [@bs.as "warning"] _, [@bs.uncurry] (warning) => unit) => t = "on";
 
-  [@bs.send] external offBeforeExit: (t, [@bs.as "beforeExit"] _, (. int) => unit) => t = "off";
-  [@bs.send] external offDisconnect: (t, [@bs.as "disconnect"] _, (. unit) => unit) => t = "off";
-  [@bs.send] external offExit: (t, [@bs.as "exit"] _, (. int) => unit) => t = "off";
+  [@bs.send] external offBeforeExit: (t, [@bs.as "beforeExit"] _, [@bs.uncurry] (int) => unit) => t = "off";
+  [@bs.send] external offDisconnect: (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit) => unit) => t = "off";
+  [@bs.send] external offExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t = "off";
   [@bs.send]
   external offMultipleResolves:
-    (t, [@bs.as "multipleResolves"] _, (. string, Js.Promise.t('a), 'a) => unit) => t =
+    (t, [@bs.as "multipleResolves"] _, [@bs.uncurry] (string, Js.Promise.t('a), 'a) => unit) => t =
     "off";
   [@bs.send]
   external offRejectionHandled:
-    (t, [@bs.as "rejectionHandled"] _, (. Js.Promise.t('a)) => unit) => t =
+    (t, [@bs.as "rejectionHandled"] _, [@bs.uncurry] (Js.Promise.t('a)) => unit) => t =
     "off";
   [@bs.send]
   external offUncaughtException:
-    (t, [@bs.as "uncaughtException"] _, (. Js.Exn.t, string) => unit) => t =
+    (t, [@bs.as "uncaughtException"] _, [@bs.uncurry] (Js.Exn.t, string) => unit) => t =
     "off";
   [@bs.send]
   external offUnhandledRejection:
-    (t, [@bs.as "unhandledRejection"] _, (. Js.Exn.t, Js.Promise.t('a)) => unit) => t =
+    (t, [@bs.as "unhandledRejection"] _, [@bs.uncurry] (Js.Exn.t, Js.Promise.t('a)) => unit) => t =
     "off";
-  [@bs.send] external offWarning: (t, [@bs.as "warning"] _, (. warning) => unit) => t = "off";
+  [@bs.send] external offWarning: (t, [@bs.as "warning"] _, [@bs.uncurry] (warning) => unit) => t = "off";
 
   [@bs.send]
-  external onBeforeExitOnce: (t, [@bs.as "beforeExit"] _, (. int) => unit) => t = "once";
+  external onBeforeExitOnce: (t, [@bs.as "beforeExit"] _, [@bs.uncurry] (int) => unit) => t = "once";
   [@bs.send]
-  external onDisconnectOnce: (t, [@bs.as "disconnect"] _, (. unit) => unit) => t = "once";
-  [@bs.send] external onExitOnce: (t, [@bs.as "exit"] _, (. int) => unit) => unit = "once";
+  external onDisconnectOnce: (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit) => unit) => t = "once";
+  [@bs.send] external onExitOnce: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => unit = "once";
   [@bs.send]
   external onMultipleResolvesOnce:
-    (t, [@bs.as "multipleResolves"] _, (. string, Js.Promise.t('a), 'a) => unit) => t =
+    (t, [@bs.as "multipleResolves"] _, [@bs.uncurry] (string, Js.Promise.t('a), 'a) => unit) => t =
     "once";
   [@bs.send]
   external onRejectionHandledOnce:
-    (t, [@bs.as "rejectionHandled"] _, (. Js.Promise.t('a)) => unit) => t =
+    (t, [@bs.as "rejectionHandled"] _, [@bs.uncurry] (Js.Promise.t('a)) => unit) => t =
     "once";
   [@bs.send]
   external onUncaughtExceptionOnce:
-    (t, [@bs.as "uncaughtException"] _, (. Js.Exn.t, string) => unit) => t =
+    (t, [@bs.as "uncaughtException"] _, [@bs.uncurry] (Js.Exn.t, string) => unit) => t =
     "once";
   [@bs.send]
   external onUnhandledRejectionOnce:
-    (t, [@bs.as "unhandledRejection"] _, (. Js.Exn.t, Js.Promise.t('a)) => unit) => t =
+    (t, [@bs.as "unhandledRejection"] _, [@bs.uncurry] (Js.Exn.t, Js.Promise.t('a)) => unit) => t =
     "once";
-  [@bs.send] external onWarningOnce: (t, [@bs.as "warning"] _, (. warning) => unit) => t = "once";
+  [@bs.send] external onWarningOnce: (t, [@bs.as "warning"] _, [@bs.uncurry] (warning) => unit) => t = "once";
 
   [@bs.send] external removeAllListeners: t => t = "removeAllListeners";
 };

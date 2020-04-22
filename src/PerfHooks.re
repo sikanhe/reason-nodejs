@@ -44,7 +44,7 @@ module Performance = {
   [@bs.get] external nodeTiming: t => PerformanceNodeTiming.t = "nodeTiming";
   [@bs.send] external now: t => float = "now";
   [@bs.send] external timerify: (unit => unit, unit) => unit = "timerify";
-  [@bs.send] external timerifyU: ((. unit) => unit) => (. unit) => unit = "timerify";
+  [@bs.send] external timerifyU: ([@bs.uncurry] (unit => unit)) => (unit => unit) = "timerify";
 };
 
 module Histogram = {

@@ -20,27 +20,27 @@ module Base = {
   module Events = {
     [@bs.send]
     external onError:
-      (subtype('data, 'a) as 'stream, [@bs.as "error"] _, (. Js.Exn.t) => unit) => 'stream =
+      (subtype('data, 'a) as 'stream, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => 'stream =
       "on";
     [@bs.send]
     external onClose:
-      (subtype('data, 'a) as 'stream, [@bs.as "close"] _, (. unit) => unit) => 'stream =
+      (subtype('data, 'a) as 'stream, [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => 'stream =
       "on";
     [@bs.send]
     external offError:
-      (subtype('data, 'a) as 'stream, [@bs.as "error"] _, (. Js.Exn.t) => unit) => 'stream =
+      (subtype('data, 'a) as 'stream, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => 'stream =
       "off";
     [@bs.send]
     external offClose:
-      (subtype('data, 'a) as 'stream, [@bs.as "close"] _, (. unit) => unit) => 'stream =
+      (subtype('data, 'a) as 'stream, [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => 'stream =
       "off";
     [@bs.send]
     external onErrorOnce:
-      (subtype('data, 'a) as 'stream, [@bs.as "error"] _, (. Js.Exn.t) => unit) => 'stream =
+      (subtype('data, 'a) as 'stream, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => 'stream =
       "once";
     [@bs.send]
     external onCloseOnce:
-      (subtype('data, 'a) as 'stream, [@bs.as "close"] _, (. unit) => unit) => 'stream =
+      (subtype('data, 'a) as 'stream, [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => 'stream =
       "once";
     [@bs.send]
     external removeAllListeners: (subtype('data, 'a) as 'stream) => 'stream =
@@ -63,61 +63,61 @@ module Readable = {
     include Base.Events;
     [@bs.send]
     external onData:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "data"] _, (. 'data) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "data"] _, [@bs.uncurry] ('data) => unit) => 'rs =
       "on";
     [@bs.send]
-    external onEnd: (subtype('data, [> kind]) as 'rs, [@bs.as "end"] _, (. unit) => unit) => 'rs =
+    external onEnd: (subtype('data, [> kind]) as 'rs, [@bs.as "end"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "on";
     [@bs.send]
     external onPause:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "pause"] _, (. unit) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "pause"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "on";
     [@bs.send]
     external onReadable:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "readable"] _, (. unit) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "readable"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "on";
     [@bs.send]
     external onResume:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "resume"] _, (. unit) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "resume"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "on";
     [@bs.send]
     external offData:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "data"] _, (. 'data) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "data"] _, [@bs.uncurry] ('data) => unit) => 'rs =
       "off";
     [@bs.send]
-    external offEnd: (subtype('data, [> kind]) as 'rs, [@bs.as "end"] _, (. unit) => unit) => 'rs =
+    external offEnd: (subtype('data, [> kind]) as 'rs, [@bs.as "end"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "off";
     [@bs.send]
     external offPause:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "pause"] _, (. unit) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "pause"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "off";
     [@bs.send]
     external offReadable:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "readable"] _, (. unit) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "readable"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "off";
     [@bs.send]
     external offResume:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "resume"] _, (. unit) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "resume"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "off";
     [@bs.send]
     external onDataOnce:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "data"] _, (. 'data) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "data"] _, [@bs.uncurry] ('data) => unit) => 'rs =
       "once";
     [@bs.send]
     external onEndOnce:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "end"] _, (. unit) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "end"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "once";
     [@bs.send]
     external onPauseOnce:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "pause"] _, (. unit) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "pause"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "once";
     [@bs.send]
     external onReadableOnce:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "readable"] _, (. unit) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "readable"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "once";
     [@bs.send]
     external onResumeOnce:
-      (subtype('data, [> kind]) as 'rs, [@bs.as "resume"] _, (. unit) => unit) => 'rs =
+      (subtype('data, [> kind]) as 'rs, [@bs.as "resume"] _, [@bs.uncurry] (unit) => unit) => 'rs =
       "once";
   };
   module Impl = {
@@ -160,18 +160,18 @@ module Writable = {
   module Events = {
     [@bs.send]
     external onDrain:
-      (subtype('data, [> kind]) as 'ws, [@bs.as "drain"] _, (. unit) => unit) => 'ws =
+      (subtype('data, [> kind]) as 'ws, [@bs.as "drain"] _, [@bs.uncurry] (unit) => unit) => 'ws =
       "on";
     [@bs.send]
     external onFinish:
-      (subtype('data, [> kind]) as 'ws, [@bs.as "finish"] _, (. unit) => unit) => 'ws =
+      (subtype('data, [> kind]) as 'ws, [@bs.as "finish"] _, [@bs.uncurry] (unit) => unit) => 'ws =
       "on";
     [@bs.send]
     external onPipe:
       (
         subtype('data, [> kind]) as 'ws,
         [@bs.as "pipe"] _,
-        (. subtype('data, [> readable])) => unit
+        [@bs.uncurry] (subtype('data, [> readable])) => unit
       ) =>
       'ws =
       "on";
@@ -180,24 +180,24 @@ module Writable = {
       (
         subtype('data, [> kind]) as 'ws,
         [@bs.as "unpipe"] _,
-        (. subtype('data, [> readable])) => unit
+        [@bs.uncurry] (subtype('data, [> readable])) => unit
       ) =>
       'ws =
       "on";
     [@bs.send]
     external offDrain:
-      (subtype('data, [> kind]) as 'ws, [@bs.as "drain"] _, (. unit) => unit) => 'ws =
+      (subtype('data, [> kind]) as 'ws, [@bs.as "drain"] _, [@bs.uncurry] (unit) => unit) => 'ws =
       "off";
     [@bs.send]
     external offFinish:
-      (subtype('data, [> kind]) as 'ws, [@bs.as "finish"] _, (. unit) => unit) => 'ws =
+      (subtype('data, [> kind]) as 'ws, [@bs.as "finish"] _, [@bs.uncurry] (unit) => unit) => 'ws =
       "off";
     [@bs.send]
     external offPipe:
       (
         subtype('data, [> kind]) as 'ws,
         [@bs.as "pipe"] _,
-        (. subtype('data, [> readable])) => unit
+        [@bs.uncurry] (subtype('data, [> readable])) => unit
       ) =>
       'ws =
       "off";
@@ -206,24 +206,24 @@ module Writable = {
       (
         subtype('data, [> kind]) as 'ws,
         [@bs.as "unpipe"] _,
-        (. subtype('data, [> readable])) => unit
+        [@bs.uncurry] (subtype('data, [> readable])) => unit
       ) =>
       'ws =
       "off";
     [@bs.send]
     external onDrainOnce:
-      (subtype('data, [> kind]) as 'ws, [@bs.as "drain"] _, (. unit) => unit) => 'ws =
+      (subtype('data, [> kind]) as 'ws, [@bs.as "drain"] _, [@bs.uncurry] (unit) => unit) => 'ws =
       "once";
     [@bs.send]
     external onFinishOnce:
-      (subtype('data, [> kind]) as 'ws, [@bs.as "finish"] _, (. unit) => unit) => 'ws =
+      (subtype('data, [> kind]) as 'ws, [@bs.as "finish"] _, [@bs.uncurry] (unit) => unit) => 'ws =
       "once";
     [@bs.send]
     external onPipeOnce:
       (
         subtype('data, [> kind]) as 'ws,
         [@bs.as "pipe"] _,
-        (. subtype('data, [> readable])) => unit
+        [@bs.uncurry] (subtype('data, [> readable])) => unit
       ) =>
       'ws =
       "once";
@@ -232,7 +232,7 @@ module Writable = {
       (
         subtype('data, [> kind]) as 'ws,
         [@bs.as "unpipe"] _,
-        (. subtype('data, [> readable])) => unit
+        [@bs.uncurry] (subtype('data, [> readable])) => unit
       ) =>
       'ws =
       "once";
@@ -310,12 +310,12 @@ module Transform = {
                     (
                       t(Buffer.t),
                       Buffer.t,
-                      (. Js.nullable(Js.Exn.t), Js.nullable(Buffer.t)) => unit
+                      (Js.nullable(Js.Exn.t), Js.nullable(Buffer.t)) => unit
                     ) =>
                     unit
                   ),
       ~flush: [@bs.this] (
-                (t(Buffer.t), (. Js.nullable(Js.Exn.t), Js.nullable(Buffer.t)) => unit) => unit
+                (t(Buffer.t), (Js.nullable(Js.Exn.t), Js.nullable(Buffer.t)) => unit) => unit
               )
     ) =>
     makeOptions;

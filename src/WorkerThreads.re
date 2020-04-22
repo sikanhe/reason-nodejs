@@ -12,8 +12,8 @@
  */
 module MessagePort = {
   type t('a);
-  [@bs.send] external onClose: (t('a), [@bs.as "close"] _, (. unit) => unit) => t('a) = "on";
-  [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, (. 'a) => unit) => t('a) = "on";
+  [@bs.send] external onClose: (t('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => t('a) = "on";
+  [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, [@bs.uncurry] ('a) => unit) => t('a) = "on";
   [@bs.send] external close: t('a) => unit = "close";
   [@bs.send] external postMessage: (t('a), 'a) => unit = "postMessage";
   [@bs.send] external ref: t('a) => unit = "ref";
@@ -22,8 +22,8 @@ module MessagePort = {
 
   module WithMessageType = (T: {type message;}) => {
     type nonrec t = t(T.message);
-    [@bs.send] external onClose: (t, [@bs.as "close"] _, (. unit) => unit) => t = "on";
-    [@bs.send] external onMessage: (t, [@bs.as "message"] _, (. T.message) => unit) => t = "on";
+    [@bs.send] external onClose: (t, [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => t = "on";
+    [@bs.send] external onMessage: (t, [@bs.as "message"] _, [@bs.uncurry] (T.message) => unit) => t = "on";
     [@bs.send] external close: t => unit = "close";
     [@bs.send] external postMessage: (t, T.message) => unit = "postMessage";
     [@bs.send] external ref: t => unit = "ref";
@@ -81,10 +81,10 @@ module Worker = {
 
   [@bs.module "worker_threads"] [@bs.new]
   external make: (~file: string, ~options: makeOptions('a)=?, unit) => t('a) = "Worker";
-  [@bs.send] external onError: (t('a), [@bs.as "error"] _, (. Js.Exn.t) => unit) => t('a) = "on";
-  [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, (. 'a) => unit) => t('a) = "on";
-  [@bs.send] external onExit: (t('a), [@bs.as "exit"] _, (. int) => unit) => t('a) = "on";
-  [@bs.send] external onOnline: (t('a), [@bs.as "online"] _, (. unit) => unit) => t('a) = "on";
+  [@bs.send] external onError: (t('a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t('a) = "on";
+  [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, [@bs.uncurry] ('a) => unit) => t('a) = "on";
+  [@bs.send] external onExit: (t('a), [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t('a) = "on";
+  [@bs.send] external onOnline: (t('a), [@bs.as "online"] _, [@bs.uncurry] (unit) => unit) => t('a) = "on";
   [@bs.send] external postMessage: (t('a), 'a) => unit = "postMessage";
   [@bs.send] external ref: t('a) => unit = "ref";
   [@bs.send] external resourceLimits: t('a) => workerResourceLimits = "workerResourceLimits";
@@ -117,10 +117,10 @@ module Worker = {
 
     [@bs.module "worker_threads"] [@bs.new]
     external make: (~file: string, ~options: makeOptions=?, unit) => t = "Worker";
-    [@bs.send] external onError: (t, [@bs.as "error"] _, (. Js.Exn.t) => unit) => t = "on";
-    [@bs.send] external onMessage: (t, [@bs.as "message"] _, (. T.message) => unit) => t = "on";
-    [@bs.send] external onExit: (t, [@bs.as "exit"] _, (. int) => unit) => t = "on";
-    [@bs.send] external onOnline: (t, [@bs.as "online"] _, (. unit) => unit) => t = "on";
+    [@bs.send] external onError: (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t = "on";
+    [@bs.send] external onMessage: (t, [@bs.as "message"] _, [@bs.uncurry] (T.message) => unit) => t = "on";
+    [@bs.send] external onExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t = "on";
+    [@bs.send] external onOnline: (t, [@bs.as "online"] _, [@bs.uncurry] (unit) => unit) => t = "on";
     [@bs.send] external postMessage: (t, T.message) => unit = "postMessage";
     [@bs.send] external ref: t => unit = "ref";
     [@bs.send] external resourceLimits: t => workerResourceLimits = "workerResourceLimits";

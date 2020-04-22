@@ -50,26 +50,26 @@ module Message = {
 module Worker = {
   type t;
   module Events = {
-    [@bs.send] external onDisconnect: (t, [@bs.as "disconnect"] (. unit) => unit) => t = "on";
-    [@bs.send] external onError: (t, [@bs.as "error"] (. Js.Exn.t) => unit) => t = "on";
-    [@bs.send] external onExit: (t, [@bs.as "exit"] (. Js.nullable(int), Js.nullable(string)) => unit) => t = "on";
-    [@bs.send] external onListening: (t, [@bs.as "listening"] (. Address.t) => unit) => t = "on";
-    [@bs.send] external onMessage: (t, [@bs.as "message"] (. Message.t('a), Js.nullable(Js.t('a))) => unit) => t = "on";
-    [@bs.send] external onOnline: (t, [@bs.as "online"] (. unit) => unit) => t = "on";
+    [@bs.send] external onDisconnect: (t, [@bs.as "disconnect"]_, [@bs.uncurry] (unit) => unit) => t = "on";
+    [@bs.send] external onError: (t, [@bs.as "error"]_, [@bs.uncurry] (Js.Exn.t) => unit) => t = "on";
+    [@bs.send] external onExit: (t, [@bs.as "exit"]_, [@bs.uncurry] (Js.nullable(int), Js.nullable(string)) => unit) => t = "on";
+    [@bs.send] external onListening: (t, [@bs.as "listening"]_, [@bs.uncurry] (Address.t) => unit) => t = "on";
+    [@bs.send] external onMessage: (t, [@bs.as "message"]_, [@bs.uncurry] (Message.t('a), Js.nullable(Js.t('a))) => unit) => t = "on";
+    [@bs.send] external onOnline: (t, [@bs.as "online"]_, [@bs.uncurry] (unit) => unit) => t = "on";
 
-    [@bs.send] external offDisconnect: (t, [@bs.as "disconnect"] (. unit) => unit) => t = "off";
-    [@bs.send] external offError: (t, [@bs.as "error"] (. Js.Exn.t) => unit) => t = "off";
-    [@bs.send] external offExit: (t, [@bs.as "exit"] (. Js.nullable(int), Js.nullable(string)) => unit) => t = "off";
-    [@bs.send] external offListening: (t, [@bs.as "listening"] (. Address.t) => unit) => t = "off";
-    [@bs.send] external offMessage: (t, [@bs.as "message"] (. Message.t('a), Js.nullable(Js.t('a))) => unit) => t = "off";
-    [@bs.send] external offOnline: (t, [@bs.as "online"] (. unit) => unit) => t = "off";
+    [@bs.send] external offDisconnect: (t, [@bs.as "disconnect"]_, [@bs.uncurry] (unit) => unit) => t = "off";
+    [@bs.send] external offError: (t, [@bs.as "error"]_, [@bs.uncurry] (Js.Exn.t) => unit) => t = "off";
+    [@bs.send] external offExit: (t, [@bs.as "exit"]_, [@bs.uncurry] (Js.nullable(int), Js.nullable(string)) => unit) => t = "off";
+    [@bs.send] external offListening: (t, [@bs.as "listening"]_, [@bs.uncurry] (Address.t) => unit) => t = "off";
+    [@bs.send] external offMessage: (t, [@bs.as "message"]_, [@bs.uncurry] (Message.t('a), Js.nullable(Js.t('a))) => unit) => t = "off";
+    [@bs.send] external offOnline: (t, [@bs.as "online"]_, [@bs.uncurry] (unit) => unit) => t = "off";
 
-    [@bs.send] external onDisconnectOnce: (t, [@bs.as "disconnect"] (. unit) => unit) => t = "once";
-    [@bs.send] external onErrorOnce: (t, [@bs.as "error"] (. Js.Exn.t) => unit) => t = "once";
-    [@bs.send] external onExitOnce: (t, [@bs.as "exit"] (. Js.nullable(int), Js.nullable(string)) => unit) => t = "once";
-    [@bs.send] external onListeningOnce: (t, [@bs.as "listening"] (. Address.t) => unit) => t = "once";
-    [@bs.send] external onMessageOnce: (t, [@bs.as "message"] (. Message.t('a), Js.nullable(Js.t('a))) => unit) => t = "once";
-    [@bs.send] external onOnlineOnce: (t, [@bs.as "online"] (. unit) => unit) => t = "once";
+    [@bs.send] external onDisconnectOnce: (t, [@bs.as "disconnect"]_, [@bs.uncurry] (unit) => unit) => t = "once";
+    [@bs.send] external onErrorOnce: (t, [@bs.as "error"]_, [@bs.uncurry] (Js.Exn.t) => unit) => t = "once";
+    [@bs.send] external onExitOnce: (t, [@bs.as "exit"]_, [@bs.uncurry] (Js.nullable(int), Js.nullable(string)) => unit) => t = "once";
+    [@bs.send] external onListeningOnce: (t, [@bs.as "listening"]_, [@bs.uncurry] (Address.t) => unit) => t = "once";
+    [@bs.send] external onMessageOnce: (t, [@bs.as "message"]_, [@bs.uncurry] (Message.t('a), Js.nullable(Js.t('a))) => unit) => t = "once";
+    [@bs.send] external onOnlineOnce: (t, [@bs.as "online"]_, [@bs.uncurry] (unit) => unit) => t = "once";
 
     [@bs.send] external removeAllListeners: t => unit = "removeAllListeners";
   };

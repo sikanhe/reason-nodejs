@@ -18,10 +18,10 @@ module HttpsServer = {
 module Agent = {
   type t;
   [@bs.send]
-  external onKeylog: (t, [@bs.as "keylog"] _, (. Buffer.t, Tls.TlsSocket.t) => unit) => t = "on";
+  external onKeylog: (t, [@bs.as "keylog"] _, [@bs.uncurry] (Buffer.t, Tls.TlsSocket.t) => unit) => t = "on";
   [@bs.send]
-  external onKeylogOnce: (t, [@bs.as "keylog"] _, (. Buffer.t, Tls.TlsSocket.t) => unit) => t =
+  external onKeylogOnce: (t, [@bs.as "keylog"] _, [@bs.uncurry] (Buffer.t, Tls.TlsSocket.t) => unit) => t =
     "once";
   [@bs.send]
-  external offKeylog: (t, [@bs.as "keylog"] _, (. Buffer.t, Tls.TlsSocket.t) => unit) => t = "off";
+  external offKeylog: (t, [@bs.as "keylog"] _, [@bs.uncurry] (Buffer.t, Tls.TlsSocket.t) => unit) => t = "off";
 };
