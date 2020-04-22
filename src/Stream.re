@@ -305,8 +305,8 @@ module Transform = {
   [@bs.obj]
   external makeOptions:
     (
-      ~transform: (~chunk: Buffer.t, ~callback: (. option(Js.Exn.t), Buffer.t) => unit) => Buffer.t,
-      ~flush: (option(Js.Exn.t), Buffer.t) => unit
+      ~transform: [@bs.this] (t(Buffer.t), Buffer.t, (. Js.nullable(Js.Exn.t), Js.nullable(Buffer.t)) => unit) => unit,
+      ~flush: [@bs.this] (t(Buffer.t), Js.nullable(Js.Exn.t), Buffer.t) => unit
     ) =>
     makeOptions;
   [@bs.module "stream"] [@bs.new]
