@@ -305,8 +305,15 @@ module Transform = {
   [@bs.obj]
   external makeOptions:
     (
-      ~transform: [@bs.this] (t(Buffer.t), Buffer.t, (. Js.nullable(Js.Exn.t), Js.nullable(Buffer.t)) => unit) => unit,
-      ~flush: [@bs.this] (t(Buffer.t), Js.nullable(Js.Exn.t), Buffer.t) => unit
+      ~transform: [@bs.this] (
+                    (
+                      t(Buffer.t),
+                      Buffer.t,
+                      (. Js.nullable(Js.Exn.t), Js.nullable(Buffer.t)) => unit
+                    ) =>
+                    unit
+                  ),
+      ~flush: [@bs.this] ((t(Buffer.t), Js.nullable(Js.Exn.t), Buffer.t) => unit)
     ) =>
     makeOptions;
   [@bs.module "stream"] [@bs.new]
@@ -346,7 +353,11 @@ external finished: (subtype('data, 'a), Js.nullable(Js.Exn.t) => unit) => cleanu
 
 [@bs.module "stream"]
 external pipeline0:
-  (Readable.subtype(Buffer.t, 'src), Writable.subtype(Buffer.t, 'dest), Js.nullable(Js.Exn.t) => unit) =>
+  (
+    Readable.subtype(Buffer.t, 'src),
+    Writable.subtype(Buffer.t, 'dest),
+    Js.nullable(Js.Exn.t) => unit
+  ) =>
   Writable.subtype(Buffer.t, 'dest) =
   "pipeline";
 
