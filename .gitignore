@@ -12,6 +12,7 @@ src/ScratchPadJs.js
 src/Events.re
 
 src/Errors__2.re
+src/Process__2.re
 src/Stream__2.re
 src/Stream__3.re
 src/Fs__2.re
