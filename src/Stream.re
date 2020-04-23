@@ -14,7 +14,7 @@ type writable = [ stream | `Writable];
 type duplex = [ stream | readable | writable];
 type transform = [ stream | duplex | `Transform];
 type passThrough = [ stream | transform | `PassThrough];
-type socket = [ stream | `Socket];
+type socket = [ stream | duplex | `Socket];
 type objectMode = [ stream | `ObjectMode];
 
 type subtype('w, 'r, 'a) constraint 'a = [> stream];
