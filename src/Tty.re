@@ -10,6 +10,8 @@ module ReadStream = {
   };
   module Impl = {
     include Stream.Readable.Impl;
+    external unsafeCoerceToSocket: t => Net.Socket.t = "%identity";
+    external unsafeCoerceFromSocket: Net.Socket.t => t = "%identity";
   };
   include Events;
   include Impl;
@@ -25,6 +27,8 @@ module WriteStream = {
   };
   module Impl = {
     include Stream.Writable.Impl;
+    external unsafeCoerceToSocket: t => Net.Socket.t = "%identity";
+    external unsafeCoerceFromSocket: Net.Socket.t => t = "%identity";
   };
   include Events;
   include Impl;
