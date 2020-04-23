@@ -20,7 +20,7 @@ external settingsObject:
 
 module Http2Stream = {
   type kind = [ Stream.duplex | `Http2Stream];
-  type t = Stream.subtype(Buffer.t, kind);
+  type t = Stream.subtype(Buffer.t, Buffer.t, kind);
   module Impl = {
     include Stream.Duplex.Impl;
   };
@@ -29,7 +29,7 @@ module Http2Stream = {
 
 module ClientHttp2Stream = {
   type kind = [ Http2Stream.kind | `ClientHttp2Stream];
-  type t = Stream.subtype(Buffer.t, kind);
+  type t = Stream.subtype(Buffer.t, Buffer.t, kind);
   module Impl = {
     include Http2Stream.Impl;
   };
@@ -38,7 +38,7 @@ module ClientHttp2Stream = {
 
 module ServerHttp2Stream = {
   type kind = [ Http2Stream.kind | `ServerHttp2Stream];
-  type t = Stream.subtype(Buffer.t, kind);
+  type t = Stream.subtype(Buffer.t, Buffer.t, kind);
   module Impl = {
     include Http2Stream.Impl;
   };
@@ -50,7 +50,7 @@ module Http2Session = {
   [@bs.send] external onClose: (t, [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => t = "on";
   [@bs.send]
   external onConnect:
-    (t, [@bs.as "connect"] _, [@bs.uncurry] (t, Stream.subtype(Buffer.t, [> Net.Socket.kind])) => unit) => t =
+    (t, [@bs.as "connect"] _, [@bs.uncurry] (t, Stream.subtype(Buffer.t, Buffer.t, [> Net.Socket.kind])) => unit) => t =
     "on";
   [@bs.send] external onError: (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t = "on";
   /** TODO: uncurry after release of bs-platform v7.3 */
@@ -76,7 +76,7 @@ module Http2Session = {
       t,
       [@bs.as "stream"] _,
       (
-        . Stream.subtype(Buffer.t, [> Http2Stream.kind]),
+        . Stream.subtype('w, 'r, [> Http2Stream.kind]),
         Js.t({
           ..
           "status": string,
@@ -191,7 +191,7 @@ module ServerHttp2Session = {
 
 module Http2ServerRequest = {
   type kind = [ Stream.readable | `Http2ServerRequest];
-  type t = Stream.subtype(Buffer.t, [ kind]);
+  type t = Stream.subtype(Buffer.t, Buffer.t,[ kind]);
   module Impl = {
     include Stream.Readable.Impl;
     [@bs.send] external onAborted: (t, [@bs.as "aborted"] _, [@bs.uncurry] (unit) => unit) => t = "on";
@@ -210,7 +210,7 @@ module Http2ServerRequest = {
     [@bs.send]
     external setTimeout: (t, int, Http2Stream.t => unit) => Http2Stream.t = "setTimeout";
     [@bs.get]
-    external socket: t => Stream.subtype(Buffer.t, [ Stream.duplex | `Socket | `TLSSocket]) =
+    external socket: t => Stream.subtype(Buffer.t, Buffer.t,[ Stream.duplex | `Socket | `TLSSocket]) =
       "socket";
     [@bs.get] external stream: t => Http2Stream.t = "stream";
     [@bs.get] external trailers: t => Js.t({..}) = "trailers";
@@ -221,7 +221,7 @@ module Http2ServerRequest = {
 
 module Http2ServerResponse = {
   type kind = [ Stream.duplex | `Http2ServerResponse];
-  type t = Stream.subtype(Buffer.t, [ kind]);
+  type t = Stream.subtype(Buffer.t, Buffer.t,[ kind]);
   module Impl = {
     include Stream.Duplex.Impl;
     [@bs.send] external onClose: (t, [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => t = "on";

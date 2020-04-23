@@ -101,13 +101,13 @@ external nextTickApply5: (t, ('a, 'b, 'c, 'd, 'e) => unit, 'a, 'b, 'c, 'd, 'e) =
 [@bs.send] external hrtime: t => (int, int) = "hrtime";
 [@bs.send] [@bs.scope "hrtime"] external hrtimeBigInt: t => BigInt.t = "bigint";
 [@bs.get]
-external stderr: t => Stream.Writable.subtype(Buffer.t, [< Stream.socket | Stream.writable]) =
+external stderr: t => Stream.Writable.subtype(Buffer.t, Buffer.t, [< Stream.socket | Stream.writable]) =
   "stderr";
 [@bs.get]
-external stdin: t => Stream.Readable.subtype(Buffer.t, [< Stream.socket | Stream.readable]) =
+external stdin: t => Stream.Readable.subtype(Buffer.t, Buffer.t, [< Stream.socket | Stream.readable]) =
   "stdin";
 [@bs.get]
-external stdout: t => Stream.Writable.subtype(Buffer.t, [< Stream.socket | Stream.writable]) =
+external stdout: t => Stream.Writable.subtype(Buffer.t, Buffer.t, [< Stream.socket | Stream.writable]) =
   "stdout";
 [@bs.get] external pid: t => int = "pid";
 [@bs.get] external platform: t => string = "platform";

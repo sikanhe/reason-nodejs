@@ -38,15 +38,15 @@ include Events;
 [@bs.get] external ref: t => unit = "ref";
 [@bs.get] [@bs.return nullable]
 external stderr:
-  t => option(Stream.Writable.subtype(Buffer.t, [< Net.Socket.kind | Stream.writable])) =
+  t => option(Stream.Writable.subtype(Buffer.t, Buffer.t, [< Net.Socket.kind | Stream.writable])) =
   "stderr";
 [@bs.get] [@bs.return nullable]
 external stdin:
-  t => option(Stream.Readable.subtype(Buffer.t, [< Net.Socket.kind | Stream.readable])) =
+  t => option(Stream.Readable.subtype(Buffer.t, Buffer.t, [< Net.Socket.kind | Stream.readable])) =
   "stdin";
 [@bs.get] [@bs.return nullable]
 external stdout:
-  t => option(Stream.Writable.subtype(Buffer.t, [< Net.Socket.kind | Stream.writable])) =
+  t => option(Stream.Writable.subtype(Buffer.t, Buffer.t,[< Net.Socket.kind | Stream.writable])) =
   "stdout";
 [@bs.get] external unref: t => unit = "unref";
 

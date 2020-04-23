@@ -4,21 +4,22 @@ module Interface = {
   [@bs.obj]
   external interfaceOptions:
     (
-      ~input: Stream.subtype('data, [ Stream.readable]),
-      ~output: Stream.subtype('data, [ Stream.writable])=?,
+      ~input: Stream.Readable.subtype('w, Buffer.t, 'k),
+      ~output: Stream.Writable.subtype(Buffer.t, 'r, 'k)=?,
       ~completer: (string, (string, (array(string), string)) => unit) => unit=?,
       ~terminal: bool=?,
       ~historySize: int=?,
       ~prompt: string=?,
       ~crlfDelay: int=?,
       ~removeHistoryDuplicates: bool=?,
-      ~escapeCodeTimeout: int=?
+      ~escapeCodeTimeout: int=?,
+      unit
     ) =>
     interfaceOptions;
   [@bs.send] external make: (t, interfaceOptions) => t = "createInterface";
   [@bs.send] external close: t => unit = "close";
   [@bs.send] external pause: t => unit = "pause";
-  [@bs.send] external prompt: (t, Js.Undefined.t(bool)) => unit = "prompt";
+  [@bs.send] external prompt: (t, Js.nullable(bool)) => unit = "prompt";
   [@bs.send] external question: (t, string, string => unit) => unit = "question";
   [@bs.send] external resume: t => unit = "resume";
   [@bs.send] external setPrompt: (t, string) => unit = "setPrompt";
@@ -46,15 +47,17 @@ module Interface = {
   [@bs.get] [@bs.return nullable] external line: t => option(string) = "line";
   [@bs.get] [@bs.return nullable] external cursor: t => option(int) = "cursor";
   [@bs.send]
-  external clearLine: (t, Stream.subtype('data, [ Stream.writable]), int) => bool = "clearLine";
+  external clearLine: (t, Stream.Writable.subtype(Buffer.t, 'r, 'k), int) => bool =
+    "clearLine";
   [@bs.send]
-  external clearScreenDown: (t, Stream.subtype('data, Stream.writable), unit => unit) => bool =
+  external clearScreenDown:
+    (t, Stream.Writable.subtype(Buffer.t, 'r, 'k), unit => unit) => bool =
     "clearScreenDown";
   [@bs.send]
   external cursorTo:
     (
       t,
-      Stream.subtype('data, Stream.writable),
+      Stream.Writable.subtype(Buffer.t, 'r, 'k),
       int,
       Js.Undefined.t(int),
       Js.Undefined.t(unit => unit)
@@ -63,6 +66,13 @@ module Interface = {
     "cursorTo";
   [@bs.send]
   external moveCursor:
-    (t, Stream.subtype('data, Stream.writable), int, int, Js.Undefined.t(unit => unit)) => bool =
+    (
+      t,
+      Stream.Writable.subtype(Buffer.t, 'r, 'k),
+      int,
+      int,
+      Js.Undefined.t(unit => unit)
+    ) =>
+    bool =
     "moveCursor";
 };
