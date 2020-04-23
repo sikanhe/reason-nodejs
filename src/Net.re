@@ -129,7 +129,7 @@ module Socket = {
   };
 
     module Impl = {
-      include Stream.Common.Impl;
+      include Stream.Duplex.Impl;
       include Events;
       [@bs.send] external address: subtype('a) => address = "address";
       [@bs.get] external bufferSize: subtype('a) => int = "bufferSize";
