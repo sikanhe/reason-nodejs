@@ -11,6 +11,7 @@ describe("Console", () => {
           ~colorMode=true,
           ~inspectOptions=Util.inspectOptions(),
           ~stdout=Process.stdout(process),
+          (),
         ),
       )
     );

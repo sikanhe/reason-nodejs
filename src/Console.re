@@ -12,13 +12,16 @@ external consoleOptions:
     ~stderr: Stream.Writable.subtype('w, 'r, 'a)=?,
     ~ignoreErrors: bool=?,
     ~colorMode: bool=?,
-    ~inspectOptions: Util.inspectOptions=?
+    ~inspectOptions: Util.inspectOptions=?,
+    unit
   ) =>
   consoleOptions;
 
-[@bs.new] [@bs.module "console"] external make: consoleOptions => t = "Console";
 [@bs.new] [@bs.module "console"]
-external make2: {.. "stdout": Stream.Writable.subtype('w, 'r, 'a)} => t = "Console";
+external make: consoleOptions => t = "Console";
+[@bs.new] [@bs.module "console"]
+external make2: {.. "stdout": Stream.Writable.subtype('w, 'r, 'a)} => t =
+  "Console";
 
 [@bs.send] external assert_: (t, bool) => unit = "assert";
 // TODO: reconsider naming
@@ -28,19 +31,23 @@ external make2: {.. "stdout": Stream.Writable.subtype('w, 'r, 'a)} => t = "Conso
 [@bs.send] external countReset: (t, string) => unit = "countReset";
 
 [@bs.send] external debug: (t, string) => unit = "debug";
-[@bs.send] [@bs.variadic] external debugMany: (t, array('a)) => unit = "debug";
+[@bs.send] [@bs.variadic]
+external debugMany: (t, array('a)) => unit = "debug";
 
 [@bs.send] external dir: (t, string) => unit = "dir";
 [@bs.send] [@bs.variadic] external dirMany: (t, array('a)) => unit = "dir";
 
 [@bs.send] external dirxml: (t, string) => unit = "dirxml";
-[@bs.send] [@bs.variadic] external dirxmlMany: (t, array('a)) => unit = "dirxml";
+[@bs.send] [@bs.variadic]
+external dirxmlMany: (t, array('a)) => unit = "dirxml";
 
 [@bs.send] external error: (t, string) => unit = "error";
-[@bs.send] [@bs.variadic] external errorMany: (t, array('a)) => unit = "error";
+[@bs.send] [@bs.variadic]
+external errorMany: (t, array('a)) => unit = "error";
 
 [@bs.send] external group: (t, string) => unit = "group";
-[@bs.send] [@bs.variadic] external groupMany: (t, array('a)) => unit = "group";
+[@bs.send] [@bs.variadic]
+external groupMany: (t, array('a)) => unit = "group";
 
 [@bs.send] external groupEnd: (t, unit) => unit = "groupEnd";
 
@@ -55,10 +62,12 @@ external make2: {.. "stdout": Stream.Writable.subtype('w, 'r, 'a)} => t = "Conso
 [@bs.send] external time: (t, string) => unit = "time";
 
 //TODO: research more into this function. Not sure how it works.
-[@bs.send] [@bs.variadic] external timeLog: (t, string, array('a)) => unit = "timeLog";
+[@bs.send] [@bs.variadic]
+external timeLog: (t, string, array('a)) => unit = "timeLog";
 
 [@bs.send] external trace: (t, string) => unit = "trace";
-[@bs.send] [@bs.variadic] external traceMany: (t, array('a)) => unit = "trace";
+[@bs.send] [@bs.variadic]
+external traceMany: (t, array('a)) => unit = "trace";
 
 [@bs.send] external warn: (t, string) => unit = "warn";
 [@bs.send] [@bs.variadic] external warnMany: (t, array('a)) => unit = "warn";
