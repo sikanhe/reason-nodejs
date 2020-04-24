@@ -15,12 +15,12 @@ module KeyObject = {
   external asymmetricExport: t(asymmetric, [< publicKey | privateKey | secretKey]) => Buffer.t =
     "export";
   module Symmetric = {
-    type kind = [ | `Symmetric];
+    type kind = [ | symmetric ];
     type nonrec t('a) = t([ kind], 'a);
     module Impl = {};
   };
   module Asymmetric = {
-    type kind = [ | `Symmetric];
+    type kind = [ | asymmetric];
     type nonrec t('a) = t([ kind], 'a);
     module Impl = {};
   };
@@ -59,8 +59,8 @@ module PublicKey = {
 
 module Hash = {
   type kind = [ Stream.transform | `Hash];
-  type subtype('w, 'r, 'a) = Stream.Transform.subtype(Buffer.t, Buffer.t, [> kind] as 'a);
-  type supertype('w, 'r, 'a) = Stream.subtype(Buffer.t, Buffer.t, [< kind] as 'a);
+  type subtype('w, 'r, 'a) = Stream.Transform.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
   type t = subtype(Buffer.t, Buffer.t, kind);
   module Impl = {
     include Stream.Transform.Impl;
@@ -75,8 +75,8 @@ module Hash = {
 
 module Hmac = {
   type kind = [ Stream.transform | `Hmac];
-  type subtype('w, 'r, 'a) = Stream.Transform.subtype(Buffer.t, Buffer.t, [> kind] as 'a);
-  type supertype('w, 'r, 'a) = Stream.subtype(Buffer.t, Buffer.t, [< kind] as 'a);
+  type subtype('w, 'r, 'a) = Stream.Transform.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
   type t = subtype(Buffer.t, Buffer.t, kind);
   module Impl = {
     include Stream.Transform.Impl;
@@ -136,8 +136,8 @@ module Cipher = {
 
 module Decipher = {
   type kind = [ Stream.transform | `Decipher];
-  type subtype('w, 'r, 'a) = Stream.Transform.subtype(Buffer.t, Buffer.t, [> kind] as 'a);
-  type supertype('w, 'r, 'a) = Stream.subtype(Buffer.t, Buffer.t, [< kind] as 'a);
+  type subtype('w, 'r, 'a) = Stream.Transform.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
   type t = subtype(Buffer.t, Buffer.t, kind);
   module Impl = {
     [@bs.send] external final: (subtype('w, 'r, 'a), string) => Buffer.t = "final";
