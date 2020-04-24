@@ -169,23 +169,45 @@ module Readable = {
   type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('r) = subtype(void, 'r, kind);
+  type objectStream('r) = subtype(void, 'r, [ kind | objectMode ])
+
   type makeOptions('r);
   [@bs.obj]
   external makeOptions:
     (
       ~highWaterMark: int=?,
       ~emitClose: bool=?,
+      ~objectMode: [@bs.as {json|false|json}] _,
       ~autoDestroy: bool=?,
       ~destroy: [@bs.this] (
                   (t('r), Js.nullable(Js.Exn.t), (~err: option(Js.Exn.t)) => unit) => unit
-                )
-                  =?,
+                ),
       ~read: [@bs.this] ((t('r), Js.nullable(int)) => unit),
       unit
     ) =>
     makeOptions('r);
   [@bs.module "stream"] [@bs.new]
   external make: makeOptions(Buffer.t) => t(Buffer.t) = "Readable";
+
+  type makeOptionsObjMode('r);
+  [@bs.obj]
+  external makeOptionsObjMode:
+    (
+      ~highWaterMark: int=?,
+      ~emitClose: bool=?,
+      ~objectMode: [@bs.as {json|true|json}] _,
+      ~autoDestroy: bool=?,
+      ~destroy: [@bs.this] (
+                  (t('r), Js.nullable(Js.Exn.t), (~err: option(Js.Exn.t)) => unit) => unit
+                ),
+      ~read: [@bs.this] ((t('r), Js.nullable(int)) => unit),
+      unit
+    ) =>
+    makeOptionsObjMode('r);
+
+  [@bs.module "stream"] [@bs.new]
+  external makeObjMode: makeOptions('r) => t('r) = "Readable";
+  
 };
 
 module Writable = {
@@ -295,6 +317,7 @@ module Writable = {
   type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('w) = subtype('w, void, kind);
+  type objectStream('w) = subtype('w, void, [ kind | objectMode ])
   type chunk('w) =
     pri {
       chunk: 'w,
