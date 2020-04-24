@@ -1,11 +1,10 @@
-type t =
-  pri {
-    dir: string,
-    root: string,
-    base: string,
-    name: string,
-    ext: string,
-  };
+type t = {
+  dir: string,
+  root: string,
+  base: string,
+  name: string,
+  ext: string,
+};
 
 [@bs.module "path"] external basename: string => string = "basename";
 
