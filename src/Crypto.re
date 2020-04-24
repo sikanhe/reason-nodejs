@@ -64,9 +64,9 @@ module Hash = {
   type t = subtype(Buffer.t, Buffer.t, kind);
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external copy: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "copy";
-    [@bs.send] external digest: subtype('w, 'r, 'a) => Buffer.t = "digest";
-    [@bs.send] external update: (subtype('w, 'r, 'a), Buffer.t) => unit = "update";
+    [@bs.send] external copy: t => t = "copy";
+    [@bs.send] external digest: t => Buffer.t = "digest";
+    [@bs.send] external update: (t, Buffer.t) => unit = "update";
   };
   include Impl;
 };
@@ -80,8 +80,8 @@ module Hmac = {
   type t = subtype(Buffer.t, Buffer.t, kind);
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external digest: subtype('w, 'r, 'a) => Buffer.t = "digest";
-    [@bs.send] external update: (subtype('w, 'r, 'a), Buffer.t) => unit = "update";
+    [@bs.send] external digest: t => Buffer.t = "digest";
+    [@bs.send] external update: (t, Buffer.t) => unit = "update";
   };
   include Impl;
 };
@@ -102,15 +102,15 @@ module Cipher = {
   type t = subtype(Buffer.t, Buffer.t, kind);
   module Impl = {
     include Stream.Transform.Impl;
-    [@bs.send] external final: (subtype('w, 'r, 'a), string) => Buffer.t = "final";
-    [@bs.send] external setAAD: (subtype('w, 'r, 'a), Buffer.t) => t = "setAAD";
+    [@bs.send] external final: (t, string) => Buffer.t = "final";
+    [@bs.send] external setAAD: (t, Buffer.t) => t = "setAAD";
     [@bs.send]
     external setAADWith:
-      (subtype('w, 'r, 'a), Buffer.t, ~options: Stream.Transform.makeOptions(Buffer.t, Buffer.t)) => t =
+      (t, Buffer.t, ~options: Stream.Transform.makeOptions(Buffer.t, Buffer.t)) => t =
       "setAAD";
-    [@bs.send] external getAuthTag: subtype('w, 'r, 'a) => Buffer.t = "getAuthTag";
-    [@bs.send] external setAutoPadding: (subtype('w, 'r, 'a), bool) => t = "setAutoPadding";
-    [@bs.send] external update: (subtype('w, 'r, 'a), Buffer.t) => Buffer.t = "update";
+    [@bs.send] external getAuthTag: t => Buffer.t = "getAuthTag";
+    [@bs.send] external setAutoPadding: (t, bool) => t = "setAutoPadding";
+    [@bs.send] external update: (t, Buffer.t) => Buffer.t = "update";
   };
   include Impl;
   [@bs.module "crypto"]
