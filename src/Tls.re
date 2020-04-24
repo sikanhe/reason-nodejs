@@ -17,9 +17,9 @@ module TlsSocket = {
 
 module TlsServer = {
   type kind = [ Net.TcpServer.kind | tls];
-  type subtype('w, 'r, 'a) = Net.Server.subtype('w, 'r, [> kind] as 'a);
-  type supertype('w, 'r, 'a) = Net.Server.subtype('w, 'r, [< kind] as 'a);
-  type t = subtype(Buffer.t, Buffer.t, kind);
+  type subtype('a) = Net.Server.subtype([> kind] as 'a);
+  type supertype('a) = Net.Server.subtype([< kind] as 'a);
+  type t = subtype(kind);
   module Events = {
     include Net.TcpServer.Events;
   };
