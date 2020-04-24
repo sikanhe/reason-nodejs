@@ -97,8 +97,8 @@ module Certificate = {
 
 module Cipher = {
   type kind = [ Stream.transform | `Cipher];
-  type subtype('w, 'r, 'a) = Stream.Transform.subtype(Buffer.t, Buffer.t, [> kind] as 'a);
-  type supertype('w, 'r, 'a) = Stream.subtype(Buffer.t, Buffer.t, [< kind] as 'a);
+  type subtype('w, 'r, 'a) = Stream.Transform.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
   type t = subtype(Buffer.t, Buffer.t, kind);
   module Impl = {
     include Stream.Transform.Impl;
