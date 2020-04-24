@@ -23,11 +23,17 @@ module Error = {
   [@bs.get] external message: t => string = "message";
   [@bs.get] external stack: t => string = "stack";
   let instanceOf = x =>
-    JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+    Internal__JsTypeReflection.instanceOfClass(
+      ~instance=x,
+      ~class_=constructor,
+    );
   let isError: Js.Exn.t => bool =
     x =>
-      JsTypeReflection.constructorName(x) == "Error"
-      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+      Internal__JsTypeReflection.constructorName(x) == "Error"
+      && Internal__JsTypeReflection.instanceOfClass(
+           ~instance=x,
+           ~class_=constructor,
+         );
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
   let fromJsExn: Js.Exn.t => option(t) =
@@ -61,11 +67,17 @@ module AssertionError = {
   [@bs.get] external operator: t => string = "operator";
   [@bs.get] external stack: t => string = "stack";
   let instanceOf = x =>
-    JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+    Internal__JsTypeReflection.instanceOfClass(
+      ~instance=x,
+      ~class_=constructor,
+    );
   let isAssertionError: Js.Exn.t => bool =
     x =>
-      JsTypeReflection.constructorName(x) == "AssertionError"
-      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+      Internal__JsTypeReflection.constructorName(x) == "AssertionError"
+      && Internal__JsTypeReflection.instanceOfClass(
+           ~instance=x,
+           ~class_=constructor,
+         );
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
   let fromJsExn: Js.Exn.t => option(t) =
@@ -81,11 +93,17 @@ module EvalError = {
   [@bs.get] external name: t => string = "name";
   [@bs.get] external stack: t => string = "stack";
   let instanceOf = x =>
-    JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+    Internal__JsTypeReflection.instanceOfClass(
+      ~instance=x,
+      ~class_=constructor,
+    );
   let isEvalError: Js.Exn.t => bool =
     x =>
-      JsTypeReflection.constructorName(x) == "EvalError"
-      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+      Internal__JsTypeReflection.constructorName(x) == "EvalError"
+      && Internal__JsTypeReflection.instanceOfClass(
+           ~instance=x,
+           ~class_=constructor,
+         );
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
   let fromJsExn: Js.Exn.t => option(t) =
@@ -102,11 +120,17 @@ module RangeError = {
   [@bs.get] external message: t => string = "message";
   [@bs.get] external stack: t => string = "stack";
   let instanceOf = x =>
-    JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+    Internal__JsTypeReflection.instanceOfClass(
+      ~instance=x,
+      ~class_=constructor,
+    );
   let isRangeError: Js.Exn.t => bool =
     x =>
-      JsTypeReflection.constructorName(x) == "RangeError"
-      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+      Internal__JsTypeReflection.constructorName(x) == "RangeError"
+      && Internal__JsTypeReflection.instanceOfClass(
+           ~instance=x,
+           ~class_=constructor,
+         );
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
   let fromJsExn: Js.Exn.t => option(t) =
@@ -123,11 +147,17 @@ module ReferenceError = {
   [@bs.get] external message: t => string = "message";
   [@bs.get] external stack: t => string = "stack";
   let instanceOf = x =>
-    JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+    Internal__JsTypeReflection.instanceOfClass(
+      ~instance=x,
+      ~class_=constructor,
+    );
   let isReferenceError: Js.Exn.t => bool =
     x =>
-      JsTypeReflection.constructorName(x) == "ReferenceError"
-      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+      Internal__JsTypeReflection.constructorName(x) == "ReferenceError"
+      && Internal__JsTypeReflection.instanceOfClass(
+           ~instance=x,
+           ~class_=constructor,
+         );
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
   let fromJsExn: Js.Exn.t => option(t) =
@@ -144,11 +174,17 @@ module SyntaxError = {
   [@bs.get] external message: t => string = "message";
   [@bs.get] external stack: t => string = "stack";
   let instanceOf = x =>
-    JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+    Internal__JsTypeReflection.instanceOfClass(
+      ~instance=x,
+      ~class_=constructor,
+    );
   let isSyntaxError: Js.Exn.t => bool =
     x =>
-      JsTypeReflection.constructorName(x) == "SyntaxError"
-      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+      Internal__JsTypeReflection.constructorName(x) == "SyntaxError"
+      && Internal__JsTypeReflection.instanceOfClass(
+           ~instance=x,
+           ~class_=constructor,
+         );
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
   let fromJsExn: Js.Exn.t => option(t) =
@@ -187,11 +223,17 @@ module TypeError = {
   [@bs.get] external stack: t => string = "stack";
   external toJsExn: t => Js.Exn.t = "%identity";
   let instanceOf = x =>
-    JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+    Internal__JsTypeReflection.instanceOfClass(
+      ~instance=x,
+      ~class_=constructor,
+    );
   let isTypeError: Js.Exn.t => bool =
     x =>
-      JsTypeReflection.constructorName(x) == "TypeError"
-      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+      Internal__JsTypeReflection.constructorName(x) == "TypeError"
+      && Internal__JsTypeReflection.instanceOfClass(
+           ~instance=x,
+           ~class_=constructor,
+         );
   external fromJsExn: Js.Exn.t => t = "%identity";
   let fromJsExn: Js.Exn.t => option(t) =
     exn => isTypeError(exn) ? Some(fromJsExn(exn)) : None;
@@ -206,11 +248,17 @@ module URIError = {
   [@bs.get] external name: t => string = "name";
   [@bs.get] external stack: t => string = "stack";
   let instanceOf = x =>
-    JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+    Internal__JsTypeReflection.instanceOfClass(
+      ~instance=x,
+      ~class_=constructor,
+    );
   let isURIError: Js.Exn.t => bool =
     x =>
-      JsTypeReflection.constructorName(x) == "URIError"
-      && JsTypeReflection.instanceOfClass(~instance=x, ~class_=constructor);
+      Internal__JsTypeReflection.constructorName(x) == "URIError"
+      && Internal__JsTypeReflection.instanceOfClass(
+           ~instance=x,
+           ~class_=constructor,
+         );
   external toJsExn: t => Js.Exn.t = "%identity";
   external fromJsExn: Js.Exn.t => t = "%identity";
   let fromJsExn: Js.Exn.t => option(t) =
