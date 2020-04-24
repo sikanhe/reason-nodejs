@@ -171,7 +171,7 @@ module Readable = {
   type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('r) = subtype(void, 'r, kind);
-  type objectStream('r) = subtype(void, 'r, [ kind | objectMode ])
+  type objectStream('r) = subtype(void, 'r, [ kind | objectMode]);
 
   type makeOptions('r);
   [@bs.obj]
@@ -207,9 +207,7 @@ module Readable = {
     ) =>
     makeOptionsObjMode('r);
 
-  [@bs.module "stream"] [@bs.new]
-  external makeObjMode: makeOptions('r) => t('r) = "Readable";
-  
+  [@bs.module "stream"] [@bs.new] external makeObjMode: makeOptions('r) => t('r) = "Readable";
 };
 
 module Writable = {
@@ -319,7 +317,7 @@ module Writable = {
   type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('w) = subtype('w, void, kind);
-  type objectStream('w) = subtype('w, void, [ kind | objectMode ])
+  type objectStream('w) = subtype('w, void, [ kind | objectMode]);
   type chunk('w) =
     pri {
       chunk: 'w,
