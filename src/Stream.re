@@ -15,6 +15,8 @@ type duplex = [ stream | readable | writable];
 type transform = [ stream | duplex | `Transform];
 type passThrough = [ stream | transform | `PassThrough];
 type socket = [ stream | duplex | `Socket];
+type tcpSocket = [ stream | socket | `Tcp];
+type icpSocket = [ stream | socket | `Icp];
 type objectMode = [ stream | `ObjectMode];
 
 type subtype('w, 'r, 'a) constraint 'a = [> stream];
