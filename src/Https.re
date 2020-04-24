@@ -2,9 +2,9 @@ type https = [ | `Https];
 
 module HttpsServer = {
   type kind = [ Tls.TlsServer.kind | https];
-  type subtype('a) = Net.Server.subtype([> kind] as 'a);
-  type supertype('a) = Net.Server.subtype([< kind] as 'a);
-  type t = subtype(kind);
+  type subtype('w, 'r, 'a) = Net.Server.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Net.Server.subtype('w, 'r, [< kind] as 'a);
+  type t = subtype(Buffer.t, Buffer.t, kind);
   module Events = {
     include Tls.TlsServer.Events;
   };

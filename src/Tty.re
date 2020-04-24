@@ -2,9 +2,9 @@ type tty = [ | `Tty];
 
 module ReadStream = {
   type kind = [ Stream.readable | tty];
-  type subtype('a) = Stream.subtype(Buffer.t, Buffer.t, [> kind] as 'a);
-  type supertype('a) = Stream.subtype(Buffer.t, Buffer.t, [< kind] as 'a);
-  type t = subtype(kind);
+  type subtype('w, 'r, 'a) = Stream.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
+  type t = subtype(Buffer.t, Buffer.t, kind);
   module Events = {
     include Stream.Readable.Events;
   };
@@ -24,19 +24,19 @@ module ReadStream = {
 
 module WriteStream = {
   type kind = [ Stream.writable | tty];
-  type subtype('a) = Stream.subtype(Buffer.t, Buffer.t, [> kind] as 'a);
-  type supertype('a) = Stream.subtype(Buffer.t, Buffer.t, [< kind] as 'a);
-  type t = subtype(kind);
+  type subtype('w, 'r, 'a) = Stream.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
+  type t = subtype(Buffer.t, Buffer.t, kind);
   module Events = {
     include Stream.Writable.Events;
     [@bs.send]
-    external onResize: (subtype('a), [@bs.as "resize"] _, [@bs.uncurry] (unit => unit)) => unit =
+    external onResize: (subtype('w, 'r, 'a), [@bs.as "resize"] _, [@bs.uncurry] (unit => unit)) => unit =
       "on";
     [@bs.send]
-    external offResize: (subtype('a), [@bs.as "resize"] _, [@bs.uncurry] (unit => unit)) => unit =
+    external offResize: (subtype('w, 'r, 'a), [@bs.as "resize"] _, [@bs.uncurry] (unit => unit)) => unit =
       "off";
     [@bs.send]
-    external onResizeOnce: (subtype('a), [@bs.as "resize"] _, [@bs.uncurry] (unit => unit)) => unit =
+    external onResizeOnce: (subtype('w, 'r, 'a), [@bs.as "resize"] _, [@bs.uncurry] (unit => unit)) => unit =
       "once";
   };
   module Impl = {

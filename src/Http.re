@@ -52,7 +52,7 @@ module IncomingMessage = {
     external setTimeoutWithCallback:
       (subtype('w, 'r, 'a), int, subtype('w, 'r, 'a) => unit) => subtype('w, 'r, 'a) =
       "setTimeout";
-    [@bs.get] external socket: subtype('w, 'r, 'a) => Net.Socket.subtype('b) = "socket";
+    [@bs.get] external socket: subtype('w, 'r, 'a) => Net.Socket.subtype('w, 'r, 'b) = "socket";
     [@bs.get] external statusCode: subtype('w, 'r, 'a) => int = "statusCode";
     [@bs.get] external statusMessage: subtype('w, 'r, 'a) => string = "statusMessage";
     [@bs.get] external trailers: subtype('w, 'r, 'a) => Js.Dict.t(string) = "trailers";
@@ -86,7 +86,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "connect"] _,
-        (IncomingMessage.subtype('w, 'r, 'b), Net.Socket.subtype('c), Buffer.t) => unit
+        (IncomingMessage.subtype('w, 'r, 'b), Net.Socket.subtype('w, 'r, 'c), Buffer.t) => unit
       ) =>
       unit =
       "on";
@@ -136,7 +136,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "connect"] _,
-        (IncomingMessage.subtype('w, 'r, 'b), Net.Socket.subtype('c), Buffer.t) => unit
+        (IncomingMessage.subtype('w, 'r, 'b), Net.Socket.subtype('w, 'r, 'c), Buffer.t) => unit
       ) =>
       unit =
       "off";
@@ -186,7 +186,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "connect"] _,
-        (IncomingMessage.subtype('w, 'r, 'b), Net.Socket.subtype('c), Buffer.t) => unit
+        (IncomingMessage.subtype('w, 'r, 'b), Net.Socket.subtype('w, 'r, 'c), Buffer.t) => unit
       ) =>
       unit =
       "once";
@@ -366,168 +366,168 @@ module Agent = {
 
 module Server = {
   type kind = [ Net.TcpServer.kind | http];
-  type subtype('a) = Net.Server.subtype([> kind] as 'a);
-  type supertype('a) = Net.Server.subtype([< kind] as 'a);
-  type t = subtype(kind);
+  type subtype('w, 'r, 'a) = Net.Server.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Net.Server.subtype('w, 'r, [< kind] as 'a);
+  type t = subtype(Buffer.t, Buffer.t, kind);
   module Events = {
     include Net.TcpServer.Events;
     [@bs.send]
     external onCheckContinue:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "checkContinue"] _,
         [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onCheckExpectation:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "checkExpectation"] _,
         [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onClientError:
-      (subtype('a), [@bs.as "clientError"] _, [@bs.uncurry] (Js.Exn.t, Net.TcpSocket.t) => unit) =>
-      subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "clientError"] _, [@bs.uncurry] (Js.Exn.t, Net.TcpSocket.t) => unit) =>
+      subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onConnect:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "connect"] _,
         [@bs.uncurry] (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onRequest:
-      (subtype('a), [@bs.as "request"] _, [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit) =>
-      subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "request"] _, [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit) =>
+      subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onUpgrade:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onTimeout:
-      (subtype('a), [@bs.as "timeout"] _, [@bs.uncurry] (Net.TcpSocket.t) => unit) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "timeout"] _, [@bs.uncurry] (Net.TcpSocket.t) => unit) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external offCheckContinue:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "checkContinue"] _,
         [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offCheckExpectation:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "checkExpectation"] _,
         [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offClientError:
-      (subtype('a), [@bs.as "clientError"] _, [@bs.uncurry] (Js.Exn.t, Net.TcpSocket.t) => unit) =>
-      subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "clientError"] _, [@bs.uncurry] (Js.Exn.t, Net.TcpSocket.t) => unit) =>
+      subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offConnect:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "connect"] _,
         [@bs.uncurry] (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offRequest:
-      (subtype('a), [@bs.as "request"] _, [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit) =>
-      subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "request"] _, [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit) =>
+      subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offUpgrade:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offTimeout:
-      (subtype('a), [@bs.as "timeout"] _, [@bs.uncurry] (Net.TcpSocket.t) => unit) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "timeout"] _, [@bs.uncurry] (Net.TcpSocket.t) => unit) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external onCheckContinueOnce:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "checkContinue"] _,
         [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onCheckExpectationOnce:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "checkExpectation"] _,
         [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onClientErrorOnce:
-      (subtype('a), [@bs.as "clientError"] _, [@bs.uncurry] (Js.Exn.t, Net.TcpSocket.t) => unit) =>
-      subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "clientError"] _, [@bs.uncurry] (Js.Exn.t, Net.TcpSocket.t) => unit) =>
+      subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onConnectOnce:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "connect"] _,
         [@bs.uncurry] (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onRequestOnce:
-      (subtype('a), [@bs.as "request"] _, [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit) =>
-      subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "request"] _, [@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit) =>
+      subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onUpgradeOnce:
       (
-        subtype('a),
+        subtype('w, 'r, 'a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
       ) =>
-      subtype('a) =
+      subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onTimeoutOnce:
-      (subtype('a), [@bs.as "timeout"] _, [@bs.uncurry] (Net.TcpSocket.t) => unit) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "timeout"] _, [@bs.uncurry] (Net.TcpSocket.t) => unit) => subtype('w, 'r, 'a) =
       "once";
   };
   module Impl = {
     include Events;
     [@bs.send]
-    external setTimeout: (subtype('a), int, [@bs.uncurry] (Net.TcpSocket.t) => unit) => unit = "setTimeout";
-    [@bs.get] external timeout: subtype('a) => int = "timeout";
-    [@bs.send] external keepAliveTimeout: (subtype('a), int) => unit = "keepAliveTimeout";
+    external setTimeout: (subtype('w, 'r, 'a), int, [@bs.uncurry] (Net.TcpSocket.t) => unit) => unit = "setTimeout";
+    [@bs.get] external timeout: subtype('w, 'r, 'a) => int = "timeout";
+    [@bs.send] external keepAliveTimeout: (subtype('w, 'r, 'a), int) => unit = "keepAliveTimeout";
     include Net.TcpServer.Impl;
   };
   include Impl;

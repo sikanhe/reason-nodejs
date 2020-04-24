@@ -12,158 +12,158 @@ type address = {
 
 module Socket = {
   type kind = [ Stream.socket];
-  type subtype('a) = Stream.subtype(Buffer.t, Buffer.t, [> kind] as 'a);
-  type supertype('a) = Stream.subtype(Buffer.t, Buffer.t, [< kind] as 'a);
-  type t = subtype(kind);
+  type subtype('w, 'r, 'a) = Stream.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
+  type t = subtype(Buffer.t, Buffer.t, kind);
 
   module Events = {
     [@bs.send]
     external onClose:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (bool => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (bool => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onConnect:
-      (subtype('a), [@bs.as "connect"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connect"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onData:
-      (subtype('a), [@bs.as "data"] _, [@bs.uncurry] (Buffer.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "data"] _, [@bs.uncurry] (Buffer.t => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onDrain:
-      (subtype('a), [@bs.as "drain"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "drain"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onEnd:
-      (subtype('a), [@bs.as "end"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "end"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onError:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onLookup:
-      (subtype('a), [@bs.as "lookup"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "lookup"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onReady:
-      (subtype('a), [@bs.as "ready"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "ready"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
-    external onTimeout: (subtype('a), [@bs.as "timeout"] _, unit => unit) => subtype('a) =
+    external onTimeout: (subtype('w, 'r, 'a), [@bs.as "timeout"] _, unit => unit) => subtype('w, 'r, 'a) =
       "on";
 
     [@bs.send]
     external offClose:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (bool => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (bool => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offConnect:
-      (subtype('a), [@bs.as "connect"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connect"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offData:
-      (subtype('a), [@bs.as "data"] _, [@bs.uncurry] (Buffer.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "data"] _, [@bs.uncurry] (Buffer.t => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offDrain:
-      (subtype('a), [@bs.as "drain"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "drain"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offEnd:
-      (subtype('a), [@bs.as "end"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "end"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offError:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offLookup:
-      (subtype('a), [@bs.as "lookup"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "lookup"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offReady:
-      (subtype('a), [@bs.as "ready"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "ready"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offTimeout:
-      (subtype('a), [@bs.as "timeout"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "timeout"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
 
     [@bs.send]
     external onCloseOnce:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (bool => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (bool => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onConnectOnce:
-      (subtype('a), [@bs.as "connect"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connect"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onDataOnce:
-      (subtype('a), [@bs.as "data"] _, [@bs.uncurry] (Buffer.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "data"] _, [@bs.uncurry] (Buffer.t => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onDrainOnce:
-      (subtype('a), [@bs.as "drain"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "drain"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onEndOnce:
-      (subtype('a), [@bs.as "end"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "end"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onErrorOnce:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onLookupOnce:
-      (subtype('a), [@bs.as "lookup"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "lookup"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onReadyOnce:
-      (subtype('a), [@bs.as "ready"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "ready"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onTimeoutOnce:
-      (subtype('a), [@bs.as "timeout"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "timeout"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
   };
 
     module Impl = {
       include Stream.Duplex.Impl;
       include Events;
-      [@bs.send] external address: subtype('a) => address = "address";
-      [@bs.get] external bufferSize: subtype('a) => int = "bufferSize";
-      [@bs.get] external bytesRead: subtype('a) => int = "bytesRead";
-      [@bs.get] external bytesWritten: subtype('a) => int = "bytesWritten";
-      [@bs.get] external connecting: subtype('a) => bool = "connecting";
-      [@bs.get] external destroyed: subtype('a) => bool = "destroyed";
+      [@bs.send] external address: subtype('w, 'r, 'a) => address = "address";
+      [@bs.get] external bufferSize: subtype('w, 'r, 'a) => int = "bufferSize";
+      [@bs.get] external bytesRead: subtype('w, 'r, 'a) => int = "bytesRead";
+      [@bs.get] external bytesWritten: subtype('w, 'r, 'a) => int = "bytesWritten";
+      [@bs.get] external connecting: subtype('w, 'r, 'a) => bool = "connecting";
+      [@bs.get] external destroyed: subtype('w, 'r, 'a) => bool = "destroyed";
       [@bs.send]
-      external destroy: (subtype('a), ~exn: Js.Exn.t=?, unit) => subtype('a) = "destroy";
-      [@bs.get] external localAddress: subtype('a) => string = "localAddress";
-      [@bs.get] external localPort: subtype('a) => int = "localPort";
-      [@bs.send] external pause: subtype('a) => subtype('a) = "pause";
-      [@bs.get] external pending: subtype('a) => bool = "pending";
-      [@bs.send] external ref: subtype('a) => subtype('a) = "ref";
-      [@bs.get] external remoteAddress: subtype('a) => string = "remoteAddress";
-      [@bs.get] external remoteFamily: subtype('a) => string = "remoteFamily";
-      [@bs.get] external remotePort: subtype('a) => int = "remotePort";
-      [@bs.send] external resume: subtype('a) => subtype('a) = "resume";
+      external destroy: (subtype('w, 'r, 'a), ~exn: Js.Exn.t=?, unit) => subtype('w, 'r, 'a) = "destroy";
+      [@bs.get] external localAddress: subtype('w, 'r, 'a) => string = "localAddress";
+      [@bs.get] external localPort: subtype('w, 'r, 'a) => int = "localPort";
+      [@bs.send] external pause: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "pause";
+      [@bs.get] external pending: subtype('w, 'r, 'a) => bool = "pending";
+      [@bs.send] external ref: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "ref";
+      [@bs.get] external remoteAddress: subtype('w, 'r, 'a) => string = "remoteAddress";
+      [@bs.get] external remoteFamily: subtype('w, 'r, 'a) => string = "remoteFamily";
+      [@bs.get] external remotePort: subtype('w, 'r, 'a) => int = "remotePort";
+      [@bs.send] external resume: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "resume";
       [@bs.send]
-      external setKeepAlive: (subtype('a), ~enable: bool, ~delay: int) => subtype('a) =
+      external setKeepAlive: (subtype('w, 'r, 'a), ~enable: bool, ~delay: int) => subtype('w, 'r, 'a) =
         "setKeepAlive";
-      [@bs.send] external setNoDelay: (subtype('a), ~noDelay: bool) => subtype('a) = "noDelay";
+      [@bs.send] external setNoDelay: (subtype('w, 'r, 'a), ~noDelay: bool) => subtype('w, 'r, 'a) = "noDelay";
       [@bs.send]
       external setTimeout:
-        (subtype('a), int, ~callback: [@bs.this] (subtype('a) => unit)=?) => subtype('a) =
+        (subtype('w, 'r, 'a), int, ~callback: [@bs.this] (subtype('w, 'r, 'a) => unit)=?) => subtype('w, 'r, 'a) =
         "setTimeout";
-      [@bs.send] external unref: subtype('a) => subtype('a) = "unref";
+      [@bs.send] external unref: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "unref";
       [@bs.send]
       external connectIcp:
-        (subtype([> kind | icp] as 'a), ~path: string, unit => unit) => subtype('a) =
+        (subtype('w, 'r, [> kind | icp] as 'a), ~path: string, unit => unit) => subtype('w, 'r, 'a) =
         "connect";
       [@bs.send]
       external connectTcp:
-        (subtype([> kind | tcp] as 'a), ~port: int, ~host: string, unit => unit) => subtype('a) =
+        (subtype('w, 'r, [> kind | tcp] as 'a), ~port: int, ~host: string, unit => unit) => subtype('w, 'r, 'a) =
         "connect";
     };
     include Impl;
@@ -178,9 +178,9 @@ module Socket = {
 
 module TcpSocket = {
   type nonrec kind = [ Socket.kind | tcp];
-  type subtype('a) = Socket.subtype([> kind] as 'a);
-  type supertype('a) = Socket.subtype([< kind] as 'a);
-  type t = subtype(kind);
+  type subtype('w, 'r, 'a) = Socket.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
+  type t = subtype(Buffer.t, Buffer.t, kind);
   module Events = {
     include Socket.Events;
   };
@@ -188,7 +188,7 @@ module TcpSocket = {
     include Socket.Impl;
     include Events;
     [@bs.send]
-    external connect: (subtype('a), ~port: int, ~host: string, unit => unit) => subtype('a) =
+    external connect: (subtype('w, 'r, 'a), ~port: int, ~host: string, unit => unit) => subtype('w, 'r, 'a) =
       "connect";
   };
   include Impl;
@@ -197,16 +197,16 @@ module TcpSocket = {
 
 module IcpSocket = {
   type kind = [ Socket.kind | icp];
-  type subtype('a) = Socket.subtype([> kind] as 'a);
-  type supertype('a) = Socket.subtype([< kind] as 'a);
-  type t = subtype(kind);
+  type subtype('w, 'r, 'a) = Socket.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Socket.subtype('w, 'r, [< kind] as 'a);
+  type t = subtype(Buffer.t, Buffer.t, kind);
   module Events = {
     include Socket.Events;
   };
   module Impl = {
     include Socket.Impl;
     [@bs.send]
-    external connect: (subtype('a), ~path: string, unit => unit) => subtype('a) = "connect";
+    external connect: (subtype('w, 'r, 'a), ~path: string, unit => unit) => subtype('w, 'r, 'a) = "connect";
   };
   include Impl;
   [@bs.module "net"] [@bs.new] external make: unit => t = "Socket";
@@ -217,73 +217,73 @@ type icpSocket = IcpSocket.t;
 
 module Server = {
   type kind = [ | `Server];
-  type subtype('a) constraint 'a = [> kind];
-  type supertype('a) constraint 'a = [< kind];
-  type t = subtype(kind);
+  type subtype('w, 'r, 'a) constraint 'a = [> kind];
+  type supertype('w, 'r, 'a) constraint 'a = [< kind];
+  type t = subtype(Buffer.t, Buffer.t, kind);
   module Events = {
     [@bs.send]
     external onClose:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onError:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onConnection:
-      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (Socket.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connection"] _, [@bs.uncurry] (Socket.t => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onListening:
-      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external offClose:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offError:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offConnection:
-      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (Socket.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connection"] _, [@bs.uncurry] (Socket.t => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offListening:
-      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external onCloseOnce:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onErrorOnce:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onConnectionOnce:
-      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (Socket.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connection"] _, [@bs.uncurry] (Socket.t => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onListeningOnce:
-      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
   };
   module Impl = {
     include Events;
     [@bs.send]
     external close:
-      (subtype('a), ~callback: Js.nullable(Js.Exn.t) => unit=?, unit) => subtype('a) =
+      (subtype('w, 'r, 'a), ~callback: Js.nullable(Js.Exn.t) => unit=?, unit) => subtype('w, 'r, 'a) =
       "close";
     [@bs.send]
-    external getConnections: (subtype('a), (Js.nullable(Js.Exn.t), int) => unit) => subtype('a) =
+    external getConnections: (subtype('w, 'r, 'a), (Js.nullable(Js.Exn.t), int) => unit) => subtype('w, 'r, 'a) =
       "getConnections";
-    [@bs.set] external setMaxConnections: (subtype('a), int) => unit = "maxConnections";
-    [@bs.get] external maxConnections: subtype('a) => int = "maxConnections";
-    [@bs.send] external ref: subtype('a) => subtype('a) = "ref";
-    [@bs.send] external unref: subtype('a) => subtype('a) = "unref";
-    [@bs.get] external listening: subtype('a) => bool = "listening";
+    [@bs.set] external setMaxConnections: (subtype('w, 'r, 'a), int) => unit = "maxConnections";
+    [@bs.get] external maxConnections: subtype('w, 'r, 'a) => int = "maxConnections";
+    [@bs.send] external ref: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "ref";
+    [@bs.send] external unref: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "unref";
+    [@bs.get] external listening: subtype('w, 'r, 'a) => bool = "listening";
   };
 
   include Impl;
@@ -291,73 +291,73 @@ module Server = {
 
 module TcpServer = {
   type kind = [ Server.kind | tcp];
-  type subtype('a) = Server.subtype([> kind] as 'a);
-  type supertype('a) = Server.subtype([< kind] as 'a);
-  type t = subtype(kind);
+  type subtype('w, 'r, 'a) = Server.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Server.subtype('w, 'r, [< kind] as 'a);
+  type t = subtype(Buffer.t, Buffer.t, kind);
   module Events = {
     [@bs.send]
     external onClose:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onError:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onConnection:
-      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (TcpSocket.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connection"] _, [@bs.uncurry] (TcpSocket.t => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onListening:
-      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external offClose:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offError:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offConnection:
-      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (TcpSocket.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connection"] _, [@bs.uncurry] (TcpSocket.t => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offListening:
-      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external onCloseOnce:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onErrorOnce:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onConnectionOnce:
-      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (TcpSocket.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connection"] _, [@bs.uncurry] (TcpSocket.t => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onListeningOnce:
-      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
   };
   module Impl = {
     include Events;
     [@bs.send]
     external close:
-      (subtype('a), ~callback: Js.nullable(Js.Exn.t) => unit=?, unit) => subtype('a) =
+      (subtype('w, 'r, 'a), ~callback: Js.nullable(Js.Exn.t) => unit=?, unit) => subtype('w, 'r, 'a) =
       "close";
     [@bs.send]
-    external getConnections: (subtype('a), (Js.nullable(Js.Exn.t), int) => unit) => subtype('a) =
+    external getConnections: (subtype('w, 'r, 'a), (Js.nullable(Js.Exn.t), int) => unit) => subtype('w, 'r, 'a) =
       "getConnections";
-    [@bs.set] external setMaxConnections: (subtype('a), int) => unit = "maxConnections";
-    [@bs.get] external maxConnections: subtype('a) => int = "maxConnections";
-    [@bs.send] external ref: subtype('a) => subtype('a) = "ref";
-    [@bs.send] external unref: subtype('a) => subtype('a) = "unref";
-    [@bs.get] external listening: subtype('a) => bool = "listening";
+    [@bs.set] external setMaxConnections: (subtype('w, 'r, 'a), int) => unit = "maxConnections";
+    [@bs.get] external maxConnections: subtype('w, 'r, 'a) => int = "maxConnections";
+    [@bs.send] external ref: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "ref";
+    [@bs.send] external unref: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "unref";
+    [@bs.get] external listening: subtype('w, 'r, 'a) => bool = "listening";
   };
   include Impl;
   type listenOptions;
@@ -381,73 +381,73 @@ module TcpServer = {
 
 module IcpServer = {
   type kind = [ Server.kind | icp];
-  type subtype('a) = Server.subtype([> kind] as 'a);
-  type supertype('a) = Server.subtype([< kind] as 'a);
-  type t = subtype(kind);
+  type subtype('w, 'r, 'a) = Server.subtype('w, 'r, [> kind] as 'a);
+  type supertype('w, 'r, 'a) = Server.subtype('w, 'r, [< kind] as 'a);
+  type t = subtype(Buffer.t, Buffer.t, kind);
   module Events = {
     [@bs.send]
     external onClose:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onError:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onConnection:
-      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (IcpSocket.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connection"] _, [@bs.uncurry] (IcpSocket.t => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external onListening:
-      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "on";
     [@bs.send]
     external offClose:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offError:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offConnection:
-      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (IcpSocket.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connection"] _, [@bs.uncurry] (IcpSocket.t => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external offListening:
-      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "off";
     [@bs.send]
     external onCloseOnce:
-      (subtype('a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onErrorOnce:
-      (subtype('a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "error"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onConnectionOnce:
-      (subtype('a), [@bs.as "connection"] _, [@bs.uncurry] (IcpSocket.t => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "connection"] _, [@bs.uncurry] (IcpSocket.t => unit)) => subtype('w, 'r, 'a) =
       "once";
     [@bs.send]
     external onListeningOnce:
-      (subtype('a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('a) =
+      (subtype('w, 'r, 'a), [@bs.as "listening"] _, [@bs.uncurry] (unit => unit)) => subtype('w, 'r, 'a) =
       "once";
   };
   module Impl = {
     include Events;
     [@bs.send]
     external close:
-      (subtype('a), ~callback: Js.nullable(Js.Exn.t) => unit=?, unit) => subtype('a) =
+      (subtype('w, 'r, 'a), ~callback: Js.nullable(Js.Exn.t) => unit=?, unit) => subtype('w, 'r, 'a) =
       "close";
     [@bs.send]
-    external getConnections: (subtype('a), (Js.nullable(Js.Exn.t), int) => unit) => subtype('a) =
+    external getConnections: (subtype('w, 'r, 'a), (Js.nullable(Js.Exn.t), int) => unit) => subtype('w, 'r, 'a) =
       "getConnections";
-    [@bs.set] external setMaxConnections: (subtype('a), int) => unit = "maxConnections";
-    [@bs.get] external maxConnections: subtype('a) => int = "maxConnections";
-    [@bs.send] external ref: subtype('a) => subtype('a) = "ref";
-    [@bs.send] external unref: subtype('a) => subtype('a) = "unref";
-    [@bs.get] external listening: subtype('a) => bool = "listening";
+    [@bs.set] external setMaxConnections: (subtype('w, 'r, 'a), int) => unit = "maxConnections";
+    [@bs.get] external maxConnections: subtype('w, 'r, 'a) => int = "maxConnections";
+    [@bs.send] external ref: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "ref";
+    [@bs.send] external unref: subtype('w, 'r, 'a) => subtype('w, 'r, 'a) = "unref";
+    [@bs.get] external listening: subtype('w, 'r, 'a) => bool = "listening";
   };
   include Impl;
   type listenOptions;
@@ -469,7 +469,7 @@ module IcpServer = {
     "listen";
 };
 
-type server('a) = Server.subtype('a);
+type server('a) = Server.subtype(Buffer.t, Buffer.t, 'a);
 type tcpServer = server(TcpServer.kind);
 type icpServer = server(IcpServer.kind);
 
