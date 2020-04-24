@@ -85,11 +85,11 @@ module Worker = {
 
   [@bs.send] external sendHttpServerHandle: (string, Http.Server.t, Js.nullable(Js.t({..}))) => unit = "send";
   let sendHttpServerHandle = (~options=?, msg, handle) => sendHttpServerHandle(msg, handle, Js.Nullable.fromOption(options));
-  [@bs.send] external sendSocketHandle: (string, Net.Socket.subtype('a), Js.nullable(Js.t({..}))) => unit = "send";
+  [@bs.send] external sendSocketHandle: (string, Net.Socket.subtype('w, 'r, 'a), Js.nullable(Js.t({..}))) => unit = "send";
   let sendSocketHandle = (~options=?, msg, handle) => sendSocketHandle(msg, handle, Js.Nullable.fromOption(options));
 };
 
-type clusterSettings = {
+type clusterSettings = pri {
   execArgv: Js.nullable(array(string)),
   exec: Js.nullable(string),
   args: Js.nullable(array(string)),
@@ -114,7 +114,8 @@ type clusterSettings = {
   ~uid: int=?,
   ~gid: int=?,
   ~inspectPort: int=?,
-  ~windowsHide: bool=?
+  ~windowsHide: bool=?,
+  unit
 ) => clusterSettings = "";
 
 [@bs.module] external disconnect: Js.Nullable.t(unit => unit) => unit = "disconnect";
