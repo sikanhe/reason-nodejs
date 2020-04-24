@@ -1,5 +1,5 @@
 /**
- * This `void` type is meant to represent the type of readable or
+ * The `void` type is meant to represent the type of readable or
  * writable data which can never be produced.
  */
 type void;
