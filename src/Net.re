@@ -543,10 +543,6 @@ module IcpServer = {
     "listen";
 };
 
-type server('a) = Server.t('a);
-type tcpServer = server(TcpServer.kind);
-type icpServer = server(IcpServer.kind);
-
 [@bs.module "net"] [@bs.val] external isIP: string => bool = "isIP";
 [@bs.module "net"] [@bs.val] external isIPv4: string => bool = "isIPv4";
 [@bs.module "net"] [@bs.val] external isIPv6: string => bool = "isIPv6";
