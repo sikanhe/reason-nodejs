@@ -57,19 +57,19 @@ type all = [
   | dataView
 ];
 
-type tag(_) =
-  | String(string): tag([> string_])
-  | Buffer(Buffer.t): tag([> buffer])
-  | Int8Array(Int8Array.t): tag([> int8Array])
-  | Uint8Array(Uint8Array.t): tag([> uInt8Array])
-  | Uint8ClampedArray(Uint8ClampedArray.t): tag([> uInt8ClampedArray])
-  | Uint16Array(Uint16Array.t): tag([> uInt16Array])
-  | Int16Array(Int16Array.t): tag([> int16Array])
-  | Uint32Array(Uint32Array.t): tag([> uInt32Array])
-  | Int32Array(Uint32Array.t): tag([> int32Array])
-  | Float32Array(Float32Array.t): tag([> float32Array])
-  | Float64Array(Float64Array.t): tag([> float64Array])
-  | DataView(DataView.t): tag([> int8Array]);
+type case(_) =
+  | String(string): case([> string_])
+  | Buffer(Buffer.t): case([> buffer])
+  | Int8Array(Int8Array.t): case([> int8Array])
+  | Uint8Array(Uint8Array.t): case([> uInt8Array])
+  | Uint8ClampedArray(Uint8ClampedArray.t): case([> uInt8ClampedArray])
+  | Uint16Array(Uint16Array.t): case([> uInt16Array])
+  | Int16Array(Int16Array.t): case([> int16Array])
+  | Uint32Array(Uint32Array.t): case([> uInt32Array])
+  | Int32Array(Uint32Array.t): case([> int32Array])
+  | Float32Array(Float32Array.t): case([> float32Array])
+  | Float64Array(Float64Array.t): case([> float64Array])
+  | DataView(DataView.t): case([> int8Array]);
 
 external string: string => t(string_) = "%identity";
 external buffer: Buffer.t => t(buffer) = "%identity";
@@ -99,7 +99,7 @@ external toFloat32Array: t(float32Array) => Float32Array.t = "%identity";
 external toFloat64Array: t(float64Array) => Float64Array.t = "%identity";
 external toDataView: t(dataView) => DataView.t = "%identity";
 
-let classify: t('a) => tag('b) =
+let classify: t('a) => case('b) =
   binaryLike =>
     if (Js.typeof(binaryLike) === "string") {
       String(Obj.magic(binaryLike));
