@@ -1,28 +1,70 @@
 type t;
 
 module Events = {
-  [@bs.send] external onData: (t, [@bs.as "data"] _, [@bs.uncurry] (Buffer.t) => unit) => t = "on";
-  [@bs.send] external onDisconnect: (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit) => unit) => t = "on";
-  [@bs.send] external onError: (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t = "on";
-  [@bs.send] external onExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t = "on";
-  [@bs.send] external onClose: (t, [@bs.as "close"] _, [@bs.uncurry] (int) => unit) => t = "on";
-
-  [@bs.send] external offData: (t, [@bs.as "data"] _, [@bs.uncurry] (Buffer.t) => unit) => t = "off";
-  [@bs.send] external offDisconnect: (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit) => unit) => t = "off";
-  [@bs.send] external offError: (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t = "off";
-  [@bs.send] external offExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t = "off";
-  [@bs.send] external offClose: (t, [@bs.as "close"] _, [@bs.uncurry] (int) => unit) => t = "off";
-
-  [@bs.send] external onDataOnce: (t, [@bs.as "data"] _, [@bs.uncurry] (Buffer.t) => unit) => t = "once";
   [@bs.send]
-  external onDisconnectOnce: (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit) => unit) => t = "once";
-  [@bs.send] external onErrorOnce: (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t = "once";
-  [@bs.send] external onExitOnce: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t = "once";
-  [@bs.send] external onCloseOnce: (t, [@bs.as "close"] _, [@bs.uncurry] (int) => unit) => t = "once";
+  external onData:
+    (t, [@bs.as "data"] _, [@bs.uncurry] (Buffer.t => unit)) => t =
+    "on";
+  [@bs.send]
+  external onDisconnect:
+    (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit => unit)) => t =
+    "on";
+  [@bs.send]
+  external onError:
+    (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => t =
+    "on";
+  [@bs.send]
+  external onExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int => unit)) => t =
+    "on";
+  [@bs.send]
+  external onClose: (t, [@bs.as "close"] _, [@bs.uncurry] (int => unit)) => t =
+    "on";
 
-  [@bs.send] external emitData: (t, [@bs.as "data"] _, Buffer.t) => bool = "emit";
-  [@bs.send] external emitDisconnect: (t, [@bs.as "disconnect"] _) => bool = "emit";
-  [@bs.send] external emitError: (t, [@bs.as "error"] _, Js.Exn.t) => bool = "emit";
+  [@bs.send]
+  external offData:
+    (t, [@bs.as "data"] _, [@bs.uncurry] (Buffer.t => unit)) => t =
+    "off";
+  [@bs.send]
+  external offDisconnect:
+    (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit => unit)) => t =
+    "off";
+  [@bs.send]
+  external offError:
+    (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => t =
+    "off";
+  [@bs.send]
+  external offExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int => unit)) => t =
+    "off";
+  [@bs.send]
+  external offClose: (t, [@bs.as "close"] _, [@bs.uncurry] (int => unit)) => t =
+    "off";
+
+  [@bs.send]
+  external onDataOnce:
+    (t, [@bs.as "data"] _, [@bs.uncurry] (Buffer.t => unit)) => t =
+    "once";
+  [@bs.send]
+  external onDisconnectOnce:
+    (t, [@bs.as "disconnect"] _, [@bs.uncurry] (unit => unit)) => t =
+    "once";
+  [@bs.send]
+  external onErrorOnce:
+    (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => t =
+    "once";
+  [@bs.send]
+  external onExitOnce: (t, [@bs.as "exit"] _, [@bs.uncurry] (int => unit)) => t =
+    "once";
+  [@bs.send]
+  external onCloseOnce:
+    (t, [@bs.as "close"] _, [@bs.uncurry] (int => unit)) => t =
+    "once";
+
+  [@bs.send]
+  external emitData: (t, [@bs.as "data"] _, Buffer.t) => bool = "emit";
+  [@bs.send]
+  external emitDisconnect: (t, [@bs.as "disconnect"] _) => bool = "emit";
+  [@bs.send]
+  external emitError: (t, [@bs.as "error"] _, Js.Exn.t) => bool = "emit";
   [@bs.send] external emitExit: (t, [@bs.as "exit"] _, int) => bool = "emit";
   [@bs.send] external emitClose: (t, [@bs.as "close"] _, int) => bool = "emit";
 
@@ -37,17 +79,11 @@ include Events;
 [@bs.get] external pid: t => int = "pid";
 [@bs.get] external ref: t => unit = "ref";
 [@bs.get] [@bs.return nullable]
-external stderr:
-  t => option(Stream.Writable.subtype(Buffer.t, Buffer.t, [< Net.Socket.kind | Stream.writable])) =
-  "stderr";
+external stderr: t => option(Stream.Writable.t(Buffer.t)) = "stderr";
 [@bs.get] [@bs.return nullable]
-external stdin:
-  t => option(Stream.Readable.subtype(Buffer.t, Buffer.t, [< Net.Socket.kind | Stream.readable])) =
-  "stdin";
+external stdin: t => option(Stream.Readable.t(Buffer.t)) = "stdin";
 [@bs.get] [@bs.return nullable]
-external stdout:
-  t => option(Stream.Writable.subtype(Buffer.t, Buffer.t,[< Net.Socket.kind | Stream.writable])) =
-  "stdout";
+external stdout: t => option(Stream.Writable.t(Buffer.t)) = "stdout";
 [@bs.get] external unref: t => unit = "unref";
 
 type execOptions;
@@ -70,10 +106,12 @@ external execOptions:
   execOptions;
 
 [@bs.module "child_process"] [@bs.val]
-external exec: (string, (option(Js.Exn.t), string, string) => unit) => t = "exec";
+external exec: (string, (option(Js.Exn.t), string, string) => unit) => t =
+  "exec";
 
 [@bs.module "child_process"] [@bs.val]
-external execWith: (string, execOptions, (option(Js.Exn.t), string, string) => unit) => t =
+external execWith:
+  (string, execOptions, (option(Js.Exn.t), string, string) => unit) => t =
   "exec";
 
 type execFileOptions;
@@ -96,12 +134,19 @@ external execFileOption:
   execFileOptions;
 
 [@bs.module "child_process"] [@bs.val]
-external execFile: (string, array(string), (option(Js.Exn.t), string, string) => unit) => t =
+external execFile:
+  (string, array(string), (option(Js.Exn.t), string, string) => unit) => t =
   "execFile";
 
 [@bs.module "child_process"] [@bs.val]
 external execFileWith:
-  (string, array(string), execFileOptions, (option(Js.Exn.t), string, string) => unit) => t =
+  (
+    string,
+    array(string),
+    execFileOptions,
+    (option(Js.Exn.t), string, string) => unit
+  ) =>
+  t =
   "execFile";
 
 type forkOptions;
@@ -123,7 +168,8 @@ external forkOptions:
   ) =>
   forkOptions;
 
-[@bs.module "child_process"] [@bs.val] external fork: (string, array(string)) => t = "fork";
+[@bs.module "child_process"] [@bs.val]
+external fork: (string, array(string)) => t = "fork";
 
 [@bs.module "child_process"] [@bs.val]
 external forkWith: (string, array(string), forkOptions) => t = "fork";
@@ -147,7 +193,8 @@ external spawnOptions:
   ) =>
   spawnOptions;
 
-[@bs.module "child_process"] [@bs.val] external spawn: (string, array(string)) => t = "spawn";
+[@bs.module "child_process"] [@bs.val]
+external spawn: (string, array(string)) => t = "spawn";
 
 [@bs.module "child_process"] [@bs.val]
 external spawnWith: (string, array(string), spawnOptions) => t = "spawn";
@@ -183,11 +230,13 @@ external spawnSyncOptions:
   spawnSyncOptions;
 
 [@bs.module "child_process"] [@bs.val]
-external spawnSync: (string, array(string), spawnSyncOptions) => spawnSyncResult('a) =
+external spawnSync:
+  (string, array(string), spawnSyncOptions) => spawnSyncResult('a) =
   "spawnSync";
 
 [@bs.module "child_process"] [@bs.val]
-external spawnSyncWith: (string, array(string), spawnSyncOptions) => spawnSyncResult('a) =
+external spawnSyncWith:
+  (string, array(string), spawnSyncOptions) => spawnSyncResult('a) =
   "spawnSync";
 
 type execSyncOptions;
@@ -210,7 +259,8 @@ external execSyncOptions:
   ) =>
   execSyncOptions;
 
-[@bs.module "child_process"] [@bs.val] external execSync: string => string = "execSync";
+[@bs.module "child_process"] [@bs.val]
+external execSync: string => string = "execSync";
 
 [@bs.module "child_process"] [@bs.val]
 external execSyncWith: (string, execSyncOptions) => string = "execSync";
@@ -239,5 +289,6 @@ external execFileSyncOptions:
 external execFileSync: (string, array(string)) => string = "execFileSync";
 
 [@bs.module "child_process"] [@bs.val]
-external execFileSyncWith: (string, array(string), execFileSyncOptions) => string =
+external execFileSyncWith:
+  (string, array(string), execFileSyncOptions) => string =
   "execFileSync";
