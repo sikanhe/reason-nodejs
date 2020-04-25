@@ -287,7 +287,7 @@ module Readable = {
       'rs =
       "unpipe";
     [@bs.send]
-    external unshift: (subtype('w, 'r, [> kind]), 'w, 'r) => unit = "unshift";
+    external unshift: (subtype('w, 'r, [> kind]), 'r) => unit = "unshift";
   };
   include Impl;
   type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
@@ -544,6 +544,46 @@ module Writable = {
     makeOptions('w);
   [@bs.module "stream"] [@bs.new]
   external make: makeOptions(Buffer.t) => t(Buffer.t) = "Writable";
+
+  type makeOptionsObjMode('w);
+  [@bs.obj]
+  external makeOptionsObjMode:
+    (
+      ~highWaterMark: int=?,
+      ~objectMode: [@bs.as {json|true|json}] _,
+      ~emitClose: bool=?,
+      ~autoDestroy: bool=?,
+      ~destroy: [@bs.this] (
+                  (
+                    t('w),
+                    Js.nullable(Js.Exn.t),
+                    (~err: option(Js.Exn.t)) => unit
+                  ) =>
+                  unit
+                )
+                  =?,
+      ~final: [@bs.this] (
+                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+              )
+                =?,
+      ~writev: [@bs.this] (
+                 (
+                   t('w),
+                   array(chunk('w)),
+                   (~err: option(Js.Exn.t)) => unit
+                 ) =>
+                 unit
+               )
+                 =?,
+      ~write: [@bs.this] (
+                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+              ),
+      unit
+    ) =>
+    makeOptionsObjMode('w);
+  [@bs.module "stream"] [@bs.new]
+  external makeObjMode: makeOptionsObjMode('w) => objectStream('w) =
+    "Writable";
 };
 
 module Duplex = {
