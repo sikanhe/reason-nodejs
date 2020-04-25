@@ -17,18 +17,18 @@ open Js.TypedArray2;
 
 type t('a);
 
-type string_ = [ | `String];
-type buffer = [ | `Buffer];
-type int8Array = [ | `Int8Array];
-type uInt8Array = [ | `Uint8Array];
-type uInt8ClampedArray = [ | `Uint8ClampedArray];
-type int16Array = [ | `Int16Array];
-type uInt16Array = [ | `Uint16Array];
-type int32Array = [ | `Int32Array];
-type uInt32Array = [ | `Uint32Array];
-type float32Array = [ | `Float32Array];
-type float64Array = [ | `Float64Array];
-type dataView = [ | `DataView];
+type string_ = [ | `string];
+type buffer = [ | `buffer];
+type int8Array = [ | `int8Array];
+type uInt8Array = [ | `uInt8Array];
+type uInt8ClampedArray = [ | `uInt8ClampedArray];
+type int16Array = [ | `int16Array];
+type uInt16Array = [ | `uInt16Array];
+type int32Array = [ | `int32Array];
+type uInt32Array = [ | `uInt32Array];
+type float32Array = [ | `float32Array];
+type float64Array = [ | `float64Array];
+type dataView = [ | `dataView];
 
 type typedArray = [
   int8Array
@@ -75,7 +75,8 @@ external string: string => t(string_) = "%identity";
 external buffer: Buffer.t => t(buffer) = "%identity";
 external int8Array: Int8Array.t => t(uInt8Array) = "%identity";
 external uInt8Array: Uint8Array.t => t(uInt8Array) = "%identity";
-external uInt8ClampedArray: Uint8ClampedArray.t => t(uInt8ClampedArray) = "%identity";
+external uInt8ClampedArray: Uint8ClampedArray.t => t(uInt8ClampedArray) =
+  "%identity";
 external uInt16Array: Uint16Array.t => t(uInt16Array) = "%identity";
 external int16Array: Int16Array.t => t(int16Array) = "%identity";
 external uInt32Array: Uint32Array.t => t(uInt32Array) = "%identity";
@@ -88,7 +89,8 @@ external toString: t(string_) => string = "%identity";
 external toBuffer: t(buffer) => Buffer.t = "%identity";
 external toInt8Array: t(int8Array) => Int8Array.t = "%identity";
 external toUint8Array: t(uInt8Array) => Uint8Array.t = "%identity";
-external toUInt8ClampedArray: t(uInt8ClampedArray) => Uint8ClampedArray.t = "%identity";
+external toUInt8ClampedArray: t(uInt8ClampedArray) => Uint8ClampedArray.t =
+  "%identity";
 external toUInt16Array: t(uInt16Array) => Uint16Array.t = "%identity";
 external toInt16Array: t(int16Array) => Int16Array.t = "%identity";
 external toUInt32Array: t(uInt32Array) => Uint32Array.t = "%identity";
