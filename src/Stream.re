@@ -11,12 +11,14 @@ type void;
 type stream = [ | `Stream];
 type readable = [ stream | `Readable];
 type writable = [ stream | `Writable];
-type duplex = [ stream | readable | writable];
-type transform = [ stream | duplex | `Transform];
-type passThrough = [ stream | transform | `PassThrough];
-type socket = [ stream | duplex | `Socket];
-type tcpSocket = [ stream | socket | `Tcp];
-type icpSocket = [ stream | socket | `Icp];
+type duplex = [ readable | writable];
+type transform = [ duplex | `Transform];
+type passThrough = [ transform | `PassThrough];
+type socket = [ duplex | `Socket];
+type tcpSocket = [ socket | `Tcp];
+type icpSocket = [ socket | `Icp];
+type fsReadStream = [ readable | `FileSystem];
+type fsWriteStream = [ writable | `FileSystem];
 type objectMode = [ stream | `ObjectMode];
 
 type subtype('w, 'r, 'a) constraint 'a = [> stream];
@@ -248,8 +250,8 @@ module Readable = {
     external pause: (subtype('w, 'r, [> kind]) as 'rs) => 'rs = "pause";
     [@bs.send]
     external pipe:
-      (subtype('w, 'r, [> kind]), subtype('w, 'r, [> writable]) as 'ws) =>
-      'ws =
+      (subtype('a, 'b, [> kind]), subtype('b, 'c, [> writable] as 'wtype)) =>
+      subtype('b, 'c, 'wtype) =
       "pipe";
     [@bs.send]
     external push: (subtype('w, 'r, [> kind]), 'r) => unit = "push";
@@ -338,7 +340,9 @@ module Readable = {
     makeOptionsObjMode('r);
 
   [@bs.module "stream"] [@bs.new]
-  external makeObjMode: makeOptions('r) => t('r) = "Readable";
+  external makeObjMode:
+    makeOptionsObjMode('r) => subtype(void, 'r, [ readable | objectMode]) =
+    "Readable";
 };
 
 module Writable = {
