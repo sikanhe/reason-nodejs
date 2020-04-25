@@ -42,7 +42,7 @@ type typedArray = [
   | float64Array
 ];
 
-type any = [
+type all = [
   string_
   | buffer
   | int8Array
