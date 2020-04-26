@@ -57,7 +57,7 @@ type all = [
   | dataView
 ];
 
-type case(_) =
+type case('a) =
   | String(string): case([> string_])
   | Buffer(Buffer.t): case([> buffer])
   | Int8Array(Int8Array.t): case([> int8Array])
@@ -69,7 +69,8 @@ type case(_) =
   | Int32Array(Uint32Array.t): case([> int32Array])
   | Float32Array(Float32Array.t): case([> float32Array])
   | Float64Array(Float64Array.t): case([> float64Array])
-  | DataView(DataView.t): case([> int8Array]);
+  | DataView(DataView.t): case([> int8Array])
+  | Unknown('a);
 
 external string: string => t(string_) = "%identity";
 external buffer: Buffer.t => t(buffer) = "%identity";
@@ -123,19 +124,8 @@ let classify: t('a) => case('b) =
       Float32Array(Obj.magic(binaryLike));
     } else if (Util.Types.isFloat64Array(binaryLike)) {
       Float64Array(Obj.magic(binaryLike));
-    } else {
+    } else if (Util.Types.isDataView(binaryLike)) {
       DataView(Obj.magic(binaryLike));
+    } else {
+      Unknown(Obj.magic(binaryLike));
     };
-
-module Test = {
-  external bufferOrString: string => t([ buffer | string_]) = "%identity";
-
-  let y = "test string"->bufferOrString;
-
-  let testClassify =
-    switch (classify(y)) {
-    | Buffer(value) => Js.log(value)
-    | String(value) => Js.log(value)
-    | unknown => Js.log(unknown)
-    };
-};
