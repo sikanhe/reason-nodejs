@@ -2,21 +2,54 @@ type t = Node.buffer;
 open Js.TypedArray2;
 
 module Constants = {
-  [@bs.module "buffer"] [@bs.scope "constants"] [@bs.val] external _MAX_LENGTH: int = "MAX_LENGTH";
+  [@bs.module "buffer"] [@bs.scope "constants"] [@bs.val]
+  external _MAX_LENGTH: int = "MAX_LENGTH";
   [@bs.module "buffer"] [@bs.scope "constants"] [@bs.val]
   external _MAX_STRING_LENGTH: int = "MAX_STRING_LENGTH";
+};
+
+module Encoding: {
+  type t = pri string;
+  [@bs.inline "ascii"]
+  let ascii: t;
+  [@bs.inline "utf8"]
+  let utf8: t;
+  [@bs.inline "utf16le"]
+  let utf16le: t;
+  [@bs.inline "usc2"]
+  let usc2: t;
+  [@bs.inline "base64"]
+  let base64: t;
+  [@bs.inline "latin1"]
+  let latin1: t;
+  [@bs.inline "binary"]
+  let binary: t;
+  [@bs.inline "hex"]
+  let hex: t;
+} = {
+  type t = string;
+  [@bs.inline "ascii"]
+  let ascii = "ascii";
+  [@bs.inline "utf8"]
+  let utf8 = "utf8";
+  [@bs.inline "utf16le"]
+  let utf16le = "utf16le";
+  [@bs.inline "usc2"]
+  let usc2 = "usc2";
+  [@bs.inline "base64"]
+  let base64 = "base64";
+  [@bs.inline "latin1"]
+  let latin1 = "latin1";
+  [@bs.inline "binary"]
+  let binary = "binary";
+  [@bs.inline "hex"]
+  let hex = "hex";
 };
 
 [@bs.val] external isBuffer: 'a => bool = "Buffer.isBuffer";
 [@bs.val] external fromString: string => t = "Buffer.from";
 [@bs.val]
-external fromStringWithEncoding:
-  (
-    string,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
-  ) =>
-  t =
-  "Buffer.from";
+external fromStringWithEncoding: (string, Encoding.t) => t = "Buffer.from";
 
 /**
  * `fromArray(array)`
@@ -49,7 +82,8 @@ external fromArrayBuffer: ArrayBuffer.t => t = "Buffer.from";
  * will be reflected in the `Buffer` view, and vice versa.
  */
 [@bs.val]
-external fromArrayBufferOffset: (ArrayBuffer.t, ~offset: int) => t = "Buffer.from";
+external fromArrayBufferOffset: (ArrayBuffer.t, ~offset: int) => t =
+  "Buffer.from";
 
 /**
  * `fromArrayBufferRange(arrayBuffer, ~offset, ~length)`
@@ -62,7 +96,8 @@ external fromArrayBufferOffset: (ArrayBuffer.t, ~offset: int) => t = "Buffer.fro
  * will be reflected in the `Buffer` view, and vice versa.
  */
 [@bs.val]
-external fromArrayBufferRange: (ArrayBuffer.t, ~offset: int, ~length: int) => t = "Buffer.from";
+external fromArrayBufferRange: (ArrayBuffer.t, ~offset: int, ~length: int) => t =
+  "Buffer.from";
 
 /**
  * `fromBuffer(buffer)`
@@ -107,13 +142,7 @@ external allocFillString: (int, ~fill: string) => t = "Buffer.alloc";
  * with the value of `~fill`, and sets the string encoding to `encoding`.
  */
 [@bs.val]
-external allocFillStringWithEncoding:
-  (
-    int,
-    ~fill: string,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
-  ) =>
-  t =
+external allocFillStringWithEncoding: (int, ~fill: string, Encoding.t) => t =
   "Buffer.alloc";
 
 /**
@@ -132,29 +161,34 @@ external allocFillBuffer: (int, ~fill: t) => t = "Buffer.alloc";
 
 [@bs.val] external byteLengthString: string => int = "Buffer.byteLength";
 [@bs.val]
-external byteLengthStringWithEncoding:
-  (
-    string,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
-  ) =>
-  int =
+external byteLengthStringWithEncoding: (string, Encoding.t) => int =
   "Buffer.byteLength";
 [@bs.val] external byteLengthBuffer: t => int = "Buffer.byteLength";
-[@bs.val] external byteLengthInt8Array: Int8Array.t => int = "Buffer.byteLength";
-[@bs.val] external byteLengthUint8Array: Uint8Array.t => int = "Buffer.byteLength";
-[@bs.val] external byteLengthInt16Array: Int16Array.t => int = "Buffer.byteLength";
-[@bs.val] external byteLengthUint16Array: Uint16Array.t => int = "Buffer.byteLength";
-[@bs.val] external byteLengthInt32Array: Int32Array.t => int = "Buffer.byteLength";
-[@bs.val] external byteLengthUint32Array: Uint32Array.t => int = "Buffer.byteLength";
-[@bs.val] external byteLengthFloat32Array: Float32Array.t => int = "Buffer.byteLength";
-[@bs.val] external byteLengthFloat64Array: Float64Array.t => int = "Buffer.byteLength";
+[@bs.val]
+external byteLengthInt8Array: Int8Array.t => int = "Buffer.byteLength";
+[@bs.val]
+external byteLengthUint8Array: Uint8Array.t => int = "Buffer.byteLength";
+[@bs.val]
+external byteLengthInt16Array: Int16Array.t => int = "Buffer.byteLength";
+[@bs.val]
+external byteLengthUint16Array: Uint16Array.t => int = "Buffer.byteLength";
+[@bs.val]
+external byteLengthInt32Array: Int32Array.t => int = "Buffer.byteLength";
+[@bs.val]
+external byteLengthUint32Array: Uint32Array.t => int = "Buffer.byteLength";
+[@bs.val]
+external byteLengthFloat32Array: Float32Array.t => int = "Buffer.byteLength";
+[@bs.val]
+external byteLengthFloat64Array: Float64Array.t => int = "Buffer.byteLength";
 [@bs.val] external byteLengthDataView: DataView.t => int = "Buffer.byteLength";
-[@bs.val] external byteLengthArrayBuffer: ArrayBuffer.t => int = "Buffer.byteLength";
+[@bs.val]
+external byteLengthArrayBuffer: ArrayBuffer.t => int = "Buffer.byteLength";
 
 [@bs.val] external compare: (t, t) => int = "Buffer.compare";
 
 [@bs.val] external concat: array(t) => t = "Buffer.concat";
-[@bs.val] external concatLength: (array(t), ~length: int) => t = "Buffer.concat";
+[@bs.val]
+external concatLength: (array(t), ~length: int) => t = "Buffer.concat";
 
 [@bs.val] external isEncoding: string => bool = "Buffer.isEncoding";
 
@@ -167,18 +201,25 @@ type bufferClass;
 [@bs.send] external copy: (t, t) => int = "copy";
 [@bs.send] external copyOffset: (t, t, ~offset: int) => int = "copy";
 [@bs.send]
-external copyOffsetFromOffset: (t, t, ~targetStart: int, ~sourceStart: int) => int = "copy";
+external copyOffsetFromOffset:
+  (t, t, ~targetStart: int, ~sourceStart: int) => int =
+  "copy";
 [@bs.send]
-external copyOffsetFromRange: (t, t, ~targetStart: int, ~sourceStart: int, ~sourceEnd: int) => int =
+external copyOffsetFromRange:
+  (t, t, ~targetStart: int, ~sourceStart: int, ~sourceEnd: int) => int =
   "copy";
 [@bs.send] external copyToUint8Array: (t, Uint8Array.t) => int = "copy";
-[@bs.send] external copyToUint8ArrayOffset: (t, Uint8Array.t, ~targetStart: int) => int = "copy";
 [@bs.send]
-external copyToUint8ArrayFrom: (t, Uint8Array.t, ~targetStart: int, ~sourceStart: int) => int =
+external copyToUint8ArrayOffset: (t, Uint8Array.t, ~targetStart: int) => int =
+  "copy";
+[@bs.send]
+external copyToUint8ArrayFrom:
+  (t, Uint8Array.t, ~targetStart: int, ~sourceStart: int) => int =
   "copy";
 [@bs.send]
 external copyToUint8ArrayFromRange:
-  (t, Uint8Array.t, ~targetStart: int, ~sourceStart: int, ~sourceEnd: int) => int =
+  (t, Uint8Array.t, ~targetStart: int, ~sourceStart: int, ~sourceEnd: int) =>
+  int =
   "copy";
 
 /* FIXME after iterators support */
@@ -188,53 +229,41 @@ external copyToUint8ArrayFromRange:
 
 [@bs.send] external fillString: (t, string) => t = "fill";
 [@bs.send] external fillStringOffset: (t, string, ~offset: int) => t = "fill";
-[@bs.send] external fillStringRange: (t, string, ~offset: int, ~end_: int) => t = "fill";
+[@bs.send]
+external fillStringRange: (t, string, ~offset: int, ~end_: int) => t = "fill";
 [@bs.send]
 external fillStringRangeWithEncoding:
-  (
-    t,
-    string,
-    ~offset: int,
-    ~end_: int,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
-  ) =>
-  t =
+  (t, string, ~offset: int, ~end_: int, Encoding.t) => t =
   "fill";
 [@bs.send] external fillBuffer: (t, t) => t = "fill";
 [@bs.send] external fillBufferOffset: (t, t, ~offset: int) => t = "fill";
-[@bs.send] external fillBufferRange: (t, t, ~offset: int, ~end_: int) => t = "fill";
+[@bs.send]
+external fillBufferRange: (t, t, ~offset: int, ~end_: int) => t = "fill";
 [@bs.send] external fillInt: (t, int) => t = "fill";
 [@bs.send] external fillIntOffset: (t, int, ~offset: int) => t = "fill";
-[@bs.send] external fillIntRange: (t, int, ~offset: int, ~end_: int) => t = "fill";
+[@bs.send]
+external fillIntRange: (t, int, ~offset: int, ~end_: int) => t = "fill";
 
 [@bs.send] external includesString: (t, string) => bool = "includes";
-[@bs.send] external includesStringFrom: (t, string, ~offset: int) => bool = "includes";
+[@bs.send]
+external includesStringFrom: (t, string, ~offset: int) => bool = "includes";
 [@bs.send]
 external includesStringWithEncodingFrom:
-  (
-    t,
-    string,
-    ~offset: int,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
-  ) =>
-  bool =
+  (t, string, ~offset: int, Encoding.t) => bool =
   "includes";
 [@bs.send] external includesBuffer: (t, t) => bool = "includes";
-[@bs.send] external includesBufferFrom: (t, t, ~offset: int) => bool = "includes";
+[@bs.send]
+external includesBufferFrom: (t, t, ~offset: int) => bool = "includes";
 [@bs.send] external includesInt: (t, int) => bool = "includes";
-[@bs.send] external includesIntFrom: (t, int, ~offset: int) => bool = "includes";
+[@bs.send]
+external includesIntFrom: (t, int, ~offset: int) => bool = "includes";
 
 [@bs.send] external indexOfString: (t, string) => int = "indexOf";
-[@bs.send] external indexOfStringFrom: (t, string, ~offset: int) => int = "indexOf";
+[@bs.send]
+external indexOfStringFrom: (t, string, ~offset: int) => int = "indexOf";
 [@bs.send]
 external indexOfStringWithEncodingFrom:
-  (
-    t,
-    string,
-    ~offset: int,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
-  ) =>
-  int =
+  (t, string, ~offset: int, Encoding.t) => int =
   "indexOf";
 [@bs.send] external indexOfBuffer: (t, t) => int = "indexOf";
 [@bs.send] external indexOfBufferFrom: (t, t, ~offset: int) => int = "indexOf";
@@ -245,21 +274,19 @@ external indexOfStringWithEncodingFrom:
 /* external keys : t -> Iterator = "" [@@bs.send] */
 
 [@bs.send] external lastIndexOfString: (t, string) => int = "lastIndexOf";
-[@bs.send] external lastIndexOfStringFrom: (t, string, ~offset: int) => int = "lastIndexOf";
+[@bs.send]
+external lastIndexOfStringFrom: (t, string, ~offset: int) => int =
+  "lastIndexOf";
 [@bs.send]
 external lastIndexOfStringWithEncodingFrom:
-  (
-    t,
-    string,
-    ~offset: int,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
-  ) =>
-  int =
+  (t, string, ~offset: int, Encoding.t) => int =
   "lastIndexOf";
 [@bs.send] external lastIndexOfBuffer: (t, t) => int = "lastIndexOf";
-[@bs.send] external lastIndexOfBufferFrom: (t, t, ~offset: int) => int = "lastIndexOf";
+[@bs.send]
+external lastIndexOfBufferFrom: (t, t, ~offset: int) => int = "lastIndexOf";
 [@bs.send] external lastIndexOfInt: (t, int) => int = "lastIndexOf";
-[@bs.send] external lastIndexOfIntFrom: (t, int, ~offset: int) => int = "lastIndexOf";
+[@bs.send]
+external lastIndexOfIntFrom: (t, int, ~offset: int) => int = "lastIndexOf";
 
 [@bs.get] external length: t => int = "length";
 
@@ -278,7 +305,8 @@ external lastIndexOfStringWithEncodingFrom:
 [@bs.send] external readInt32LE: (t, ~offset: int) => float = "readInt32LE";
 
 [@bs.send] external readIntBE: (t, ~offset: int) => float = "readIntBE";
-[@bs.send] external readIntLE: (t, ~offset: int, ~length: int) => float = "readIntLE";
+[@bs.send]
+external readIntLE: (t, ~offset: int, ~length: int) => float = "readIntLE";
 
 [@bs.send] external readUint8: (t, ~offset: int) => float = "readUint8";
 
@@ -288,8 +316,10 @@ external lastIndexOfStringWithEncodingFrom:
 [@bs.send] external readUint32BE: (t, ~offset: int) => float = "readUint32BE";
 [@bs.send] external readUint32LE: (t, ~offset: int) => float = "readUint32LE";
 
-[@bs.send] external readUintBE: (t, ~offset: int, ~length: int) => float = "readUintBE";
-[@bs.send] external readUintLE: (t, ~offset: int, ~length: int) => float = "readUintLE";
+[@bs.send]
+external readUintBE: (t, ~offset: int, ~length: int) => float = "readUintBE";
+[@bs.send]
+external readUintLE: (t, ~offset: int, ~length: int) => float = "readUintLE";
 
 [@bs.send] external slice: (t, ~start: int, ~end_: int) => t = "slice";
 [@bs.send] external sliceToEnd: (t, ~start: int) => t = "slice";
@@ -302,101 +332,68 @@ external lastIndexOfStringWithEncodingFrom:
 
 [@bs.send] external toString: t => string = "toString";
 [@bs.send]
-external toStringWithEncoding:
-  (t, [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]) =>
-  string =
-  "toString";
+external toStringWithEncoding: (t, Encoding.t) => string = "toString";
 [@bs.send]
-external toStringWithEncodingOffset:
-  (
-    t,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex],
-    ~start: int
-  ) =>
-  string =
+external toStringWithEncodingOffset: (t, Encoding.t, ~start: int) => string =
   "toString";
 [@bs.send]
 external toStringWithEncodingRange:
-  (
-    t,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex],
-    ~start: int,
-    ~end_: int
-  ) =>
-  string =
+  (t, Encoding.t, ~start: int, ~end_: int) => string =
   "toString";
 
 [@bs.send] external write: (t, string) => int = "write";
 [@bs.send]
-external writeWithEncoding:
-  (
-    t,
-    string,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
-  ) =>
-  int =
-  "write";
+external writeWithEncoding: (t, string, Encoding.t) => int = "write";
 [@bs.send] external writeOffset: (t, string, ~offset: int) => int = "write";
-[@bs.send] external writeRange: (t, string, ~offset: int, ~length: int) => int = "write";
+[@bs.send]
+external writeRange: (t, string, ~offset: int, ~length: int) => int = "write";
 [@bs.send]
 external writeRangeWithEncoding:
-  (
-    t,
-    string,
-    ~offset: int,
-    ~length: int,
-    [@bs.string] [ | `ascii | `utf8 | `utf16le | `usc2 | `base64 | `latin1 | `binary | `hex]
-  ) =>
-  int =
+  (t, string, ~offset: int, ~length: int, Encoding.t) => int =
   "write";
 
-[@bs.send] external writeDoubleBE: (t, float, ~offset: int) => float = "writeDoubleBE";
-[@bs.send] external writeDoubleLE: (t, float, ~offset: int) => float = "writeDoubleLE";
-[@bs.send] external writeFloatBE: (t, float, ~offset: int) => float = "writeFloatBE";
-[@bs.send] external writeFloatLE: (t, float, ~offset: int) => float = "writeFloatLE";
+[@bs.send]
+external writeDoubleBE: (t, float, ~offset: int) => float = "writeDoubleBE";
+[@bs.send]
+external writeDoubleLE: (t, float, ~offset: int) => float = "writeDoubleLE";
+[@bs.send]
+external writeFloatBE: (t, float, ~offset: int) => float = "writeFloatBE";
+[@bs.send]
+external writeFloatLE: (t, float, ~offset: int) => float = "writeFloatLE";
 [@bs.send] external writeInt8: (t, int, ~offset: int) => float = "writeInt8";
-[@bs.send] external writeInt16BE: (t, int, ~offset: int) => float = "writeInt16BE";
-[@bs.send] external writeInt16LE: (t, int, ~offset: int) => float = "writeInt16LE";
-[@bs.send] external writeInt32BE: (t, int, ~offset: int) => float = "writeInt32BE";
-[@bs.send] external writeInt32LE: (t, int, ~offset: int) => float = "writeInt32LE";
-[@bs.send] external writeIntBE: (t, int, ~offset: int, ~length: int) => float = "writeIntBE";
-[@bs.send] external writeIntLE: (t, int, ~offset: int, ~length: int) => float = "writeIntLE";
+[@bs.send]
+external writeInt16BE: (t, int, ~offset: int) => float = "writeInt16BE";
+[@bs.send]
+external writeInt16LE: (t, int, ~offset: int) => float = "writeInt16LE";
+[@bs.send]
+external writeInt32BE: (t, int, ~offset: int) => float = "writeInt32BE";
+[@bs.send]
+external writeInt32LE: (t, int, ~offset: int) => float = "writeInt32LE";
+[@bs.send]
+external writeIntBE: (t, int, ~offset: int, ~length: int) => float =
+  "writeIntBE";
+[@bs.send]
+external writeIntLE: (t, int, ~offset: int, ~length: int) => float =
+  "writeIntLE";
 [@bs.send] external writeUint8: (t, int, ~offset: int) => float = "writeUint8";
-[@bs.send] external writeUint16BE: (t, int, ~offset: int) => float = "writeUint16BE";
-[@bs.send] external writeUint16LE: (t, int, ~offset: int) => float = "writeUint16LE";
-[@bs.send] external writeUint32BE: (t, int, ~offset: int) => float = "writeUint32BE";
-[@bs.send] external writeUint32LE: (t, int, ~offset: int) => float = "writeUint32LE";
-[@bs.send] external writeUintBE: (t, int, ~offset: int, ~length: int) => float = "writeUintBE";
-[@bs.send] external writeUintLE: (t, int, ~offset: int, ~length: int) => float = "writeUintLE";
+[@bs.send]
+external writeUint16BE: (t, int, ~offset: int) => float = "writeUint16BE";
+[@bs.send]
+external writeUint16LE: (t, int, ~offset: int) => float = "writeUint16LE";
+[@bs.send]
+external writeUint32BE: (t, int, ~offset: int) => float = "writeUint32BE";
+[@bs.send]
+external writeUint32LE: (t, int, ~offset: int) => float = "writeUint32LE";
+[@bs.send]
+external writeUintBE: (t, int, ~offset: int, ~length: int) => float =
+  "writeUintBE";
+[@bs.send]
+external writeUintLE: (t, int, ~offset: int, ~length: int) => float =
+  "writeUintLE";
 
 [@bs.get] external _INSPECT_MAX_BYTES: t => int = "INSPECT_MAX_BYTES";
 [@bs.get] external kMaxLength: t => int = "kMaxLength";
 
 [@bs.send]
-external transcode:
-  (
-    t,
-    ~source: t,
-    ~fromEnc: [@bs.string] [
-                | `ascii
-                | `utf8
-                | `utf16le
-                | `usc2
-                | `base64
-                | `latin1
-                | `binary
-                | `hex
-              ],
-    ~toEnc: [@bs.string] [
-              | `ascii
-              | `utf8
-              | `utf16le
-              | `usc2
-              | `base64
-              | `latin1
-              | `binary
-              | `hex
-            ]
-  ) =>
-  t =
+external transcode: (t, ~source: t, ~from: Encoding.t, ~to_: Encoding.t) => t =
   "transcode";
