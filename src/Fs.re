@@ -190,7 +190,7 @@ module FileHandle = {
   [@bs.send] external chown: (t, int, int) => Js.Promise.t(unit) = "chown";
   [@bs.send] external close: t => Js.Promise.t(unit) = "close";
   [@bs.send] external datasync: t => Js.Promise.t(unit) = "datasync";
-  [@bs.send] external fd: t => fd = "fd";
+  [@bs.get] external fd: t => fd = "fd";
 
   type readInfo = {
     bytesRead: int,
