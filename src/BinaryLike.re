@@ -126,6 +126,8 @@ let classify: t('a) => case('b) =
       Float64Array(Obj.magic(binaryLike));
     } else if (Util.Types.isDataView(binaryLike)) {
       DataView(Obj.magic(binaryLike));
+    } else if (Util.Types.isStringObject(binaryLike)) {
+      String(Obj.magic(binaryLike));
     } else {
       Unknown(Obj.magic(binaryLike));
     };
