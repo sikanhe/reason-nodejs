@@ -1,48 +1,4 @@
-[@bs.val] [@bs.module "util"]
-external deprecate0: ([@bs.uncurry] (unit => 'result), unit) => 'result =
-  "deprecate";
-[@bs.val] [@bs.module "util"]
-external deprecate1: ([@bs.uncurry] ('a1 => 'result), 'a1) => 'result =
-  "deprecate";
-[@bs.val] [@bs.module "util"]
-external deprecate2:
-  ([@bs.uncurry] (('a1, 'a2) => 'result), 'a1, 'a2) => 'result =
-  "deprecate";
-[@bs.val] [@bs.module "util"]
-external deprecate3:
-  ([@bs.uncurry] (('a1, 'a2, 'a3) => 'result), 'a1, 'a2, 'a3) => 'result =
-  "deprecate";
-[@bs.val] [@bs.module "util"]
-external deprecate4:
-  ([@bs.uncurry] (('a1, 'a2, 'a3, 'a4) => 'result), 'a1, 'a2, 'a3, 'a4) =>
-  'result =
-  "deprecate";
-[@bs.val] [@bs.module "util"]
-external deprecate5:
-  (
-    [@bs.uncurry] (('a1, 'a2, 'a3, 'a4, 'a5) => 'result),
-    'a1,
-    'a2,
-    'a3,
-    'a4,
-    'a5
-  ) =>
-  'result =
-  "deprecate";
-[@bs.val] [@bs.module "util"]
-external deprecate6:
-  (
-    [@bs.uncurry] (('a1, 'a2, 'a3, 'a4, 'a5, 'a6) => 'result),
-    'a1,
-    'a2,
-    'a3,
-    'a4,
-    'a5,
-    'a6
-  ) =>
-  'result =
-  "deprecate";
-[@bs.val] [@bs.module "util"]
+[@bs.module "util"]
 external getSystemErrorName: int => string = "getSystemErrorName";
 
 type inspectOptions;
