@@ -1,4 +1,3 @@
-
 module Impl: {
   open Js.TypedArray2;
 
@@ -17,7 +16,7 @@ module Impl: {
     | Float32Array(Float32Array.t)
     | Float64Array(Float64Array.t)
     | DataView(DataView.t)
-    // | Unknown(t);
+    | Unknown(t);
 
   let string: string => t;
   let buffer: Buffer.t => t;
@@ -32,7 +31,6 @@ module Impl: {
   let float64Array: Float64Array.t => t;
   let dataView: DataView.t => t;
   let classify: t => case;
-
 } = {
   open Js.TypedArray2;
 
@@ -53,7 +51,7 @@ module Impl: {
     | Float32Array(Float32Array.t)
     | Float64Array(Float64Array.t)
     | DataView(DataView.t)
-    // | Unknown(t);
+    | Unknown(t);
 
   let string: string => t = x => Any(x);
   let buffer: Buffer.t => t = x => Any(x);
@@ -98,8 +96,7 @@ module Impl: {
       } else if (Util.Types.isStringObject(binaryLike)) {
         String(Obj.magic(binaryLike));
       } else {
-        raise(Failure("test"));
-        // Unknown(Obj.magic(binaryLike));
+        Unknown(Obj.magic(binaryLike));
       };
 };
 
