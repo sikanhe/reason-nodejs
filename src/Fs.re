@@ -86,30 +86,52 @@ module Constants = {
 module Flag: {
   type t = pri string;
 
-  [@bs.inline "r"] let read: t;
-  [@bs.inline "r+"] let readWrite: t;
-  [@bs.inline "rs+"] let readWriteSync: t;
-  [@bs.inline "w"] let write: t;
-  [@bs.inline "wx"] let writeFailIfExists: t;
-  [@bs.inline "w+"] let writeRead: t;
-  [@bs.inline "wx+"] let writeReadFailIfExists: t;
-  [@bs.inline "a"] let append: t;
-  [@bs.inline "ax"] let appendFailIfExists: t;
-  [@bs.inline "a+"] let appendRead: t;
-  [@bs.inline "ax+"] let appendReadFailIfExists: t;
+  [@bs.inline "r"]
+  let read: t;
+  [@bs.inline "r+"]
+  let readWrite: t;
+  [@bs.inline "rs+"]
+  let readWriteSync: t;
+  [@bs.inline "w"]
+  let write: t;
+  [@bs.inline "wx"]
+  let writeFailIfExists: t;
+  [@bs.inline "w+"]
+  let writeRead: t;
+  [@bs.inline "wx+"]
+  let writeReadFailIfExists: t;
+  [@bs.inline "a"]
+  let append: t;
+  [@bs.inline "ax"]
+  let appendFailIfExists: t;
+  [@bs.inline "a+"]
+  let appendRead: t;
+  [@bs.inline "ax+"]
+  let appendReadFailIfExists: t;
 } = {
   type t = string;
-  [@bs.inline "r"] let read = "r";
-  [@bs.inline "r+"] let readWrite = "r+";
-  [@bs.inline "rs+"] let readWriteSync = "rs+";
-  [@bs.inline "w"] let write = "w";
-  [@bs.inline "wx"] let writeFailIfExists = "wx";
-  [@bs.inline "w+"] let writeRead = "w+";
-  [@bs.inline "wx+"] let writeReadFailIfExists = "wx+";
-  [@bs.inline "a"] let append = "a";
-  [@bs.inline "ax"] let appendFailIfExists = "ax";
-  [@bs.inline "a+"] let appendRead = "a+";
-  [@bs.inline "ax+"] let appendReadFailIfExists = "ax+";
+  [@bs.inline "r"]
+  let read = "r";
+  [@bs.inline "r+"]
+  let readWrite = "r+";
+  [@bs.inline "rs+"]
+  let readWriteSync = "rs+";
+  [@bs.inline "w"]
+  let write = "w";
+  [@bs.inline "wx"]
+  let writeFailIfExists = "wx";
+  [@bs.inline "w+"]
+  let writeRead = "w+";
+  [@bs.inline "wx+"]
+  let writeReadFailIfExists = "wx+";
+  [@bs.inline "a"]
+  let append = "a";
+  [@bs.inline "ax"]
+  let appendFailIfExists = "ax";
+  [@bs.inline "a+"]
+  let appendRead = "a+";
+  [@bs.inline "ax+"]
+  let appendReadFailIfExists = "ax+";
 };
 
 type fd = pri int;
@@ -121,11 +143,11 @@ external writeFileOptions:
 
 type appendFileOptions;
 [@bs.obj]
-external appendFileOptions: (~mode: int=?, ~flag: Flag.t=?, unit) => appendFileOptions;
+external appendFileOptions:
+  (~mode: int=?, ~flag: Flag.t=?, unit) => appendFileOptions;
 
 type readFileOptions;
-[@bs.obj]
-external readFileOptions: (~flag: Flag.t=?, unit) => readFileOptions;
+[@bs.obj] external readFileOptions: (~flag: Flag.t=?, unit) => readFileOptions;
 
 /**
  * `readdirSync(path)`
@@ -162,7 +184,8 @@ external rmdirSync: string => unit = "rmdirSync";
 
 [@bs.module "fs"] external openSync: string => fd = "openSync";
 [@bs.module "fs"]
-external openSyncWith: (string, ~flag: Flag.t=?, ~mode: int=?) => fd = "openSync";
+external openSyncWith: (string, ~flag: Flag.t=?, ~mode: int=?) => fd =
+  "openSync";
 
 [@bs.module "fs"]
 external readFileSync: (string, ~options: readFileOptions=?, unit) => Buffer.t =
@@ -170,7 +193,9 @@ external readFileSync: (string, ~options: readFileOptions=?, unit) => Buffer.t =
 [@bs.module "fs"] external existsSync: string => bool = "existsSync";
 
 type writeFileSyncOptions;
-[@bs.obj] external writeFileSyncOptions: (~mode: int=?, ~flag: Flag.t=?, unit) => writeFileSyncOptions;
+[@bs.obj]
+external writeFileSyncOptions:
+  (~mode: int=?, ~flag: Flag.t=?, unit) => writeFileSyncOptions;
 
 [@bs.val] [@bs.module "fs"]
 external writeFileSync: (string, Buffer.t) => unit = "writeFileSync";
@@ -228,7 +253,8 @@ module FileHandle = {
 
   type writeFileOptions;
   [@bs.obj]
-  external writeFileOptions: (~mode: int=?, ~flag: Flag.t=?, unit) => writeFileOptions;
+  external writeFileOptions:
+    (~mode: int=?, ~flag: Flag.t=?, unit) => writeFileOptions;
 
   [@bs.send]
   external writeFile: (t, Buffer.t) => Js.Promise.t(unit) = "writeFile";
@@ -254,7 +280,9 @@ external appendFileWith:
   "appendFile";
 
 type appendFileBufferOptions;
-[@bs.obj] external appendFileBufferOptions: (~mode: int=?, ~flag: Flag.t=?, unit) => appendFileBufferOptions;
+[@bs.obj]
+external appendFileBufferOptions:
+  (~mode: int=?, ~flag: Flag.t=?, unit) => appendFileBufferOptions;
 
 [@bs.module "fs"] [@bs.scope "promises"]
 external appendFileBuffer: (string, Buffer.t) => Js.Promise.t(unit) =
@@ -314,10 +342,13 @@ external mkdtemp: (string, mdktempOptions) => Js.Promise.t(unit) = "mkddtemp";
 external mkdtempWith: (string, mdktempOptions) => Js.Promise.t(unit) =
   "mkddtemp";
 
-[@bs.module "fs"] [@bs.scope "promises"] external open_: (string, Flag.t) => Js.Promise.t(FileHandle.t) = "open";
+[@bs.module "fs"] [@bs.scope "promises"]
+external open_: (string, Flag.t) => Js.Promise.t(FileHandle.t) = "open";
 
 [@bs.module "fs"] [@bs.scope "promises"]
-external openWithMode: (string, Flag.t, ~mode: int) => Js.Promise.t(FileHandle.t) = "open";
+external openWithMode:
+  (string, Flag.t, ~mode: int) => Js.Promise.t(FileHandle.t) =
+  "open";
 
 module WriteStream = {
   type kind = [ Stream.writable | `FileSystem];
