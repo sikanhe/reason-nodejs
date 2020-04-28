@@ -1,6 +1,71 @@
+/** 
+ * Streams have complex-looking type signatures. You will notice that most
+ * of the stream modules have a type `t` with one or two type variables, and a
+ * `subtype` with three type variables. This might be confusing, but they each
+ * have their own meaning which is important for composing streams in a typesafe
+ * and flexible way.
+ * 
+ * In most cases, the first two type variables for `subtype` are labelled
+ * `w` or `r`, which represent the types of data that may be *written* or
+ * *read* from a given stream. The third variable is a polymorphic variant
+ * that represents the specific class "subtype" for the stream. You could even
+ * think of these polymorphic variants as representing the prototype chain for
+ * the Node stream object.
+ * 
+ * When a stream is created (e.g. with `Readable.make` or `Fs.createWriteStream`)
+ * We lock in the subtype (the third type variable), which allows any function
+ * defined in a module of its *supertype* to work on that stream object. In
+ * addition, we often lock in the `w` and/or `r` data type variables (e.g. with
+ * `Buffer.t`) when that type is known and fixed, which is usually the case for
+ * the built-in streams.
+ * 
+ * A good example is the stream returned by `Fs.createReadStream`, which takes
+ * a file path and returns a stream of type:
+ * 
+ * ```
+ * Stream.Readable.subtype(void, Buffer.t, [`Stream | `Readable | `FileSystem]);
+ * ```
+ * 
+ * This indicates that we may write nothing to it (the `Stream.void` type cannot be
+ * produced, so we enforce read-only semantics), that we may read values of type
+ * `Buffer.t` from it, and that all the functions defined in `Stream.Common`,
+ * `Stream.Readable`, and anything that takes a file-system specific readable
+ * streams.
+ * 
+ * If we create our own readable stream with `Stream.Readable.make`, then, after
+ * implementing the necessary functions (`read` and `destroy`), we get back
+ * a stream of type:
+ * 
+ * ```
+ * Stream.Readable.t(Buffer.t)`;
+ * ```
+ * 
+ * What is not shown in the above type signature is that the type `t('r)` in
+ * `Readable` is the same thing as `Readable.subtype(void, 'r, readable)`;
+ * The `w` type variable is already locked in as `void` since by definition
+ * this stream is not configured to be writable. We also lock in the polymorphic
+ * variant in the third position, indicating that this stream is a 'Readable'
+ * subtype of the `Stream` class, no more and no less.
+ * 
+ * Also note that there is an "object mode" version of these streams, which
+ * allows arbitrary JS types to be written or read from the stream as oppose to
+ * the usual `Buffer.t` used by most built-in streams. Implementing a custom
+ * object-mode stream will imply/lock-in the type signatures, and allow a series
+ * of duplex/transform streams to be composed together using the `pipe` method.
+ * 
+ * This kind of stream composition is the main reason for so many type parameters.
+ * Tracking the readable/writable data types allows the user to compose async
+ * data pipelines in a type-safe and expressive way.
+ * 
+*/
+
 /**
- * The `void` type is meant to represent the type of readable or
- * writable data which can never be produced.
+ * The `void` type is meant to represent the type of readable or writable
+ * data which can never be produced. It is useful for modelling non-readable
+ * or non-writable streams. While the `unit` type might be a good candidate,
+ * it is possible to pass unit as a value, which is represented in JavaScript
+ * as either `0` or `undefined`, depending on your compiler version. To
+ * avoid edge cases, we use the unrepresentable type `void` instead.
  */
 type void;
 
