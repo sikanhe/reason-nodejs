@@ -33,7 +33,7 @@
  * 
  * 2. We may read values of type `Buffer.t` from it.
  * 
- * 3. All the functions defined in `Stream.Common`, `Stream.Readable` will
+ * 3. All the functions defined in `Stream.Common` and `Stream.Readable` will
  * accept this stream as a primary arugment, along with any functions that take
  * a file-system specific readable stream.
  * 
