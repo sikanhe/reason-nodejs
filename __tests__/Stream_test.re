@@ -1,7 +1,7 @@
 open Jest;
 
 describe("Stream", () => {
-  testAsync("Stream.makeReadable should create a Stream.Readable.t", (done_) => {
+  testAsync("Stream.makeReadable should create a Stream.Readable.t", (resolve) => {
     open! ExpectJs;
 
     open Stream.Readable;
@@ -14,7 +14,7 @@ describe("Stream", () => {
     );
     let readable = make(options, );
 
-    expect(readable->Js.Undefined.return) |> toBeDefined |> done_;
+    expect(readable->Js.Undefined.return) |> toBeDefined |> resolve;
 
   })
 });
