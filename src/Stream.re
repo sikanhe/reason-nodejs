@@ -26,11 +26,16 @@
  * Stream.Readable.subtype(void, Buffer.t, [`Stream | `Readable | `FileSystem]);
  * ```
  * 
- * This indicates that we may write nothing to it (the `Stream.void` type cannot be
- * produced, so we enforce read-only semantics), that we may read values of type
- * `Buffer.t` from it, and that all the functions defined in `Stream.Common`,
- * `Stream.Readable`, and anything that takes a file-system specific readable
- * streams.
+ * This indicates:
+ * 
+ * 1. We may write nothing to it (the `Stream.void` type cannot be produced,
+ * so we enforce read-only semantics).
+ * 
+ * 2. We may read values of type `Buffer.t` from it.
+ * 
+ * 3. All the functions defined in `Stream.Common`, `Stream.Readable` will
+ * accept this stream as a primary arugment, along with any functions that take
+ * a file-system specific readable stream.
  * 
  * If we create our own readable stream with `Stream.Readable.make`, then, after
  * implementing the necessary functions (`read` and `destroy`), we get back
