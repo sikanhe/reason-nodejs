@@ -36,7 +36,7 @@ module Impl: {
 
   [@unboxed]
   type t =
-    | Any('a): t;
+    | BinaryLike('a): t;
 
   type case =
     | String(string)
@@ -53,22 +53,22 @@ module Impl: {
     | DataView(DataView.t)
     | Unknown(t);
 
-  let string: string => t = x => Any(x);
-  let buffer: Buffer.t => t = x => Any(x);
-  let int8Array: Int8Array.t => t = x => Any(x);
-  let uInt8Array: Uint8Array.t => t = x => Any(x);
-  let uInt8ClampedArray: Uint8ClampedArray.t => t = x => Any(x);
-  let uInt16Array: Uint16Array.t => t = x => Any(x);
-  let int16Array: Int16Array.t => t = x => Any(x);
-  let uInt32Array: Uint32Array.t => t = x => Any(x);
-  let int32Array: Int32Array.t => t = x => Any(x);
-  let float32Array: Float32Array.t => t = x => Any(x);
-  let float64Array: Float64Array.t => t = x => Any(x);
-  let dataView: DataView.t => t = x => Any(x);
+  let string: string => t = x => BinaryLike(x);
+  let buffer: Buffer.t => t = x => BinaryLike(x);
+  let int8Array: Int8Array.t => t = x => BinaryLike(x);
+  let uInt8Array: Uint8Array.t => t = x => BinaryLike(x);
+  let uInt8ClampedArray: Uint8ClampedArray.t => t = x => BinaryLike(x);
+  let uInt16Array: Uint16Array.t => t = x => BinaryLike(x);
+  let int16Array: Int16Array.t => t = x => BinaryLike(x);
+  let uInt32Array: Uint32Array.t => t = x => BinaryLike(x);
+  let int32Array: Int32Array.t => t = x => BinaryLike(x);
+  let float32Array: Float32Array.t => t = x => BinaryLike(x);
+  let float64Array: Float64Array.t => t = x => BinaryLike(x);
+  let dataView: DataView.t => t = x => BinaryLike(x);
 
   let classify: t => case =
     fun
-    | Any(binaryLike) =>
+    | BinaryLike(binaryLike) =>
       if (Js.typeof(binaryLike) === "string") {
         String(Obj.magic(binaryLike));
       } else if (Buffer.isBuffer(binaryLike)) {
