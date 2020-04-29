@@ -54,10 +54,10 @@
  * 
  * Also note that there is an "object mode" version of these streams, which
  * allows arbitrary JS types to be written or read from the stream as oppose to
- * the usual `Buffer.t` used by most built-in streams. Implementing a custom
- * object-mode stream will imply/lock-in the type signatures, and allow a series
- * of duplex/transform streams to be composed together using the `pipe` method.
+ * the usual `Buffer.t` used by most built-in streams.
  * 
+ * Implementing a custom stream will imply/lock-in the type signatures for `r` and `w`.
+ * This will allow a series of streams to be composed together using the `pipe` method.
  * This kind of stream composition is the main reason for so many type parameters.
  * Tracking the readable/writable data types allows the user to compose async
  * data pipelines in a type-safe and expressive way.
