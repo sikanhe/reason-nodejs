@@ -87,12 +87,18 @@ type passThrough = [ transform | `PassThrough];
 type socket = [ duplex | `Socket];
 type tcpSocket = [ socket | `Tcp];
 type icpSocket = [ socket | `Icp];
-type fsReadStream = [ readable | `FileSystem];
-type fsWriteStream = [ writable | `FileSystem];
+type fsReadable = [ readable | `FileSystem];
+type fsWritable = [ writable | `FileSystem];
 type objectMode = [ stream | `ObjectMode];
 
 type subtype('w, 'r, 'a) constraint 'a = [> stream];
 type t('w, 'r) = subtype('w, 'r, stream);
+
+type chunk('w) =
+  pri {
+    chunk: 'w,
+    encoding: string,
+  };
 
 module Common = {
   type kind = [ stream];
@@ -363,7 +369,7 @@ module Readable = {
   type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('r) = subtype(void, 'r, kind);
-  type objectStream('r) = subtype(void, 'r, [ kind | objectMode]);
+  type objStream('r) = subtype(void, 'r, [ kind | objectMode]);
 
   type makeOptions('r);
   [@bs.obj]
@@ -411,7 +417,7 @@ module Readable = {
 
   [@bs.module "stream"] [@bs.new]
   external makeObjMode:
-    makeOptionsObjMode('r) => subtype(void, 'r, [ readable | objectMode]) =
+    makeOptionsObjMode('r) => objStream('r) =
     "Readable";
 };
 
@@ -570,12 +576,7 @@ module Writable = {
   type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('w) = subtype('w, void, kind);
-  type objectStream('w) = subtype('w, void, [ kind | objectMode]);
-  type chunk('w) =
-    pri {
-      chunk: 'w,
-      encoding: string,
-    };
+  type objStream('w) = subtype('w, void, [ kind | objectMode]);
   type makeOptions('w);
   [@bs.obj]
   external makeOptions:
@@ -652,7 +653,7 @@ module Writable = {
     ) =>
     makeOptionsObjMode('w);
   [@bs.module "stream"] [@bs.new]
-  external makeObjMode: makeOptionsObjMode('w) => objectStream('w) =
+  external makeObjMode: makeOptionsObjMode('w) => objStream('w) =
     "Writable";
 };
 
@@ -671,8 +672,43 @@ module Duplex = {
   type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('w, 'r) = subtype('w, 'r, kind);
-  [@bs.module "stream"] [@bs.new]
-  external make: unit => t(Buffer.t, Buffer.t) = "Duplex";
+  type makeOptions('w, 'r);
+  [@bs.obj] external makeOptions: (
+    ~objectMode: [@bs.as {json|false|json}] _,
+    ~allowHalfOpen: bool=?,
+    ~highWaterMark: int=?,
+    ~emitClose: bool=?,
+    ~autoDestroy: bool=?,
+      ~destroy: [@bs.this] (
+                  (
+                    t('w, 'r),
+                    Js.nullable(Js.Exn.t),
+                    (~err: option(Js.Exn.t)) => unit
+                  ) =>
+                  unit
+                )
+                  =?,
+      ~final: [@bs.this] (
+                (t('w, 'r), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+              )
+                =?,
+      ~writev: [@bs.this] (
+                 (
+                   t('w, 'r),
+                   array(chunk('w)),
+                   (~err: option(Js.Exn.t)) => unit
+                 ) =>
+                 unit
+               )
+                 =?,
+      ~read: [@bs.this] ((t('w, 'r), Js.nullable(int)) => unit),
+      ~write: [@bs.this] (
+                (t('w, 'r), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+              ),
+    unit
+  ) => makeOptions('w, 'r);
+    
+  [@bs.module "stream"] [@bs.new] external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) = "Duplex";
 };
 
 module Transform = {
@@ -688,10 +724,13 @@ module Transform = {
   type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('w, 'r) = subtype('w, 'r, kind);
+  type objStream('w, 'r) = subtype('w, 'r, [ kind | objectMode]);
   type makeOptions('w, 'r);
   [@bs.obj]
   external makeOptions:
     (
+      ~objectMode: [@bs.as {json|false|json}] _,
+      ~highWaterMark: int=?,
       ~transform: [@bs.this] (
                     (
                       t('w, 'r),
@@ -713,7 +752,36 @@ module Transform = {
     makeOptions('w, 'r);
 
   [@bs.module "stream"] [@bs.new]
-  external make: makeOptions('w, 'r) => t('w, 'r) = "Transform";
+  external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) = "Transform";
+
+  type makeOptionsObjMode('w, 'r);
+  [@bs.obj]
+  external makeOptionsObjMode:
+    (
+      ~objectMode: [@bs.as {json|true|json}] _,
+      ~highWaterMark: int=?,
+      ~transform: [@bs.this] (
+                    (
+                      t('w, 'r),
+                      'w,
+                      string,
+                      (~err: option(Js.Exn.t), ~data: option('r)) => unit
+                    ) =>
+                    unit
+                  ),
+      ~flush: [@bs.this] (
+                (
+                  t('w, 'r),
+                  (~err: option(Js.Exn.t), ~data: option('r)) => unit
+                ) =>
+                unit
+              ),
+      unit
+    ) =>
+    makeOptions('w, 'r);
+
+  [@bs.module "stream"] [@bs.new]
+  external makeObjMode: makeOptions('w, 'r) => objStream('w, 'r) = "Transform";
 };
 
 module PassThrough = {
