@@ -332,14 +332,14 @@ external mkdir: (string, mkdirOptions) => Js.Promise.t(unit) = "mkdir";
 [@bs.module "fs"] [@bs.scope "promises"]
 external mkdirWith: (string, mkdirOptions) => Js.Promise.t(unit) = "mkdir";
 
-type mdktempOptions;
-[@bs.obj] external mdktempOptions: unit => mdktempOptions;
+type mkdtempOptions;
+[@bs.obj] external mdktempOptions: unit => mkdtempOptions;
 
 [@bs.module "fs"] [@bs.scope "promises"]
-external mkdtemp: (string, mdktempOptions) => Js.Promise.t(unit) = "mkddtemp";
+external mkdtemp: (string, mkdtempOptions) => Js.Promise.t(string) = "mkddtemp";
 
 [@bs.module "fs"] [@bs.scope "promises"]
-external mkdtempWith: (string, mdktempOptions) => Js.Promise.t(unit) =
+external mkdtempWith: (string, mkdtempOptions) => Js.Promise.t(string) =
   "mkddtemp";
 
 [@bs.module "fs"] [@bs.scope "promises"]
