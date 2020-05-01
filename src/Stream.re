@@ -731,6 +731,8 @@ module Transform = {
     (
       ~objectMode: [@bs.as {json|false|json}] _,
       ~highWaterMark: int=?,
+      ~emitClose: bool=?,
+      ~autoDestroy: bool=?,
       ~transform: [@bs.this] (
                     (
                       t('w, 'r),
@@ -760,6 +762,8 @@ module Transform = {
     (
       ~objectMode: [@bs.as {json|true|json}] _,
       ~highWaterMark: int=?,
+      ~emitClose: bool=?,
+      ~autoDestroy: bool=?,
       ~transform: [@bs.this] (
                     (
                       t('w, 'r),
