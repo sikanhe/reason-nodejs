@@ -546,7 +546,7 @@ external createServerOptions:
   createServerOptions;
 
 [@bs.module "http"]
-external createServer: ((IncomingMessage.t, ServerResponse.t) => unit) => Server.t =
+external createServer: ([@bs.uncurry] (IncomingMessage.t, ServerResponse.t) => unit) => Server.t =
   "createServer";
 
 [@bs.module "http"]
