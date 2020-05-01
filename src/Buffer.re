@@ -11,7 +11,8 @@ module Constants = {
 [@bs.val] external isBuffer: 'a => bool = "Buffer.isBuffer";
 [@bs.val] external fromString: string => t = "Buffer.from";
 [@bs.val]
-external fromStringWithEncoding: (string, StringEncoding.t) => t = "Buffer.from";
+external fromStringWithEncoding: (string, StringEncoding.t) => t =
+  "Buffer.from";
 
 /**
  * `fromArray(array)`
@@ -104,7 +105,8 @@ external allocFillString: (int, ~fill: string) => t = "Buffer.alloc";
  * with the value of `~fill`, and sets the string encoding to `encoding`.
  */
 [@bs.val]
-external allocFillStringWithEncoding: (int, ~fill: string, StringEncoding.t) => t =
+external allocFillStringWithEncoding:
+  (int, ~fill: string, StringEncoding.t) => t =
   "Buffer.alloc";
 
 /**
@@ -296,7 +298,8 @@ external readUintLE: (t, ~offset: int, ~length: int) => float = "readUintLE";
 [@bs.send]
 external toStringWithEncoding: (t, StringEncoding.t) => string = "toString";
 [@bs.send]
-external toStringWithEncodingOffset: (t, StringEncoding.t, ~start: int) => string =
+external toStringWithEncodingOffset:
+  (t, StringEncoding.t, ~start: int) => string =
   "toString";
 [@bs.send]
 external toStringWithEncodingRange:
@@ -357,6 +360,6 @@ external writeUintLE: (t, int, ~offset: int, ~length: int) => float =
 [@bs.get] external kMaxLength: t => int = "kMaxLength";
 
 [@bs.send]
-external transcode: (t, ~source: t, ~from: StringEncoding.t, ~to_: StringEncoding.t) => t =
+external transcode:
+  (t, ~source: t, ~from: StringEncoding.t, ~to_: StringEncoding.t) => t =
   "transcode";
-
