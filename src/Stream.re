@@ -778,7 +778,7 @@ module Transform = {
               ),
       unit
     ) =>
-    makeOptions('w, 'r);
+    makeOptionsObjMode('w, 'r);
 
   [@bs.module "stream"] [@bs.new]
   external makeObjMode: makeOptionsObjMode('w, 'r) => objStream('w, 'r) = "Transform";
