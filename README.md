@@ -36,7 +36,7 @@ Help all Reason Node.js apps and libaries to be built faster by reducing the tim
 
   ```reason
     Fs.createReadStream("/path")
-    ->Stream.pipe(Process.stdout)
+    ->Stream.pipe(Process.(stdout(process)))
     ->Stream.onError(_ => Js.log("handleError"))
   ```
   ### Echo server:
