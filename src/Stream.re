@@ -781,7 +781,7 @@ module Transform = {
     makeOptions('w, 'r);
 
   [@bs.module "stream"] [@bs.new]
-  external makeObjMode: makeOptions('w, 'r) => objStream('w, 'r) = "Transform";
+  external makeObjMode: makeOptionsObjMode('w, 'r) => objStream('w, 'r) = "Transform";
 };
 
 module PassThrough = {
@@ -798,7 +798,7 @@ module PassThrough = {
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('w, 'r) = subtype('w, 'r, kind);
   [@bs.module "stream"] [@bs.new]
-  external make: unit => t('w, 'r) = "PassThrough";
+  external make: unit => t(Buffer.t, Buffer.t) = "PassThrough";
 };
 
 module Events = {
