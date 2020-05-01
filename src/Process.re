@@ -182,18 +182,18 @@ include Events;
 [@bs.send] external exitWithCode: (t, int) => unit = "exit";
 [@bs.get] external exitCode: t => int = "exitCode";
 [@bs.send] external nextTick: (t, unit => unit) => unit = "nextTick";
-[@bs.send] external nextTickApply1: (t, 'a => unit, 'a) => unit = "nextTick";
+[@bs.send] external nextTickApply1: (t, [@bs.uncurry] 'a => unit, 'a) => unit = "nextTick";
 [@bs.send]
-external nextTickApply2: (t, ('a, 'b) => unit, 'a, 'b) => unit = "nextTick";
+external nextTickApply2: (t, [@bs.uncurry] ('a, 'b) => unit, 'a, 'b) => unit = "nextTick";
 [@bs.send]
-external nextTickApply3: (t, ('a, 'b, 'c) => unit, 'a, 'b, 'c) => unit =
+external nextTickApply3: (t, [@bs.uncurry] ('a, 'b, 'c) => unit, 'a, 'b, 'c) => unit =
   "nextTick";
 [@bs.send]
-external nextTickApply4: (t, ('a, 'b, 'c, 'd) => unit, 'a, 'b, 'c, 'd) => unit =
+external nextTickApply4: (t, [@bs.uncurry] ('a, 'b, 'c, 'd) => unit, 'a, 'b, 'c, 'd) => unit =
   "nextTick";
 [@bs.send]
 external nextTickApply5:
-  (t, ('a, 'b, 'c, 'd, 'e) => unit, 'a, 'b, 'c, 'd, 'e) => unit =
+  (t, [@bs.uncurry] ('a, 'b, 'c, 'd, 'e) => unit, 'a, 'b, 'c, 'd, 'e) => unit =
   "nextTick";
 [@bs.send] external hrtime: t => (int, int) = "hrtime";
 [@bs.send] [@bs.scope "hrtime"]
