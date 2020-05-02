@@ -14,7 +14,7 @@ external setStackTraceLimit: int => Js.Undefined.t('a) = "setStackTraceLimit";
 let setStackTraceLimit: int => unit = n => setStackTraceLimit(n)->ignore;
 
 module Error = {
-  type t;
+  type t = exn;
   type constructor;
   [@bs.val] external constructor: constructor = "Error";
   [@bs.new] external make: string => t = "Error";
@@ -41,7 +41,7 @@ module Error = {
 };
 
 module AssertionError = {
-  type t;
+  type t = exn;
   type constructor;
   type makeOptions;
   [@bs.obj]
@@ -85,7 +85,7 @@ module AssertionError = {
 };
 
 module EvalError = {
-  type t;
+  type t = exn;
   type constructor;
   [@bs.val] external constructor: constructor = "EvalError";
   [@bs.new] external make: string => t = "EvalError";
@@ -111,7 +111,7 @@ module EvalError = {
 };
 
 module RangeError = {
-  type t;
+  type t = exn;
   type constructor;
   [@bs.val] external constructor: constructor = "RangeError";
   [@bs.new] external make: string => t = "RangeError";
@@ -138,7 +138,7 @@ module RangeError = {
 };
 
 module ReferenceError = {
-  type t;
+  type t = exn;
   type constructor;
   [@bs.val] external constructor: constructor = "ReferenceError";
   [@bs.new] external make: string => t = "ReferenceError";
@@ -165,7 +165,7 @@ module ReferenceError = {
 };
 
 module SyntaxError = {
-  type t;
+  type t = exn;
   type constructor;
   [@bs.val] external constructor: constructor = "SyntaxError";
   [@bs.new] external make: string => t = "SyntaxError";
@@ -195,7 +195,7 @@ module SyntaxError = {
 // `SystemError` is an undefined identifier at runtime.
 
 module SystemError = {
-  type t;
+  type t = exn;
   [@bs.get] external name: t => string = "name";
   [@bs.get] [@bs.return nullable]
   external address: t => option(string) = "address";
@@ -213,7 +213,7 @@ module SystemError = {
 };
 
 module TypeError = {
-  type t;
+  type t = exn;
   type constructor;
   [@bs.val] external constructor: constructor = "TypeError";
   [@bs.new] external make: string => t = "TypeError";
@@ -240,7 +240,7 @@ module TypeError = {
 };
 
 module URIError = {
-  type t;
+  type t = exn;
   type constructor;
   [@bs.val] external constructor: constructor = "URIError";
   [@bs.new] external make: string => t = "URIError";
