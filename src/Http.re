@@ -1,7 +1,6 @@
 type http = [ | `Http];
 
-module Headers = {
-  type t = pri {
+  type headers = pri {
     accept: option(string),
     [@bs.as "accept-language"] acceptLanguage: option(string),
     [@bs.as "accept-patch"] acceptPatch: option(string),
@@ -57,7 +56,6 @@ module Headers = {
     warning: option(string),
     [@bs.as "www-authenticate"] wwwAuthenticate: option(string),
   };
-};
 
 module IncomingMessage = {
   type kind = [ Stream.readable | `IncomingMessage];
@@ -128,7 +126,7 @@ module IncomingMessage = {
     [@bs.get] external url: subtype('w, 'r, 'a) => string = "url";
     [@bs.get] external port: subtype('w, 'r, 'a) => int = "port";
     [@bs.get]
-    external headers: subtype('w, 'r, 'a) => Headers.t = "headers";
+    external headers: subtype('w, 'r, 'a) => headers = "headers";
     [@bs.get]
     external rawHeaders: subtype('w, 'r, 'a) => array(string) = "rawHeaders";
     [@bs.get]
@@ -174,7 +172,7 @@ module ClientRequest = {
     httpVersionMinor: int,
     statusCode: int,
     statusMessage: string,
-    headers: Headers.t,
+    headers: headers,
     rawHeaders: array(string),
   };
   module Events = {
@@ -579,7 +577,7 @@ module ServerResponse = {
     external getHeaderNames: subtype('w, 'r, 'a) => array(string) =
       "getHeaderNames";
     [@bs.send]
-    external getHeaders: subtype('w, 'r, 'a) => Headers.t = "getHeaders";
+    external getHeaders: subtype('w, 'r, 'a) => headers = "getHeaders";
     [@bs.send]
     external hasHeader: (subtype('w, 'r, 'a), string) => bool = "hasHeader";
     [@bs.get]
@@ -910,7 +908,7 @@ external requestOptions:
     ~createConnection: unit => Net.TcpSocket.t=?,
     ~defaultPort: int=?,
     ~family: int=?,
-    ~headers: Headers.t=?,
+    ~headers: headers=?,
     ~host: string=?,
     ~hostName: string=?,
     ~localAddress: string=?,
