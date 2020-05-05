@@ -1,5 +1,64 @@
 type http = [ | `Http];
 
+module Headers = {
+  type t = pri {
+    accept: option(string),
+    [@bs.as "accept-language"] acceptLanguage: option(string),
+    [@bs.as "accept-patch"] acceptPatch: option(string),
+    [@bs.as "accept-ranges"] acceptRanges: option(string),
+    [@bs.as "access-control-allow-credentials"] accessControlAllowCredentials: option(string),
+    [@bs.as "access-control-allow-headers"] accessControlAllowHeaders: option(string),
+    [@bs.as "access-control-allow-methods"] accessControlAllowMethods: (string),
+    [@bs.as "access-control-allow-origin"] accessControlAllowOrigin: option(string),
+    [@bs.as "access-control-expose-headers"] accessControlExposeHeaders: option(string),
+    [@bs.as "access-control-max-age"] accessControlMaxAge: option(string),
+    age: option(string),
+    allow: option(string),
+    [@bs.as "alt-svc"] altSvc: option(string),
+    authorization: option(string),
+    [@bs.as "cache-control"] cacheControl: option(string),
+    connection: option(string),
+    [@bs.as "content-disposition"] contentDisposition: option(string),
+    [@bs.as "content-encoding"] contentEncoding: option(string),
+    [@bs.as "content-language"] contentLanguage: option(string),
+    [@bs.as "content-length"] contentLenth: option(string),
+    [@bs.as "content-location"] contentLocation: option(string),
+    [@bs.as "content-range"] contentRange: option(string),
+    [@bs.as "content-type"] contentType: option(string),
+    cookie: option(string),
+    date: option(string),
+    expect: option(string),
+    expires: option(string),
+    forwarded: option(string),
+    from: option(string),
+    host: option(string),
+    [@bs.as "if-match"] ifMatch: option(string),
+    [@bs.as "if-modified-since"] ifModifiedSince: option(string),
+    [@bs.as "if-none-match"] ifNoneMatch: option(string),
+    [@bs.as "if-unmodified-since"] ifUnmodifiedSince: option(string),
+    [@bs.as "last-modified"] lastModified: option(string),
+    location: option(string),
+    pragma: option(string),
+    [@bs.as "proxy-authenticate"] proxyAuthenticate: option(string),
+    [@bs.as "proxy-authorization"] proxyAuthorization: option(string),
+    [@bs.as "public-key-pins"] publicKeyPins: option(string),
+    range: option(string),
+    referer: option(string),
+    [@bs.as "retry-after"] retryAfter: option(string),
+    [@bs.as "set-cookie"] setCookie: option(array(string)),
+    [@bs.as "strict-transport-security"] strictTransportPolicy: option(string),
+    tk: option(string),
+    trailer: option(string),
+    [@bs.as "transfer-encoding"] transferEncoding: option(string),
+    upgrade: option(string),
+    [@bs.as "user-agent"] userAgent: option(string),
+    vary: option(string),
+    via: option(string),
+    warning: option(string),
+    [@bs.as "www-authenticate"] wwwAuthenticate: option(string),
+  };
+};
+
 module IncomingMessage = {
   type kind = [ Stream.readable | `IncomingMessage];
   type subtype('w, 'r, 'a) = Stream.subtype('w, 'r, [> kind] as 'a);
@@ -69,7 +128,7 @@ module IncomingMessage = {
     [@bs.get] external url: subtype('w, 'r, 'a) => string = "url";
     [@bs.get] external port: subtype('w, 'r, 'a) => int = "port";
     [@bs.get]
-    external headers: subtype('w, 'r, 'a) => Js.Dict.t(string) = "headers";
+    external headers: subtype('w, 'r, 'a) => Headers.t = "headers";
     [@bs.get]
     external rawHeaders: subtype('w, 'r, 'a) => array(string) = "rawHeaders";
     [@bs.get]
@@ -109,15 +168,14 @@ module ClientRequest = {
   type subtype('w, 'r, 'a) = Stream.subtype('w, 'r, [> kind] as 'a);
   type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
   type t = subtype(Buffer.t, Buffer.t, [ kind]);
-  type information('a) = {
-    .
-    "httpVersion": string,
-    "httpVersionMajor": int,
-    "httpVersionMinor": int,
-    "statusCode": int,
-    "statusMessage": string,
-    "headers": Js.t({..} as 'a),
-    "rawHeaders": array(string),
+  type information = {
+    httpVersion: string,
+    httpVersionMajor: int,
+    httpVersionMinor: int,
+    statusCode: int,
+    statusMessage: string,
+    headers: Headers.t,
+    rawHeaders: array(string),
   };
   module Events = {
     include Stream.Duplex.Events;
@@ -158,7 +216,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "information"] _,
-        [@bs.uncurry] (information('b) => unit)
+        [@bs.uncurry] (information => unit)
       ) =>
       subtype('w, 'r, 'a) =
       "on";
@@ -239,7 +297,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "information"] _,
-        [@bs.uncurry] (information('b) => unit)
+        [@bs.uncurry] (information => unit)
       ) =>
       subtype('w, 'r, 'a) =
       "off";
@@ -320,7 +378,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "information"] _,
-        [@bs.uncurry] (information('b) => unit)
+        [@bs.uncurry] (information => unit)
       ) =>
       subtype('w, 'r, 'a) =
       "once";
@@ -521,7 +579,7 @@ module ServerResponse = {
     external getHeaderNames: subtype('w, 'r, 'a) => array(string) =
       "getHeaderNames";
     [@bs.send]
-    external getHeaders: subtype('w, 'r, 'a) => Js.t({..}) = "getHeaders";
+    external getHeaders: subtype('w, 'r, 'a) => Headers.t = "getHeaders";
     [@bs.send]
     external hasHeader: (subtype('w, 'r, 'a), string) => bool = "hasHeader";
     [@bs.get]
@@ -852,7 +910,7 @@ external requestOptions:
     ~createConnection: unit => Net.TcpSocket.t=?,
     ~defaultPort: int=?,
     ~family: int=?,
-    ~headers: Js.t({..})=?,
+    ~headers: Headers.t=?,
     ~host: string=?,
     ~hostName: string=?,
     ~localAddress: string=?,
