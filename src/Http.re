@@ -1,29 +1,48 @@
 type http = [ | `Http];
 
-  type headers = pri {
+type headers =
+  pri {
     accept: option(string),
-    [@bs.as "accept-language"] acceptLanguage: option(string),
-    [@bs.as "accept-patch"] acceptPatch: option(string),
-    [@bs.as "accept-ranges"] acceptRanges: option(string),
-    [@bs.as "access-control-allow-credentials"] accessControlAllowCredentials: option(string),
-    [@bs.as "access-control-allow-headers"] accessControlAllowHeaders: option(string),
-    [@bs.as "access-control-allow-methods"] accessControlAllowMethods: (string),
-    [@bs.as "access-control-allow-origin"] accessControlAllowOrigin: option(string),
-    [@bs.as "access-control-expose-headers"] accessControlExposeHeaders: option(string),
-    [@bs.as "access-control-max-age"] accessControlMaxAge: option(string),
+    [@bs.as "accept-language"]
+    acceptLanguage: option(string),
+    [@bs.as "accept-patch"]
+    acceptPatch: option(string),
+    [@bs.as "accept-ranges"]
+    acceptRanges: option(string),
+    [@bs.as "access-control-allow-credentials"]
+    accessControlAllowCredentials: option(string),
+    [@bs.as "access-control-allow-headers"]
+    accessControlAllowHeaders: option(string),
+    [@bs.as "access-control-allow-methods"]
+    accessControlAllowMethods: string,
+    [@bs.as "access-control-allow-origin"]
+    accessControlAllowOrigin: option(string),
+    [@bs.as "access-control-expose-headers"]
+    accessControlExposeHeaders: option(string),
+    [@bs.as "access-control-max-age"]
+    accessControlMaxAge: option(string),
     age: option(string),
     allow: option(string),
-    [@bs.as "alt-svc"] altSvc: option(string),
+    [@bs.as "alt-svc"]
+    altSvc: option(string),
     authorization: option(string),
-    [@bs.as "cache-control"] cacheControl: option(string),
+    [@bs.as "cache-control"]
+    cacheControl: option(string),
     connection: option(string),
-    [@bs.as "content-disposition"] contentDisposition: option(string),
-    [@bs.as "content-encoding"] contentEncoding: option(string),
-    [@bs.as "content-language"] contentLanguage: option(string),
-    [@bs.as "content-length"] contentLenth: option(string),
-    [@bs.as "content-location"] contentLocation: option(string),
-    [@bs.as "content-range"] contentRange: option(string),
-    [@bs.as "content-type"] contentType: option(string),
+    [@bs.as "content-disposition"]
+    contentDisposition: option(string),
+    [@bs.as "content-encoding"]
+    contentEncoding: option(string),
+    [@bs.as "content-language"]
+    contentLanguage: option(string),
+    [@bs.as "content-length"]
+    contentLenth: option(string),
+    [@bs.as "content-location"]
+    contentLocation: option(string),
+    [@bs.as "content-range"]
+    contentRange: option(string),
+    [@bs.as "content-type"]
+    contentType: option(string),
     cookie: option(string),
     date: option(string),
     expect: option(string),
@@ -31,30 +50,44 @@ type http = [ | `Http];
     forwarded: option(string),
     from: option(string),
     host: option(string),
-    [@bs.as "if-match"] ifMatch: option(string),
-    [@bs.as "if-modified-since"] ifModifiedSince: option(string),
-    [@bs.as "if-none-match"] ifNoneMatch: option(string),
-    [@bs.as "if-unmodified-since"] ifUnmodifiedSince: option(string),
-    [@bs.as "last-modified"] lastModified: option(string),
+    [@bs.as "if-match"]
+    ifMatch: option(string),
+    [@bs.as "if-modified-since"]
+    ifModifiedSince: option(string),
+    [@bs.as "if-none-match"]
+    ifNoneMatch: option(string),
+    [@bs.as "if-unmodified-since"]
+    ifUnmodifiedSince: option(string),
+    [@bs.as "last-modified"]
+    lastModified: option(string),
     location: option(string),
     pragma: option(string),
-    [@bs.as "proxy-authenticate"] proxyAuthenticate: option(string),
-    [@bs.as "proxy-authorization"] proxyAuthorization: option(string),
-    [@bs.as "public-key-pins"] publicKeyPins: option(string),
+    [@bs.as "proxy-authenticate"]
+    proxyAuthenticate: option(string),
+    [@bs.as "proxy-authorization"]
+    proxyAuthorization: option(string),
+    [@bs.as "public-key-pins"]
+    publicKeyPins: option(string),
     range: option(string),
     referer: option(string),
-    [@bs.as "retry-after"] retryAfter: option(string),
-    [@bs.as "set-cookie"] setCookie: option(array(string)),
-    [@bs.as "strict-transport-security"] strictTransportPolicy: option(string),
+    [@bs.as "retry-after"]
+    retryAfter: option(string),
+    [@bs.as "set-cookie"]
+    setCookie: option(array(string)),
+    [@bs.as "strict-transport-security"]
+    strictTransportPolicy: option(string),
     tk: option(string),
     trailer: option(string),
-    [@bs.as "transfer-encoding"] transferEncoding: option(string),
+    [@bs.as "transfer-encoding"]
+    transferEncoding: option(string),
     upgrade: option(string),
-    [@bs.as "user-agent"] userAgent: option(string),
+    [@bs.as "user-agent"]
+    userAgent: option(string),
     vary: option(string),
     via: option(string),
     warning: option(string),
-    [@bs.as "www-authenticate"] wwwAuthenticate: option(string),
+    [@bs.as "www-authenticate"]
+    wwwAuthenticate: option(string),
   };
 
 module IncomingMessage = {
@@ -125,8 +158,7 @@ module IncomingMessage = {
     [@bs.get] external method_: subtype('w, 'r, 'a) => string = "method";
     [@bs.get] external url: subtype('w, 'r, 'a) => string = "url";
     [@bs.get] external port: subtype('w, 'r, 'a) => int = "port";
-    [@bs.get]
-    external headers: subtype('w, 'r, 'a) => headers = "headers";
+    [@bs.get] external headers: subtype('w, 'r, 'a) => headers = "headers";
     [@bs.get]
     external rawHeaders: subtype('w, 'r, 'a) => array(string) = "rawHeaders";
     [@bs.get]
@@ -172,7 +204,7 @@ module ClientRequest = {
     httpVersionMinor: int,
     statusCode: int,
     statusMessage: string,
-    headers: headers,
+    headers,
     rawHeaders: array(string),
   };
   module Events = {
