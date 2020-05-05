@@ -5,7 +5,8 @@ module SearchParams = {
     [@bs.as "delete"]
     delete: string => unit,
     [@bs.as "forEach"]
-    forEach: ((~value: string, ~name: string=?, ~searchParams: t=?) => unit) => unit,
+    forEach:
+      ((~value: string, ~name: string=?, ~searchParams: t=?) => unit) => unit,
     [@bs.as "get"]
     get: string => Js.Null.t(string),
     [@bs.as "getAll"]
@@ -30,44 +31,34 @@ module SearchParams = {
 };
 
 type t = {
-  [@bs.as "hash"]
   hash: string,
-  [@bs.as "host"]
   host: string,
-  [@bs.as "hostname"]
   hostname: string,
-  [@bs.as "href"]
   href: string,
-  [@bs.as "origin"]
   origin: string,
-  [@bs.as "password"]
   password: string,
-  [@bs.as "pathname"]
   pathname: string,
-  [@bs.as "port"]
   port: int,
-  [@bs.as "protocol"]
   protocol: string,
-  [@bs.as "search"]
   search: string,
-  [@bs.as "searchParams"]
   searchParams: SearchParams.t,
-  [@bs.as "username"]
   username: string,
-  [@bs.as "toString"]
   toString: unit => string,
-  [@bs.as "toJson"]
   toJson: unit => Js.Json.t,
 };
 
 [@bs.module "url"] [@bs.new] external make: string => t = "URL";
-[@bs.module "url"] [@bs.new] external fromBaseString: (~input: string, ~base: string) => t = "URL";
-[@bs.module "url"] [@bs.new] external fromBaseUrl: (~input: string, ~base: t) => t = "URL";
+[@bs.module "url"] [@bs.new]
+external fromBaseString: (~input: string, ~base: string) => t = "URL";
+[@bs.module "url"] [@bs.new]
+external fromBaseUrl: (~input: string, ~base: t) => t = "URL";
 
 [@bs.module "url"] external domainToASCII: string => string = "domainToASCII";
-[@bs.module "url"] external domainToUnicode: string => string = "domainToUnicode";
+[@bs.module "url"]
+external domainToUnicode: string => string = "domainToUnicode";
 [@bs.module "url"] external fileURLToPath: t => string = "fileURLToPath";
-[@bs.module "url"] external fileStringToPath: string => string = "fileURLToPath";
+[@bs.module "url"]
+external fileStringToPath: string => string = "fileURLToPath";
 
 type urlFormatOptions = {
   .

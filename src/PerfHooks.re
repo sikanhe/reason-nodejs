@@ -25,7 +25,8 @@ module PerformanceNodeTiming = {
   [@bs.get] external moduleLoadStart: t => float = "moduleLoadStart";
   [@bs.get] external moduleLoadEnd: t => float = "moduleLoadEnd";
   [@bs.get] external nodeStart: t => float = "nodeStart";
-  [@bs.get] external preloadModuleLoadStart: t => float = "preloadModuleLoadStart";
+  [@bs.get]
+  external preloadModuleLoadStart: t => float = "preloadModuleLoadStart";
   [@bs.get] external preloadModuleLoadEnd: t => float = "preloadModuleLoadEnd";
   [@bs.get] external thirdPartyMainStart: t => float = "thirdPartyMainStart";
   [@bs.get] external thirdPartyMainEnd: t => float = "thirdPartyMainEnd";
@@ -40,11 +41,14 @@ module Performance = {
   [@bs.send] external mark: (t, unit) => unit = "mark";
   [@bs.send] external markWithName: (t, string) => unit = "mark";
   [@bs.send]
-  external measure: (t, string, ~startMark: string, ~endMark: string) => unit = "measure";
+  external measure: (t, string, ~startMark: string, ~endMark: string) => unit =
+    "measure";
   [@bs.get] external nodeTiming: t => PerformanceNodeTiming.t = "nodeTiming";
   [@bs.send] external now: t => float = "now";
   [@bs.send] external timerify: (unit => unit, unit) => unit = "timerify";
-  [@bs.send] external timerifyU: ([@bs.uncurry] (unit => unit)) => (unit => unit) = "timerify";
+  [@bs.send]
+  external timerifyU: ([@bs.uncurry] (unit => unit), unit) => unit =
+    "timerify";
 };
 
 module Histogram = {
@@ -64,24 +68,29 @@ module Histogram = {
 
 module PerformanceObserverEntryList = {
   type t;
-  [@bs.send] external getEntries: t => array(PerformanceEntry.t) = "getEntries";
   [@bs.send]
-  external getEntriesByName: (t, string, Js.Nullable.t(string)) => array(PerformanceEntry.t) =
+  external getEntries: t => array(PerformanceEntry.t) = "getEntries";
+  [@bs.send]
+  external getEntriesByName:
+    (t, string, Js.Nullable.t(string)) => array(PerformanceEntry.t) =
     "getEntriesByName";
   let getEntriesByName = (entryList, ~type_=?, name) =>
     getEntriesByName(entryList, name, Js.Nullable.fromOption(type_));
   [@bs.send]
-  external getEntriesByType: (t, string) => array(PerformanceEntry.t) = "getEntriesByType";
+  external getEntriesByType: (t, string) => array(PerformanceEntry.t) =
+    "getEntriesByType";
 };
 
 module PerformanceObserver = {
   type t;
   [@bs.module "perf_hooks"] [@bs.new]
-  external make: ((PerformanceObserverEntryList.t, t) => unit) => t = "PerformanceObserver";
+  external make: ((PerformanceObserverEntryList.t, t) => unit) => t =
+    "PerformanceObserver";
 };
 
 [@bs.module "perf_hooks"]
-external monitorEventLoopDelay: Js.Nullable.t({. "resolution": float}) => Histogram.t =
+external monitorEventLoopDelay:
+  Js.Nullable.t({. "resolution": float}) => Histogram.t =
   "eventLoopDelay";
 let monitorEventLoopDelay = (~resolution=?, ()) =>
   monitorEventLoopDelay(Js.Nullable.fromOption(resolution));

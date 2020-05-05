@@ -336,7 +336,8 @@ type mkdtempOptions;
 [@bs.obj] external mdktempOptions: unit => mkdtempOptions;
 
 [@bs.module "fs"] [@bs.scope "promises"]
-external mkdtemp: (string, mkdtempOptions) => Js.Promise.t(string) = "mkddtemp";
+external mkdtemp: (string, mkdtempOptions) => Js.Promise.t(string) =
+  "mkddtemp";
 
 [@bs.module "fs"] [@bs.scope "promises"]
 external mkdtempWith: (string, mkdtempOptions) => Js.Promise.t(string) =

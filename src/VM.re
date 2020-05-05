@@ -15,7 +15,8 @@ external createContextOptions:
   ) =>
   createContextOptions;
 [@bs.val] [@bs.module "vm"]
-external createContext: Js.t({..} as 'a) => contextifiedObject('a) = "createContext";
+external createContext: Js.t({..} as 'a) => contextifiedObject('a) =
+  "createContext";
 [@bs.val] [@bs.module "vm"]
 external createContextWithOptions:
   (Js.t({..} as 'a), createContextOptions) => contextifiedObject('a) =
@@ -35,10 +36,14 @@ module Script = {
     ) =>
     makeOptions;
   [@bs.new] [@bs.module "vm"] external make: string => t = "Script";
-  [@bs.new] [@bs.module "vm"] external makeWithOptions: (string, makeOptions) => t = "Script";
+  [@bs.new] [@bs.module "vm"]
+  external makeWithOptions: (string, makeOptions) => t = "Script";
   [@bs.send] external createCachedData: t => Buffer.t = "createCachedData";
-  [@bs.send] external runInContext: (t, string, contextifiedObject('a)) => 'b = "runInContext";
   [@bs.send]
-  external runInNewContext: (t, string, contextifiedObject('a)) => 'b = "runInNewContext";
+  external runInContext: (t, string, contextifiedObject('a)) => 'b =
+    "runInContext";
+  [@bs.send]
+  external runInNewContext: (t, string, contextifiedObject('a)) => 'b =
+    "runInNewContext";
   [@bs.send] external runInThisContext: (t, string) => 'a = "runInThisContext";
 };

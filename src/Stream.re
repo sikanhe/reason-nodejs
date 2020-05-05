@@ -1,67 +1,67 @@
-/** 
+/**
  * Streams have complex-looking type signatures. You will notice that most
  * of the stream modules have a type `t` with one or two type variables, and a
  * `subtype` with three type variables. This might be confusing, but they each
  * have their own meaning which is important for composing streams in a typesafe
  * and flexible way.
- * 
+ *
  * In most cases, the first two type variables for `subtype` are labelled
  * `w` or `r`, which represent the types of data that may be *written* or
  * *read* from a given stream. The third variable is a polymorphic variant
  * that represents the specific class "subtype" for the stream. You could even
  * think of these polymorphic variants as representing the prototype chain for
  * the Node stream object.
- * 
+ *
  * When a stream is created (e.g. with `Readable.make` or `Fs.createWriteStream`)
  * We lock in the subtype (the third type variable), which allows any function
  * defined in a module of its *supertype* to work on that stream object. In
  * addition, we often lock in the `w` and/or `r` data type variables (e.g. with
  * `Buffer.t`) when that type is known and fixed, which is usually the case for
  * the built-in streams.
- * 
+ *
  * A good example is the stream returned by `Fs.createReadStream`, which takes
  * a file path and returns a stream of type:
- * 
+ *
  * ```
  * Stream.Readable.subtype(void, Buffer.t, [`Stream | `Readable | `FileSystem]);
  * ```
- * 
+ *
  * This indicates:
- * 
+ *
  * 1. We may write nothing to it (the `Stream.void` type cannot be produced,
  * so we enforce read-only semantics).
- * 
+ *
  * 2. We may read values of type `Buffer.t` from it.
- * 
+ *
  * 3. All the functions defined in `Stream.Common` and `Stream.Readable` will
  * accept this stream as a primary arugment, along with any functions that take
  * a file-system specific readable stream.
- * 
+ *
  * If we create our own readable stream with `Stream.Readable.make`, then, after
  * implementing the necessary functions (`read` and `destroy`), we get back
  * a stream of type:
- * 
+ *
  * ```
  * Stream.Readable.t(Buffer.t)`;
  * ```
- * 
+ *
  * What is not shown in the above type signature is that the type `t('r)` in
  * `Readable` is the same thing as `Readable.subtype(void, 'r, readable)`;
  * The `w` type variable is already locked in as `void` since by definition
  * this stream is not configured to be writable. We also lock in the polymorphic
  * variant in the third position, indicating that this stream is a 'Readable'
  * subtype of the `Stream` class, no more and no less.
- * 
+ *
  * Also note that there is an "object mode" version of these streams, which
  * allows arbitrary JS types to be written or read from the stream as oppose to
  * the usual `Buffer.t` used by most built-in streams.
- * 
+ *
  * Implementing a custom stream will imply/lock-in the type signatures for `r` and `w`.
  * This will allow a series of streams to be composed together using the `pipe` method.
  * This kind of stream composition is the main reason for so many type parameters.
  * Tracking the readable/writable data types allows the user to compose async
  * data pipelines in a type-safe and expressive way.
- * 
+ *
 */
 
 /**
@@ -416,9 +416,7 @@ module Readable = {
     makeOptionsObjMode('r);
 
   [@bs.module "stream"] [@bs.new]
-  external makeObjMode:
-    makeOptionsObjMode('r) => objStream('r) =
-    "Readable";
+  external makeObjMode: makeOptionsObjMode('r) => objStream('r) = "Readable";
 };
 
 module Writable = {
@@ -653,8 +651,7 @@ module Writable = {
     ) =>
     makeOptionsObjMode('w);
   [@bs.module "stream"] [@bs.new]
-  external makeObjMode: makeOptionsObjMode('w) => objStream('w) =
-    "Writable";
+  external makeObjMode: makeOptionsObjMode('w) => objStream('w) = "Writable";
 };
 
 module Duplex = {
@@ -673,12 +670,14 @@ module Duplex = {
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('w, 'r) = subtype('w, 'r, kind);
   type makeOptions('w, 'r);
-  [@bs.obj] external makeOptions: (
-    ~objectMode: [@bs.as {json|false|json}] _,
-    ~allowHalfOpen: bool=?,
-    ~highWaterMark: int=?,
-    ~emitClose: bool=?,
-    ~autoDestroy: bool=?,
+  [@bs.obj]
+  external makeOptions:
+    (
+      ~objectMode: [@bs.as {json|false|json}] _,
+      ~allowHalfOpen: bool=?,
+      ~highWaterMark: int=?,
+      ~emitClose: bool=?,
+      ~autoDestroy: bool=?,
       ~destroy: [@bs.this] (
                   (
                     t('w, 'r),
@@ -705,10 +704,13 @@ module Duplex = {
       ~write: [@bs.this] (
                 (t('w, 'r), 'w, (~err: option(Js.Exn.t)) => unit) => unit
               ),
-    unit
-  ) => makeOptions('w, 'r);
-    
-  [@bs.module "stream"] [@bs.new] external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) = "Duplex";
+      unit
+    ) =>
+    makeOptions('w, 'r);
+
+  [@bs.module "stream"] [@bs.new]
+  external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) =
+    "Duplex";
 };
 
 module Transform = {
@@ -754,7 +756,8 @@ module Transform = {
     makeOptions('w, 'r);
 
   [@bs.module "stream"] [@bs.new]
-  external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) = "Transform";
+  external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) =
+    "Transform";
 
   type makeOptionsObjMode('w, 'r);
   [@bs.obj]
@@ -785,7 +788,8 @@ module Transform = {
     makeOptionsObjMode('w, 'r);
 
   [@bs.module "stream"] [@bs.new]
-  external makeObjMode: makeOptionsObjMode('w, 'r) => objStream('w, 'r) = "Transform";
+  external makeObjMode: makeOptionsObjMode('w, 'r) => objStream('w, 'r) =
+    "Transform";
 };
 
 module PassThrough = {

@@ -1,4 +1,5 @@
-[@bs.module "v8"] external cachedDataVersionTag: unit => int = "cachedDataVersion";
+[@bs.module "v8"]
+external cachedDataVersionTag: unit => int = "cachedDataVersion";
 
 type heapSpaceStats = {
   [@bs.as "space_name"]
@@ -14,10 +15,12 @@ type heapSpaceStats = {
 };
 
 [@bs.module "v8"]
-external getHeapSpaceStatistics: unit => array(heapSpaceStats) = "getHeapSpaceStatistics";
+external getHeapSpaceStatistics: unit => array(heapSpaceStats) =
+  "getHeapSpaceStatistics";
 
 [@bs.module "v8"]
-external getHeapSnapshot: unit => Stream.Readable.t(Buffer.t) = "getHeapSnapshot";
+external getHeapSnapshot: unit => Stream.Readable.t(Buffer.t) =
+  "getHeapSnapshot";
 
 type heapStats = {
   [@bs.as "total_heap_size_executable"]
@@ -42,7 +45,8 @@ type heapStats = {
   number_of_detached_contexts: int,
 };
 
-[@bs.module "v8"] external getHeapStatistics: unit => heapStats = "getHeapStatistics";
+[@bs.module "v8"]
+external getHeapStatistics: unit => heapStats = "getHeapStatistics";
 
 type heapCodeStats = {
   [@bs.as "code_and_metadata_size"]
@@ -53,9 +57,11 @@ type heapCodeStats = {
   external_script_source_size: int,
 };
 
-[@bs.module "v8"] external getHeapCodeStatistics: unit => heapStats = "getHeapCodeStatistics";
+[@bs.module "v8"]
+external getHeapCodeStatistics: unit => heapStats = "getHeapCodeStatistics";
 
-[@bs.module "v8"] external writeHeapSnapshot: string => Js.Json.t = "writeHeapSnapshot";
+[@bs.module "v8"]
+external writeHeapSnapshot: string => Js.Json.t = "writeHeapSnapshot";
 
 [@bs.module "v8"] external serialize: 'a => Buffer.t = "serialize";
 [@bs.module "v8"] external deserialize: Buffer.t => 'a = "deserialize";

@@ -12,8 +12,14 @@
  */
 module MessagePort = {
   type t('a);
-  [@bs.send] external onClose: (t('a), [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => t('a) = "on";
-  [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, [@bs.uncurry] ('a) => unit) => t('a) = "on";
+  [@bs.send]
+  external onClose:
+    (t('a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => t('a) =
+    "on";
+  [@bs.send]
+  external onMessage:
+    (t('a), [@bs.as "message"] _, [@bs.uncurry] ('a => unit)) => t('a) =
+    "on";
   [@bs.send] external close: t('a) => unit = "close";
   [@bs.send] external postMessage: (t('a), 'a) => unit = "postMessage";
   [@bs.send] external ref: t('a) => unit = "ref";
@@ -22,8 +28,14 @@ module MessagePort = {
 
   module WithMessageType = (T: {type message;}) => {
     type nonrec t = t(T.message);
-    [@bs.send] external onClose: (t, [@bs.as "close"] _, [@bs.uncurry] (unit) => unit) => t = "on";
-    [@bs.send] external onMessage: (t, [@bs.as "message"] _, [@bs.uncurry] (T.message) => unit) => t = "on";
+    [@bs.send]
+    external onClose:
+      (t, [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => t =
+      "on";
+    [@bs.send]
+    external onMessage:
+      (t, [@bs.as "message"] _, [@bs.uncurry] (T.message => unit)) => t =
+      "on";
     [@bs.send] external close: t => unit = "close";
     [@bs.send] external postMessage: (t, T.message) => unit = "postMessage";
     [@bs.send] external ref: t => unit = "ref";
@@ -36,15 +48,20 @@ module MessageChannel = {
   type t('message1, 'message2);
   [@bs.module "worker_threads"] [@bs.new]
   external make: unit => t('message1, 'message2) = "MessageChannel";
-  [@bs.get] external port1: t('message1, 'message2) => MessagePort.t('message1) = "port1";
-  [@bs.get] external port2: t('message1, 'message2) => MessagePort.t('message2) = "port2";
+  [@bs.get]
+  external port1: t('message1, 'message2) => MessagePort.t('message1) =
+    "port1";
+  [@bs.get]
+  external port2: t('message1, 'message2) => MessagePort.t('message2) =
+    "port2";
 
   module WithMessageTypes = (T: {
                                type message1;
                                type message2;
                              }) => {
     type nonrec t = t(T.message1, T.message2);
-    [@bs.module "worker_threads"] [@bs.new] external make: unit => t = "MessageChannel";
+    [@bs.module "worker_threads"] [@bs.new]
+    external make: unit => t = "MessageChannel";
     [@bs.get] external port1: t => MessagePort.t(T.message1) = "port1";
     [@bs.get] external port2: t => MessagePort.t(T.message2) = "port2";
   };
@@ -80,16 +97,32 @@ module Worker = {
     makeOptions('a);
 
   [@bs.module "worker_threads"] [@bs.new]
-  external make: (~file: string, ~options: makeOptions('a)=?, unit) => t('a) = "Worker";
-  [@bs.send] external onError: (t('a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t('a) = "on";
-  [@bs.send] external onMessage: (t('a), [@bs.as "message"] _, [@bs.uncurry] ('a) => unit) => t('a) = "on";
-  [@bs.send] external onExit: (t('a), [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t('a) = "on";
-  [@bs.send] external onOnline: (t('a), [@bs.as "online"] _, [@bs.uncurry] (unit) => unit) => t('a) = "on";
+  external make: (~file: string, ~options: makeOptions('a)=?, unit) => t('a) =
+    "Worker";
+  [@bs.send]
+  external onError:
+    (t('a), [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => t('a) =
+    "on";
+  [@bs.send]
+  external onMessage:
+    (t('a), [@bs.as "message"] _, [@bs.uncurry] ('a => unit)) => t('a) =
+    "on";
+  [@bs.send]
+  external onExit:
+    (t('a), [@bs.as "exit"] _, [@bs.uncurry] (int => unit)) => t('a) =
+    "on";
+  [@bs.send]
+  external onOnline:
+    (t('a), [@bs.as "online"] _, [@bs.uncurry] (unit => unit)) => t('a) =
+    "on";
   [@bs.send] external postMessage: (t('a), 'a) => unit = "postMessage";
   [@bs.send] external ref: t('a) => unit = "ref";
-  [@bs.send] external resourceLimits: t('a) => workerResourceLimits = "workerResourceLimits";
+  [@bs.send]
+  external resourceLimits: t('a) => workerResourceLimits =
+    "workerResourceLimits";
   [@bs.get] external stderr: t('a) => Stream.Readable.t('a) = "stderr";
-  [@bs.get] external stdin: t('a) => Js.nullable(Stream.Writable.t('a)) = "stdin";
+  [@bs.get]
+  external stdin: t('a) => Js.nullable(Stream.Writable.t('a)) = "stdin";
   [@bs.get] external stdout: t('a) => Stream.Readable.t('a) = "stdout";
   [@bs.send] external terminate: t('a) => Js.Promise.t(int) = "terminate";
   [@bs.get] external threadId: t('a) => int = "threadId";
@@ -116,16 +149,31 @@ module Worker = {
       makeOptions;
 
     [@bs.module "worker_threads"] [@bs.new]
-    external make: (~file: string, ~options: makeOptions=?, unit) => t = "Worker";
-    [@bs.send] external onError: (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t) => unit) => t = "on";
-    [@bs.send] external onMessage: (t, [@bs.as "message"] _, [@bs.uncurry] (T.message) => unit) => t = "on";
-    [@bs.send] external onExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int) => unit) => t = "on";
-    [@bs.send] external onOnline: (t, [@bs.as "online"] _, [@bs.uncurry] (unit) => unit) => t = "on";
+    external make: (~file: string, ~options: makeOptions=?, unit) => t =
+      "Worker";
+    [@bs.send]
+    external onError:
+      (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => t =
+      "on";
+    [@bs.send]
+    external onMessage:
+      (t, [@bs.as "message"] _, [@bs.uncurry] (T.message => unit)) => t =
+      "on";
+    [@bs.send]
+    external onExit: (t, [@bs.as "exit"] _, [@bs.uncurry] (int => unit)) => t =
+      "on";
+    [@bs.send]
+    external onOnline:
+      (t, [@bs.as "online"] _, [@bs.uncurry] (unit => unit)) => t =
+      "on";
     [@bs.send] external postMessage: (t, T.message) => unit = "postMessage";
     [@bs.send] external ref: t => unit = "ref";
-    [@bs.send] external resourceLimits: t => workerResourceLimits = "workerResourceLimits";
+    [@bs.send]
+    external resourceLimits: t => workerResourceLimits =
+      "workerResourceLimits";
     [@bs.get] external stderr: t => Stream.Readable.t('a) = "stderr";
-    [@bs.get] external stdin: t => Js.nullable(Stream.Writable.t('a)) = "stdin";
+    [@bs.get]
+    external stdin: t => Js.nullable(Stream.Writable.t('a)) = "stdin";
     [@bs.get] external stdout: t => Stream.Readable.t('a) = "stdout";
     [@bs.send] external terminate: t => Js.Promise.t(int) = "terminate";
     [@bs.get] external threadId: t => int = "threadId";
@@ -133,7 +181,8 @@ module Worker = {
   };
 };
 
-[@bs.val] [@bs.module "worker_threads"] external isMainThread: bool = "isMainThread";
+[@bs.val] [@bs.module "worker_threads"]
+external isMainThread: bool = "isMainThread";
 [@bs.val] [@bs.module "worker_threads"]
 external moveMessagePortToContext:
   (MessagePort.t('a), VM.contextifiedObject('b)) => MessagePort.t('a) =
@@ -141,10 +190,12 @@ external moveMessagePortToContext:
 [@bs.val] [@bs.module "worker_threads"] [@bs.return nullable]
 external parentPort: option(MessagePort.t('a)) = "parentPort";
 [@bs.val] [@bs.module "worker_threads"] [@bs.return nullable]
-external receiveMessageOnPort: MessagePort.t('a) => option(Js.t({..})) = "receiveMessageOnPort";
+external receiveMessageOnPort: MessagePort.t('a) => option(Js.t({..})) =
+  "receiveMessageOnPort";
 [@bs.val] [@bs.module "worker_threads"]
 external resourceLimits: workerResourceLimits = "resourceLimits";
-[@bs.val] [@bs.module "worker_threads"] external _SHARE_ENV: Js.Types.symbol = "SHARE_ENV";
+[@bs.val] [@bs.module "worker_threads"]
+external _SHARE_ENV: Js.Types.symbol = "SHARE_ENV";
 [@bs.val] [@bs.module "worker_threads"] external threadId: int = "threadId";
 [@bs.val] [@bs.module "worker_threads"] external workerData: 'a = "workerData";
 
@@ -153,19 +204,24 @@ module WithMessageType = (T: {type message;}) => {
     Worker.WithMessageType({
       type nonrec message = T.message;
     });
-  [@bs.val] [@bs.module "worker_threads"] external isMainThread: bool = "isMainThread";
+  [@bs.val] [@bs.module "worker_threads"]
+  external isMainThread: bool = "isMainThread";
   [@bs.val] [@bs.module "worker_threads"]
   external moveMessagePortToContext:
-    (MessagePort.t(T.message), VM.contextifiedObject('b)) => MessagePort.t(T.message) =
+    (MessagePort.t(T.message), VM.contextifiedObject('b)) =>
+    MessagePort.t(T.message) =
     "moveMessagePortToContext";
   [@bs.val] [@bs.module "worker_threads"] [@bs.return nullable]
   external parentPort: option(MessagePort.t(T.message)) = "parentPort";
   [@bs.val] [@bs.module "worker_threads"] [@bs.return nullable]
-  external receiveMessageOnPort: MessagePort.t(T.message) => option(Js.t({..})) =
+  external receiveMessageOnPort:
+    MessagePort.t(T.message) => option(Js.t({..})) =
     "receiveMessageOnPort";
   [@bs.val] [@bs.module "worker_threads"]
   external resourceLimits: workerResourceLimits = "resourceLimits";
-  [@bs.val] [@bs.module "worker_threads"] external _SHARE_ENV: Js.Types.symbol = "SHARE_ENV";
+  [@bs.val] [@bs.module "worker_threads"]
+  external _SHARE_ENV: Js.Types.symbol = "SHARE_ENV";
   [@bs.val] [@bs.module "worker_threads"] external threadId: int = "threadId";
-  [@bs.val] [@bs.module "worker_threads"] external workerData: T.message = "workerData";
+  [@bs.val] [@bs.module "worker_threads"]
+  external workerData: T.message = "workerData";
 };
