@@ -3,10 +3,8 @@
  *
  * Not sure if the functor approach is the best way to use this module. But it
  * does allow us to "lock in" the data types we want to use across contexts.
- *
  * There may be some other issues with this implementaiton due to a naive
- * understanding of how data is passed/shared, as well as how local thread contexts
- * work.
+ * understanding of how data is passed/shared.
  *
  * We should revisit this with concrete tests to determine the best design.
  */
