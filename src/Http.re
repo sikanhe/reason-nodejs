@@ -901,6 +901,12 @@ module Server = {
       "keepAliveTimeout";
     include Net.TcpServer.Impl;
   };
+
+  [@bs.send]
+  external listen:
+    (t, ~port: int, ~host: string, ~callback: unit => unit=?, unit) => t =
+    "listen";
+
   include Impl;
 };
 
