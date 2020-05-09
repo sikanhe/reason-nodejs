@@ -173,7 +173,7 @@ include Events;
 [@bs.get] external argv: t => array(string) = "argv";
 [@bs.get] external argv0: t => string = "argv0";
 [@bs.send] external chdir: (t, string) => unit = "chdir";
-[@bs.send] external cwd: t => string = "cwd";
+[@bs.send] external cwd: (t, unit) => string = "cwd";
 [@bs.send] external disconnect: t => unit = "disconnect";
 [@bs.get] external env: t => Js.Dict.t(string) = "env";
 [@bs.get] external execArgv: t => array(string) = "execArgv";
