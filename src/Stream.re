@@ -326,8 +326,8 @@ module Readable = {
     external pause: (subtype('w, 'r, [> kind]) as 'rs) => 'rs = "pause";
     [@bs.send]
     external pipe:
-      (subtype('a, 'b, [> kind]), subtype('b, 'c, [> writable] as 'wtype)) =>
-      subtype('b, 'c, 'wtype) =
+      (subtype('a, 'b, [> kind]), subtype('b, 'c, [> writable]) as 'ws) =>
+      'ws =
       "pipe";
     [@bs.send]
     external push: (subtype('w, 'r, [> kind]), 'r) => unit = "push";
@@ -359,8 +359,8 @@ module Readable = {
     external resume: (subtype('w, 'r, [> kind]) as 'rs) => 'rs = "resume";
     [@bs.send]
     external unpipe:
-      (subtype('w, 'r, [> kind]) as 'rs, subtype('w, 'r, [> writable])) =>
-      'rs =
+      (subtype('a, 'b, [> kind]), subtype('b, 'c, [> writable]) as 'ws) =>
+      'ws =
       "unpipe";
     [@bs.send]
     external unshift: (subtype('w, 'r, [> kind]), 'r) => unit = "unshift";
@@ -535,8 +535,8 @@ module Writable = {
     include Common.Impl;
     include Events;
     [@bs.send] external cork: subtype('w, 'r, [> kind]) => unit = "cork";
-    [@bs.send] external uncork: subtype('w, 'r, [> kind]) => unit = "uncork";
     [@bs.send] external end_: subtype('w, 'r, [> kind]) => unit = "end";
+    [@bs.send] external uncork: subtype('w, 'r, [> kind]) => unit = "uncork";
     [@bs.send]
     external write: (subtype('w, 'r, [> kind]), 'w) => bool = "write";
     [@bs.send]
