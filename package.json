@@ -5,7 +5,10 @@
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "test": "jest"
+    "test": "jest",
+    "clean-build": "bsb -clean-world && bsb -make-world",
+    "clean-start": "bsb -clean-world && bsb -make-world -w",
+    "clean-test": "bsb -clean-world && jest"
   },
   "keywords": [
     "BuckleScript"
