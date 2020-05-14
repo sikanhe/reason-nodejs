@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/BuckleScript/bucklescript/master/docs/docson/build-schema.json",
-  "name": "reason-nodejs",
+  "name": "node-js",
   "sources": [
     {
       "dir": "src",
@@ -24,7 +24,7 @@
     }
   ],
   "suffix": ".bs.js",
-  "namespace": "node-js",
+  "namespace": true,
   "bs-dependencies": [
   ],
   "bs-dev-dependencies": [
