@@ -1,6 +1,6 @@
 {
   "name": "reason-nodejs",
-  "version": "13.0.0-dev.2",
+  "version": "13.0.0-dev.3",
   "scripts": {
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
