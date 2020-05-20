@@ -12,3 +12,5 @@ src/ScratchPadJs.js
 src/ScratchRE.re
 src/ScratchML.ml
 src/Events.re
+
+scratch.js
