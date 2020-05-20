@@ -258,10 +258,12 @@ module Writable = {
       "writableObjectMode";
   };
   include Impl;
+
   type nonrec t('w) = subtype(writable('w));
   type objStream('w) = subtype([ writable('w) | objectMode]);
-  type nonrec supertype('w, 'ty) = subtype([< writable('w)] as 'ty);
+  type supertype('w, 'ty) = subtype([< writable('w)] as 'ty);
   type nonrec subtype('w, 'ty) = subtype([> writable('w)] as 'ty);
+
   type makeOptions('w);
   [@bs.obj]
   external makeOptions:
@@ -530,9 +532,10 @@ module Readable = {
     external unshift: (subtype([> readable('r)]), 'r) => unit = "unshift";
   };
   include Impl;
+
   type nonrec t('r) = subtype(readable('r));
   type objStream('r) = subtype([ readable('r) | objectMode]);
-  type nonrec supertype('r, 'ty) = subtype([< readable('r)] as 'ty);
+  type supertype('r, 'ty) = subtype([< readable('r)] as 'ty);
   type nonrec subtype('r, 'ty) = subtype([> readable('r)] as 'ty);
 
   type makeOptions('r);
@@ -595,9 +598,12 @@ module Duplex = {
     include Events;
   };
   include Impl;
-  type nonrec t('w, 'r) = subtype(duplex('w, 'r));
-  type nonrec supertype('w, 'r, 'ty) = subtype([< duplex('w, 'r)] as 'ty);
+
+  type t('w, 'r) = subtype(duplex('w, 'r));
+  type supertype('w, 'r, 'ty) = subtype([< duplex('w, 'r)] as 'ty);
   type nonrec subtype('w, 'r, 'ty) = subtype([> duplex('w, 'r)] as 'ty);
+  type objStream('w, 'r) = subtype('w, 'r, [ duplex('w, 'r) | objectMode]);
+
   type makeOptions('w, 'r);
   [@bs.obj]
   external makeOptions:
@@ -640,6 +646,49 @@ module Duplex = {
   [@bs.module "stream"] [@bs.new]
   external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) =
     "Duplex";
+
+  type makeOptionsObjMode('w, 'r);
+  [@bs.obj]
+  external makeOptionsObjMode:
+    (
+      ~objectMode: [@bs.as {json|true|json}] _,
+      ~allowHalfOpen: bool=?,
+      ~highWaterMark: int=?,
+      ~emitClose: bool=?,
+      ~autoDestroy: bool=?,
+      ~destroy: [@bs.this] (
+                  (
+                    t('w, 'r),
+                    Js.nullable(Js.Exn.t),
+                    (~err: option(Js.Exn.t)) => unit
+                  ) =>
+                  unit
+                )
+                  =?,
+      ~final: [@bs.this] (
+                (t('w, 'r), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+              )
+                =?,
+      ~writev: [@bs.this] (
+                 (
+                   t('w, 'r),
+                   array(chunk('w)),
+                   (~err: option(Js.Exn.t)) => unit
+                 ) =>
+                 unit
+               )
+                 =?,
+      ~read: [@bs.this] ((t('w, 'r), Js.nullable(int)) => unit),
+      ~write: [@bs.this] (
+                (t('w, 'r), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+              ),
+      unit
+    ) =>
+    makeOptions('w, 'r);
+
+  [@bs.module "stream"] [@bs.new]
+  external makeObjMode: makeOptionsObjMode('w, 'r) => t('w, 'r) =
+    "Duplex";
 };
 
 module Transform = {
@@ -652,9 +701,9 @@ module Transform = {
     include Events;
   };
   include Impl;
-  type nonrec t('w, 'r) = subtype(transform('w, 'r));
+  type t('w, 'r) = subtype(transform('w, 'r));
   type objStream('w, 'r) = subtype([ transform('w, 'r) | objectMode]);
-  type nonrec supertype('w, 'r, 'ty) = subtype([< transform('w, 'r)] as 'ty);
+  type supertype('w, 'r, 'ty) = subtype([< transform('w, 'r)] as 'ty);
   type nonrec subtype('w, 'r, 'ty) = subtype([> transform('w, 'r)] as 'ty);
   type makeOptions('w, 'r);
   [@bs.obj]
@@ -732,8 +781,8 @@ module PassThrough = {
     include Events;
   };
   include Impl;
-  type nonrec t('w, 'r) = subtype(passThrough('w, 'r));
-  type nonrec supertype('w, 'r, 'ty) = subtype([< passThrough('w, 'r)] as 'ty);
+  type t('w, 'r) = subtype(passThrough('w, 'r));
+  type supertype('w, 'r, 'ty) = subtype([< passThrough('w, 'r)] as 'ty);
   type nonrec subtype('w, 'r, 'ty) = subtype([> passThrough('w, 'r)] as 'ty);
   [@bs.module "stream"] [@bs.new]
   external make: unit => t(Buffer.t, Buffer.t) = "PassThrough";
