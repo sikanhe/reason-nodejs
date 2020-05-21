@@ -42,7 +42,7 @@ Help all Reason Node.js apps and libaries to be built faster by reducing the tim
 ## Non-Goals
 
 - Have 100% coverage of Node.js api surface - Due to lack of man power for testing and maintaining, we should only have enough surface to cover all common use cases. But we should have enough coverage that developers only rarely have to write a custom binding.
-- Ensure all APIs are idiomatic Reason and 100% typesafe - This library should be as barebones as possible to allow for minimal context switching between offical Node.js documentation and the Reason equilvalent. And due to the dynamic nature of the JS API, bending it to be idiomatic Reason will lead to a ton of bikeshedding in design as well as sacrificing maintainability.
+- Ensure all APIs are idiomatic Reason and 100% typesafe - This library should be as low-level as possible to allow for minimal context switching between offical Node.js documentation and the Reason equilvalent. And due to the dynamic nature of the JS API, bending it to be idiomatic Reason will lead to a ton of bikeshedding in design as well as sacrificing maintainability.
 
 ## Principles
 
