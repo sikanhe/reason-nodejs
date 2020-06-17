@@ -34,7 +34,7 @@ external make2: {.. "stdout": Stream.Writable.subtype('w, 'r, 'a)} => t =
 [@bs.send] [@bs.variadic]
 external debugMany: (t, array('a)) => unit = "debug";
 
-[@bs.send] external dir: (t, string) => unit = "dir";
+[@bs.send] external dir: (t, 'a) => unit = "dir";
 [@bs.send] [@bs.variadic] external dirMany: (t, array('a)) => unit = "dir";
 
 [@bs.send] external dirxml: (t, string) => unit = "dirxml";
