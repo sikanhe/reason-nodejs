@@ -3,9 +3,12 @@
   "version": "13.0.0-beta.1",
   "scripts": {
     "build": "bsb -make-world",
+    "clean-build": "bsb -clean-world && bsb -make-world",
     "start": "bsb -make-world -w",
-    "clean": "bsb -clean-world",
-    "test": "jest"
+    "clean-start": "bsb -clean-world && bsb -make-world -w",
+    "test": "jest",
+    "clean-test": "bsb -clean-world && bsb -make-world && jest",
+    "clean": "bsb -clean-world"
   },
   "keywords": [
     "BuckleScript"
