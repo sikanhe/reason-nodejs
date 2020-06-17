@@ -3,7 +3,8 @@ let makeReadableEmpty = () => {
   open Stream.Readable;
   let options =
     makeOptions(
-      ~destroy=[@bs.this] (_, _, done_) => {done_(~err=None)},
+      ~destroy=
+        [@bs.this] (_, err, done_) => done_(~err=Js.Nullable.toOption(err)),
       ~read=[@bs.this] (_, _) => (),
       ~autoDestroy=true,
       (),
