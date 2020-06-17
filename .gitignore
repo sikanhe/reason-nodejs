@@ -8,7 +8,5 @@ bsb
 *.bs.js
 package-lock.json
 
-src/ScratchPadJs.js
 src/ScratchRe.re
 src/ScratchMl.ml
-src/Events.re
