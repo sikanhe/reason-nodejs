@@ -4,8 +4,8 @@ let makeReadableEmpty = () => {
   let options =
     makeOptions(
       ~destroy=
-        [@bs.this] (_, err, done_) => done_(~err=Js.Nullable.toOption(err)),
-      ~read=[@bs.this] (_, _) => (),
+        [@bs.this] (_, err, done_) => {done_(~err=Js.Nullable.toOption(err));},
+      ~read=[@bs.this] (_, _size) => (),
       ~autoDestroy=true,
       (),
     );
@@ -17,7 +17,7 @@ let makeWritableEmpty = () => {
   open Stream.Writable;
   let options =
     makeOptions(
-      ~destroy=[@bs.this] (_, _, done_) => {done_(~err=None)},
+      ~destroy=[@bs.this] (_, err, done_) => {done_(~err=Js.Nullable.toOption(err));},
       ~write=[@bs.this] (_, _, _) => (),
       ~autoDestroy=true,
       (),
