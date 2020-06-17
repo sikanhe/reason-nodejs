@@ -6,7 +6,7 @@
 module Impl = (T: {type t;}) => {
   /**
    * `addListener(emitter, event, listener)`
-   * 
+   *
    * Adds a new event listener function to the event emitter.
    */
   [@bs.send]
@@ -29,13 +29,12 @@ module Impl = (T: {type t;}) => {
   external listenerCount: (T.t, Event.t('a => 'b, T.t)) => int =
     "listenerCount";
   [@bs.send]
-
   external listeners: (T.t, Event.t('a => 'b, T.t)) => array('a => 'b) =
     "listeners";
 
   /**
    * `on(emitter, event, listener)`
-   * 
+   *
    * Adds a new event listener function to the event emitter.
    * Alias for `addListener`.
    */
@@ -44,7 +43,7 @@ module Impl = (T: {type t;}) => {
 
   /**
    * `once(emitter, event, listener)`
-   * 
+   *
    * Adds a new **single-use** event listener function to the event
    * emitter. Then next time the given event is emitted, this listener
    * will fire exactly once, and then be removed from the emitter's
@@ -55,27 +54,27 @@ module Impl = (T: {type t;}) => {
 
   /**
    * `off(emitter, event, listener)`
-   * 
+   *
    * Removes the listener function from the event emitter.
-   * 
+   *
    * The specified listener function is compared by **referential
    * equality** to each function in the emitter's internal listener
    * array.
-   * 
+   *
    * This means that, when the target listener is initially added, that
    * exact function reference must be maintained and provided here
    * in order to ensure removal.
-   * 
+   *
    * Alias for `removeListener`.
    */
   [@bs.send]
   external off: (T.t, Event.t('a => 'b, T.t), 'a => 'b) => T.t = "off";
-  
+
   /**
    * `prependListener(emitter, event, listener)`
-   * 
+   *
    * Adds a new event listener function to the event emitter.
-   * 
+   *
    * Unlike `on` and `addListener`, `prependListener` adds the listener
    * function to the front of the internal listener array, ensuring
    * that this function is called before the rest of the listeners for
@@ -87,12 +86,12 @@ module Impl = (T: {type t;}) => {
 
   /**
    * `prependListenerOnce(emitter, event, listener)`
-   * 
+   *
    * Adds a new **single-use** event listener function to the event
    * emitter. Then next time the given event is emitted, this listener
    * will fire exactly once, and then be removed from the emitter's
    * internal listener array.
-   * 
+   *
    * Unlike `once`, `prependListenerOnce` adds the listener function
    * to the front of the internal listener array, ensuring that this
    * function is called before the rest of the listeners for the
@@ -106,13 +105,13 @@ module Impl = (T: {type t;}) => {
 
   /**
    * `removeListener(emitter, event, listener)`
-   * 
+   *
    * Removes the listener function from the event emitter.
-   * 
+   *
    * The specified listener function is compared by **referential
    * equality** to each function in the emitter's internal listener
    * array.
-   * 
+   *
    * This means that, when the target listener is initially added, that
    * exact function reference must be maintained and provided here
    * in order to ensure removal.
@@ -123,35 +122,16 @@ module Impl = (T: {type t;}) => {
 
   /**
    * `setMaxListeners(emitter, numberOfListeners)`
-   * 
+   *
    * Sets the maximum number of event listeners that may be added to
    * an event emitter before Node begins emitting warnings.
-   * 
+   *
    * By default, each event emitter has this value set to 10. This is
    * intended to warn the user about possible memory leaks.
    * `setMaxListeners` will increase this threshold.
    */
-  [@bs.send] external setMaxListeners: (T.t, int) => T.t = "setMaxListeners";
-
   [@bs.send]
-  external onNewListener:
-    (
-      T.t,
-      [@bs.as "newListener"] _,
-      (Event.t('a => 'b, T.t), 'a => 'b) => unit
-    ) =>
-    T.t =
-    "on";
-
-  [@bs.send]
-  external onRemoveListener:
-    (
-      T.t,
-      [@bs.as "removeListener"] _,
-      (Event.t('a => 'b, T.t), 'a => 'b) => unit
-    ) =>
-    T.t =
-    "on";
+  external setMaxListeners: (T.t, int) => T.t = "setMaxListeners";
 };
 
 /**
