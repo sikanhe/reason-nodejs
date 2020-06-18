@@ -1,7 +1,6 @@
 type http = [ | `Http];
 
-type headers =
-  pri {
+type headers = {
     accept: option(string),
     [@bs.as "accept-language"]
     acceptLanguage: option(string),
