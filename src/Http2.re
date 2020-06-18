@@ -1,9 +1,3 @@
-/**
- * TODO: Some of the functions in this module use optional
- * named arguments for JS args that are optional. Evaluate
- * whether this is safe/future-proof. If not, refactor.
- */
-
 type settingsObject;
 [@bs.obj]
 external settingsObject:
