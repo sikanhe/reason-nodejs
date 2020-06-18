@@ -352,12 +352,12 @@ external openWithMode:
   "open";
 
 module WriteStream = {
-  type kind('w) = [ Stream2.writable('w) | `FileSystem];
-  type subtype('w, 'ty) = Stream2.subtype([> kind('w)] as 'ty);
-  type supertype('w, 'ty) = Stream2.subtype([< kind('w)] as 'ty);
+  type kind('w) = [ Stream__.writable('w) | `FileSystem];
+  type subtype('w, 'ty) = Stream__.subtype([> kind('w)] as 'ty);
+  type supertype('w, 'ty) = Stream__.subtype([< kind('w)] as 'ty);
   type t = subtype(Buffer.t, [ kind(Buffer.t)]);
   module Impl = {
-    include Stream2.Writable.Impl;
+    include Stream__.Writable.Impl;
     [@bs.send]
     external bytesWritten: subtype('w, [> kind('w)]) => int = "bytesWritten";
     [@bs.send] external path: subtype('w, [> kind('w)]) => string = "path";
@@ -386,13 +386,13 @@ module WriteStream = {
 };
 
 module ReadStream = {
-  type kind('r) = [ Stream2.readable('r) | `FileSystem];
-  type subtype('r, 'ty) = Stream2.subtype([> kind('r)] as 'ty);
+  type kind('r) = [ Stream__.readable('r) | `FileSystem];
+  type subtype('r, 'ty) = Stream__.subtype([> kind('r)] as 'ty);
   type supertype('r, 'ty) =
-    Stream2.subtype([< kind('r)] as 'ty);
+    Stream__.subtype([< kind('r)] as 'ty);
   type t = subtype(Buffer.t, [ kind(Buffer.t)]);
   module Impl = {
-    include Stream2.Readable.Impl;
+    include Stream__.Readable.Impl;
     [@bs.send]
     external bytesRead: subtype('r, [> kind('r)]) => int = "bytesWritten";
     [@bs.send] external path: subtype('r, [> kind('r)]) => string = "path";
