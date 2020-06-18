@@ -8,8 +8,8 @@ type consoleOptions;
 [@bs.obj]
 external consoleOptions:
   (
-    ~stdout: Stream.Writable.subtype('w, 'r, 'a),
-    ~stderr: Stream.Writable.subtype('w, 'r, 'a)=?,
+    ~stdout: Stream.Writable.subtype('w, 'a),
+    ~stderr: Stream.Writable.subtype('w, 'a)=?,
     ~ignoreErrors: bool=?,
     ~colorMode: bool=?,
     ~inspectOptions: Util.inspectOptions=?,
@@ -20,7 +20,7 @@ external consoleOptions:
 [@bs.new] [@bs.module "console"]
 external make: consoleOptions => t = "Console";
 [@bs.new] [@bs.module "console"]
-external make2: {.. "stdout": Stream.Writable.subtype('w, 'r, 'a)} => t =
+external make2: {.. "stdout": Stream.Writable.subtype('w, 'a)} => t =
   "Console";
 
 [@bs.send] external assert_: (t, bool) => unit = "assert";

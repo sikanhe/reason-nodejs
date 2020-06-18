@@ -1,5 +1,5 @@
 type settingsObject;
-[@bs.obj]
+
 external settingsObject:
   (
     ~headerTableSize: int=?,
@@ -13,17 +13,40 @@ external settingsObject:
   settingsObject;
 
 module Http2Stream = {
-  type kind = [ Stream.duplex | `Http2Stream];
-  type t = Stream.subtype(Buffer.t, Buffer.t, kind);
+  type kind('w, 'r) = [ Stream.duplex('w, 'r) | `Http2Stream];
+  type subtype('w, 'r, 'ty) = Stream.subtype([> kind('w, 'r)] as 'ty);
+  type supertype('w, 'r, 'ty) = Stream.subtype([< kind('w, 'r)] as 'ty);
+  type t('w, 'r) = Stream.subtype(kind('w, 'r));
+  module Events = {
+    include Stream.Duplex.Events;
+  };
   module Impl = {
     include Stream.Duplex.Impl;
+    [@bs.get] external aborted: subtype('w, 'r, 'ty) => bool = "aborted";
+    [@bs.get] external bufferSize: subtype('w, 'r, 'ty) => int = "bufferSize";
+    [@bs.get] external closed: subtype('w, 'r, 'ty) => bool = "closed";
+    [@bs.get] external destroyed: subtype('w, 'r, 'ty) => bool = "destroyed";
+    [@bs.get]
+    external endAfterHeaders: subtype('w, 'r, 'ty) => bool =
+      "endAfterHeaders";
+    [@bs.get] [@bs.return nullable]
+    external id: subtype('w, 'r, 'ty) => option(int) = "id";
+    [@bs.get] external pending: subtype('w, 'r, 'ty) => bool = "pending";
+    [@bs.get] external rstCode: subtype('w, 'r, 'ty) => int = "rstCode";
+    [@bs.get]
+    external sentHeaders: subtype('w, 'r, 'ty) => bool = "sentHeaders";
   };
   include Impl;
 };
 
 module ClientHttp2Stream = {
-  type kind = [ Http2Stream.kind | `ClientHttp2Stream];
-  type t = Stream.subtype(Buffer.t, Buffer.t, kind);
+  type kind('w, 'r) = [ Http2Stream.kind('w, 'r) | `ClientHttp2Stream];
+  type subtype('w, 'r, 'ty) = Stream.subtype([> kind('w, 'r)] as 'ty);
+  type supertype('w, 'r, 'ty) = Stream.subtype([< kind('w, 'r)] as 'ty);
+  type t('w, 'r) = Stream.subtype(kind('w, 'r));
+  module Events = {
+    include Http2Stream.Events;
+  };
   module Impl = {
     include Http2Stream.Impl;
   };
@@ -31,8 +54,13 @@ module ClientHttp2Stream = {
 };
 
 module ServerHttp2Stream = {
-  type kind = [ Http2Stream.kind | `ServerHttp2Stream];
-  type t = Stream.subtype(Buffer.t, Buffer.t, kind);
+  type kind('w, 'r) = [ Http2Stream.kind('w, 'r) | `ServerHttp2Stream];
+  type subtype('w, 'r, 'ty) = Stream.subtype([> kind('w, 'r)] as 'ty);
+  type supertype('w, 'r, 'ty) = Stream.subtype([< kind('w, 'r)] as 'ty);
+  type t = Stream.subtype(kind(Buffer.t, Buffer.t));
+  module Events = {
+    include Http2Stream.Events;
+  };
   module Impl = {
     include Http2Stream.Impl;
   };
@@ -46,36 +74,27 @@ module Http2Session = {
     "on";
   [@bs.send]
   external onConnect:
-    (
-      t,
-      [@bs.as "connect"] _,
-      [@bs.uncurry] (
-        (t, Stream.subtype(Buffer.t, Buffer.t, [> Net.Socket.kind])) => unit
-      )
-    ) =>
-    t =
+    (t, [@bs.as "connect"] _, [@bs.uncurry] ((t, Net.Socket.t) => unit)) => t =
     "on";
   [@bs.send]
   external onError:
     (t, [@bs.as "error"] _, [@bs.uncurry] (Js.Exn.t => unit)) => t =
     "on";
-  /** TODO: uncurry after release of bs-platform v7.3 */
   [@bs.send]
   external onFrameError:
     (
       t,
       [@bs.as "frameError"] _,
-      (~type_: int, ~errorCode: int, ~streamId: int) => unit
+      [@bs.uncurry] ((~type_: int, ~errorCode: int, ~streamId: int) => unit)
     ) =>
     t =
     "on";
-  /** TODO: uncurry after release of bs-platform v7.3 */
   [@bs.send]
   external onGoAway:
     (
       t,
       [@bs.as "goAway"] _,
-      (~errorCode: int, ~lastStreamId: int, Buffer.t) => unit
+      [@bs.uncurry] ((~errorCode: int, ~lastStreamId: int, Buffer.t) => unit)
     ) =>
     t =
     "on";
@@ -99,7 +118,7 @@ module Http2Session = {
       t,
       [@bs.as "stream"] _,
       (
-        . Stream.subtype('w, 'r, [> Http2Stream.kind]),
+        t,
         Js.t({
           ..
           "status": string,
@@ -240,42 +259,54 @@ module ServerHttp2Session = {
 };
 
 module Http2ServerRequest = {
-  type kind = [ Stream.readable | `Http2ServerRequest];
-  type t = Stream.subtype(Buffer.t, Buffer.t, [ kind]);
+  type kind('r) = [ Stream.readable('r) | `Http2ServerRequest];
+  type subtype('r, 'ty) = Stream.subtype([> kind('r)] as 'ty);
+  type supertype('r, 'ty) = Stream.subtype([< kind('r)] as 'ty);
+  type t = Stream.subtype(kind(Buffer.t));
   module Impl = {
     include Stream.Readable.Impl;
     [@bs.send]
     external onAborted:
-      (t, [@bs.as "aborted"] _, [@bs.uncurry] (unit => unit)) => t =
+      (
+        subtype('r, 'ty),
+        [@bs.as "aborted"] _,
+        [@bs.uncurry] (unit => unit)
+      ) =>
+      subtype('r, 'ty) =
       "on";
     [@bs.send]
     external onClose:
-      (t, [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => t =
+      (subtype('r, 'ty), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) =>
+      subtype('r, 'ty) =
       "on";
-    [@bs.get] external aborted: t => bool = "aborted";
-    [@bs.get] external authority: t => string = "authority";
-    [@bs.get] external complete: t => bool = "complete";
-    [@bs.send] external destroy: t => unit = "destroy";
-    [@bs.send] external destroyWithError: (t, Js.Exn.t) => unit = "destroy";
-    [@bs.get] external headers: t => Js.t({..}) = "headers";
-    [@bs.get] external httpVersion: t => string = "httpVersion";
-    [@bs.get] external method_: t => string = "method";
-    [@bs.get] external rawHeaders: t => array(string) = "rawHeaders";
-    [@bs.get] external rawTrailers: t => array(string) = "rawTrailers";
-    [@bs.get] external scheme: t => string = "scheme";
+    [@bs.get] external aborted: subtype('r, 'ty) => bool = "aborted";
+    [@bs.get] external authority: subtype('r, 'ty) => string = "authority";
+    [@bs.get] external complete: subtype('r, 'ty) => bool = "complete";
+    [@bs.send] external destroy: subtype('r, 'ty) => unit = "destroy";
     [@bs.send]
-    external setTimeout: (t, int, Http2Stream.t => unit) => Http2Stream.t =
+    external destroyWithError: (subtype('r, 'ty), Js.Exn.t) => unit =
+      "destroy";
+    [@bs.get] external headers: subtype('r, 'ty) => Js.t({..}) = "headers";
+    [@bs.get]
+    external httpVersion: subtype('r, 'ty) => string = "httpVersion";
+    [@bs.get] external method_: subtype('r, 'ty) => string = "method";
+    [@bs.get]
+    external rawHeaders: subtype('r, 'ty) => array(string) = "rawHeaders";
+    [@bs.get]
+    external rawTrailers: subtype('r, 'ty) => array(string) = "rawTrailers";
+    [@bs.get] external scheme: subtype('r, 'ty) => string = "scheme";
+    [@bs.send]
+    external setTimeout:
+      (subtype('r, 'ty), int, unit => unit) => subtype('r, 'ty) =
       "setTimeout";
     [@bs.get]
     external socket:
       t =>
       Stream.subtype(
-        Buffer.t,
-        Buffer.t,
-        [ Stream.duplex | `Socket | `TLSSocket],
+        [< Net.Socket.kind('w, 'r) | Tls.TlsSocket.kind('w, 'r)],
       ) =
       "socket";
-    [@bs.get] external stream: t => Http2Stream.t = "stream";
+    [@bs.get] external stream: t => Stream.t = "stream";
     [@bs.get] external trailers: t => Js.t({..}) = "trailers";
     [@bs.get] external url: t => string = "url";
   };
@@ -283,53 +314,79 @@ module Http2ServerRequest = {
 };
 
 module Http2ServerResponse = {
-  type kind = [ Stream.duplex | `Http2ServerResponse];
-  type t = Stream.subtype(Buffer.t, Buffer.t, [ kind]);
+  type kind = [ Stream.stream | `Http2ServerResponse];
+  type subtype('ty) = Stream.subtype([> kind] as 'ty);
+  type supertype('ty) = Stream.subtype([< kind] as 'ty);
+  type t = Stream.subtype(kind);
   module Impl = {
     include Stream.Duplex.Impl;
     [@bs.send]
     external onClose:
-      (t, [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) => t =
+      (subtype('ty), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) =>
+      subtype('ty) =
       "on";
     [@bs.send]
     external onFinish:
-      (t, [@bs.as "finish"] _, [@bs.uncurry] (unit => unit)) => t =
+      (subtype('ty), [@bs.as "finish"] _, [@bs.uncurry] (unit => unit)) =>
+      subtype('ty) =
       "on";
-    [@bs.send] external setTrailers: (t, Js.t({..})) => unit = "setTrailers";
-    [@bs.send] external end_: t => unit = "end";
     [@bs.send]
-    external endWith: (t, ~data: Buffer.t=?, ~callback: unit => unit=?) => t =
+    external setTrailers: (subtype('ty), Js.t({..})) => unit = "setTrailers";
+    [@bs.send] external end_: subtype('ty) => unit = "end";
+    [@bs.send]
+    external endWith:
+      (subtype('ty), ~data: Buffer.t=?, ~callback: unit => unit=?) =>
+      subtype('ty) =
       "end";
-    [@bs.send] external getHeader: (t, string) => string = "getHeader";
-    [@bs.send] external getHeaderNames: t => array(string) = "getHeaderNames";
-    [@bs.send] external getHeaders: t => Js.t({..}) = "getHeaders";
-    [@bs.send] external hasHeader: (t, string) => bool = "hasHeader";
-    [@bs.send] external headersSent: t => bool = "headersSent";
-    [@bs.send] external removeHeader: (t, string) => unit = "removeHeader";
-    [@bs.send] external setHeader: (t, string) => unit = "setHeader";
     [@bs.send]
-    external setHeaderArray: (t, array(string)) => unit = "setHeader";
+    external getHeader: (subtype('ty), string) => string = "getHeader";
     [@bs.send]
-    external setTimeout: (t, int, Http2Stream.t => unit) => Http2Stream.t =
+    external getHeaderNames: subtype('ty) => array(string) =
+      "getHeaderNames";
+    [@bs.send]
+    external getHeaders: subtype('ty) => Js.t({..}) = "getHeaders";
+    [@bs.send]
+    external hasHeader: (subtype('ty), string) => bool = "hasHeader";
+    [@bs.send] external headersSent: subtype('ty) => bool = "headersSent";
+    [@bs.send]
+    external removeHeader: (subtype('ty), string) => unit = "removeHeader";
+    [@bs.send]
+    external setHeader: (subtype('ty), string) => unit = "setHeader";
+    [@bs.send]
+    external setHeaderArray: (subtype('ty), array(string)) => unit =
+      "setHeader";
+    [@bs.send]
+    external setTimeout:
+      (subtype('ty), int, unit => unit) => Http2Stream.t('w, 'r) =
       "setTimeout";
-    [@bs.get] external socket: t => Net.TcpSocket.t = "socket";
-    [@bs.get] external statusCode: t => int = "statusCode";
-    [@bs.get] external statusMessage: t => string = "statusMessage";
-    [@bs.get] external stream: t => Http2Stream.t = "stream";
-    [@bs.get] external writableEnded: t => bool = "writableEnded";
-    [@bs.send] external write: (t, Buffer.t) => bool = "write";
+    [@bs.get] external socket: subtype('ty) => Net.TcpSocket.t = "socket";
+    [@bs.get] external statusCode: subtype('ty) => int = "statusCode";
+    [@bs.get]
+    external statusMessage: subtype('ty) => string = "statusMessage";
+    [@bs.get]
+    external stream: subtype('ty) => Http2Stream.t('w, 'r) = "stream";
+    [@bs.get] external writableEnded: subtype('ty) => bool = "writableEnded";
+    [@bs.send] external write: (subtype('ty), Buffer.t) => bool = "write";
     [@bs.send]
-    external writeWith: (t, Buffer.t, ~callback: unit => unit=?) => bool =
+    external writeWith:
+      (subtype('ty), Buffer.t, ~callback: unit => unit=?) => bool =
       "write";
-    [@bs.send] external writeContinue: t => unit = "writeContinue";
-    [@bs.send] external writeHead: (t, int) => t = "writeHead";
+    [@bs.send] external writeContinue: subtype('ty) => unit = "writeContinue";
+    [@bs.send]
+    external writeHead: (subtype('ty), int) => subtype('ty) = "writeHead";
     [@bs.send]
     external writeHeadWith:
-      (t, int, ~message: string=?, ~headers: Js.t({..})=?) => t =
+      (subtype('ty), int, ~message: string=?, ~headers: Js.t({..})=?) =>
+      subtype('ty) =
       "writeHead";
     [@bs.send]
     external createPushResponse:
-      (t, Js.t({..}), (Js.Exn.t, ServerHttp2Stream.t) => unit) => unit =
+      (
+        subtype('ty),
+        Js.t({..}),
+        [@bs.uncurry] ((Js.Exn.t, ServerHttp2Stream.t) => unit)
+      ) =>
+      unit =
       "writeHead";
   };
   include Impl;

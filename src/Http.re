@@ -1,6 +1,6 @@
 type http = [ | `Http];
 
-type headers = {
+type headersObject = {
     accept: option(string),
     [@bs.as "accept-language"]
     acceptLanguage: option(string),
@@ -90,120 +90,93 @@ type headers = {
   };
 
 module IncomingMessage = {
-  type kind = [ Stream.readable | `IncomingMessage];
-  type subtype('w, 'r, 'a) = Stream.subtype('w, 'r, [> kind] as 'a);
-  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
-  type t = subtype(Buffer.t, Buffer.t, [ kind]);
+  type kind('r) = [ Stream.readable('r) | `IncomingMessage];
+  type subtype('r, 'a) = Stream.subtype([> kind('r)] as 'a);
+  type supertype('r, 'a) = Stream.subtype([< kind('r)] as 'a);
+  type t = Stream.subtype([ kind(Buffer.t)]);
   module Events = {
     include Stream.Readable.Events;
     [@bs.send]
     external onAborted:
-      (
-        subtype('w, 'r, 'a),
-        [@bs.as "aborted"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      subtype('w, 'r, 'a) =
+      (subtype('r, 'a), [@bs.as "aborted"] _, [@bs.uncurry] (unit => unit)) =>
+      subtype('r, 'a) =
       "on";
     [@bs.send]
     external onClose:
-      (
-        subtype('w, 'r, 'a),
-        [@bs.as "close"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      subtype('w, 'r, 'a) =
+      (subtype('r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) =>
+      subtype('r, 'a) =
       "on";
     [@bs.send]
     external offAborted:
-      (
-        subtype('w, 'r, 'a),
-        [@bs.as "aborted"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      subtype('w, 'r, 'a) =
+      (subtype('r, 'a), [@bs.as "aborted"] _, [@bs.uncurry] (unit => unit)) =>
+      subtype('r, 'a) =
       "off";
     [@bs.send]
     external offClose:
-      (
-        subtype('w, 'r, 'a),
-        [@bs.as "close"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      subtype('w, 'r, 'a) =
+      (subtype('r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) =>
+      subtype('r, 'a) =
       "off";
     [@bs.send]
     external onAbortedOnce:
-      (
-        subtype('w, 'r, 'a),
-        [@bs.as "aborted"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      subtype('w, 'r, 'a) =
+      (subtype('r, 'a), [@bs.as "aborted"] _, [@bs.uncurry] (unit => unit)) =>
+      subtype('r, 'a) =
       "once";
     [@bs.send]
     external onCloseOnce:
-      (
-        subtype('w, 'r, 'a),
-        [@bs.as "close"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      subtype('w, 'r, 'a) =
+      (subtype('r, 'a), [@bs.as "close"] _, [@bs.uncurry] (unit => unit)) =>
+      subtype('r, 'a) =
       "once";
   };
+
   module Impl = {
     include Stream.Readable.Impl;
     include Events;
-    [@bs.get] external method_: subtype('w, 'r, 'a) => string = "method";
-    [@bs.get] external url: subtype('w, 'r, 'a) => string = "url";
-    [@bs.get] external port: subtype('w, 'r, 'a) => int = "port";
-    [@bs.get] external headers: subtype('w, 'r, 'a) => headers = "headers";
+    [@bs.get] external method_: subtype('r, 'a) => string = "method";
+    [@bs.get] external url: subtype('r, 'a) => string = "url";
+    [@bs.get] external port: subtype('r, 'a) => int = "port";
+    [@bs.get] external headers: subtype('r, 'a) => headersObject = "headers";
     [@bs.get]
-    external rawHeaders: subtype('w, 'r, 'a) => array(string) = "rawHeaders";
+    external rawHeaders: subtype('r, 'a) => array(string) = "rawHeaders";
     [@bs.get]
-    external rawTrailers: subtype('w, 'r, 'a) => array(string) =
-      "rawTrailers";
+    external rawTrailers: subtype('r, 'a) => array(string) = "rawTrailers";
     [@bs.get]
-    external connection: subtype('w, 'r, 'a) => Net.TcpSocket.t =
-      "connection";
-    [@bs.get] external aborted: subtype('w, 'r, 'a) => bool = "aborted";
-    [@bs.get] external complete: subtype('w, 'r, 'a) => bool = "complete";
-    [@bs.send] external destroy: subtype('w, 'r, 'a) => unit = "destroy";
+    external connection: subtype('r, 'a) => Net.TcpSocket.t = "connection";
+    [@bs.get] external aborted: subtype('r, 'a) => bool = "aborted";
+    [@bs.get] external complete: subtype('r, 'a) => bool = "complete";
+    [@bs.send] external destroy: subtype('r, 'a) => unit = "destroy";
     [@bs.send]
-    external destroyWithError: (subtype('w, 'r, 'a), Js.Exn.t) => bool =
+    external destroyWithError: (subtype('r, 'a), Js.Exn.t) => bool =
       "destroy";
     [@bs.send]
-    external setTimeout: (subtype('w, 'r, 'a), int) => subtype('w, 'r, 'a) =
+    external setTimeout: (subtype('r, 'a), int) => subtype('r, 'a) =
       "setTimeout";
     [@bs.send]
     external setTimeoutWithCallback:
-      (subtype('w, 'r, 'a), int, subtype('w, 'r, 'a) => unit) =>
-      subtype('w, 'r, 'a) =
+      (subtype('r, 'a), int, subtype('r, 'a) => unit) => subtype('r, 'a) =
       "setTimeout";
     [@bs.get]
-    external socket: subtype('w, 'r, 'a) => Net.Socket.subtype('w, 'r, 'b) =
-      "socket";
-    [@bs.get] external statusCode: subtype('w, 'r, 'a) => int = "statusCode";
+    external socket: subtype('r, 'a) => Net.TcpSocket.t = "socket";
+    [@bs.get] external statusCode: subtype('r, 'a) => int = "statusCode";
     [@bs.get]
-    external statusMessage: subtype('w, 'r, 'a) => string = "statusMessage";
+    external statusMessage: subtype('r, 'a) => string = "statusMessage";
     [@bs.get]
-    external trailers: subtype('w, 'r, 'a) => Js.Dict.t(string) = "trailers";
+    external trailers: subtype('r, 'a) => Js.Dict.t(string) = "trailers";
   };
   include Impl;
 };
 
 module ClientRequest = {
-  type kind = [ Stream.duplex | `ClientRequest];
-  type subtype('w, 'r, 'a) = Stream.subtype('w, 'r, [> kind] as 'a);
-  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
-  type t = subtype(Buffer.t, Buffer.t, [ kind]);
+  type kind('w, 'r) = [ Stream.duplex('w, 'r) | `ClientRequest];
+  type subtype('w, 'r, 'a) = Stream.subtype([> kind('w, 'r)] as 'a);
+  type supertype('w, 'r, 'a) = Stream.subtype([< kind('w, 'r)] as 'a);
+  type t = Stream.subtype([ kind(Buffer.t, Buffer.t)]);
   type information = {
     httpVersion: string,
     httpVersionMajor: int,
     httpVersionMinor: int,
     statusCode: int,
     statusMessage: string,
-    headers,
+    headers: headersObject,
     rawHeaders: array(string),
   };
   module Events = {
@@ -222,12 +195,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "connect"] _,
-        (
-          IncomingMessage.subtype('w, 'r, 'b),
-          Net.Socket.subtype('w, 'r, 'c),
-          Buffer.t
-        ) =>
-        unit
+        (IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit
       ) =>
       unit =
       "on";
@@ -254,7 +222,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "response"] _,
-        [@bs.uncurry] (IncomingMessage.subtype('w, 'r, 'b) => unit)
+        [@bs.uncurry] (IncomingMessage.t => unit)
       ) =>
       subtype('w, 'r, 'a) =
       "on";
@@ -282,8 +250,7 @@ module ClientRequest = {
         subtype('w, 'r, 'a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (
-          (IncomingMessage.subtype('w, 'r, 'b), Net.TcpSocket.t, Buffer.t) =>
-          unit
+          (IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit
         )
       ) =>
       subtype('w, 'r, 'a) =
@@ -303,12 +270,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "connect"] _,
-        (
-          IncomingMessage.subtype('w, 'r, 'b),
-          Net.Socket.subtype('w, 'r, 'c),
-          Buffer.t
-        ) =>
-        unit
+        (IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit
       ) =>
       unit =
       "off";
@@ -335,7 +297,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "response"] _,
-        [@bs.uncurry] (IncomingMessage.subtype('w, 'r, 'b) => unit)
+        [@bs.uncurry] (IncomingMessage.t => unit)
       ) =>
       subtype('w, 'r, 'a) =
       "off";
@@ -363,8 +325,7 @@ module ClientRequest = {
         subtype('w, 'r, 'a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (
-          (IncomingMessage.subtype('w, 'r, 'b), Net.TcpSocket.t, Buffer.t) =>
-          unit
+          (IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit
         )
       ) =>
       subtype('w, 'r, 'a) =
@@ -384,11 +345,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "connect"] _,
-        (
-          IncomingMessage.subtype('w, 'r, 'b),
-          Net.Socket.subtype('w, 'r, 'c),
-          Buffer.t
-        ) =>
+        (IncomingMessage.t, Net.Socket.subtype('w, 'r, 'c), Buffer.t) =>
         unit
       ) =>
       unit =
@@ -416,7 +373,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "response"] _,
-        [@bs.uncurry] (IncomingMessage.subtype('w, 'r, 'b) => unit)
+        [@bs.uncurry] (IncomingMessage.t => unit)
       ) =>
       subtype('w, 'r, 'a) =
       "once";
@@ -444,8 +401,7 @@ module ClientRequest = {
         subtype('w, 'r, 'a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (
-          (IncomingMessage.subtype('w, 'r, 'b), Net.TcpSocket.t, Buffer.t) =>
-          unit
+          (IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit
         )
       ) =>
       subtype('w, 'r, 'a) =
@@ -513,10 +469,10 @@ module ClientRequest = {
 };
 
 module ServerResponse = {
-  type kind = [ Stream.duplex | `ServerResponse];
-  type subtype('w, 'r, 'a) = Stream.subtype('w, 'r, [> kind] as 'a);
-  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
-  type t = subtype(Buffer.t, Buffer.t, [ kind]);
+  type kind('w, 'r) = [ Stream.duplex('w, 'r) | `ServerResponse];
+  type subtype('w, 'r, 'a) = Stream.subtype([> kind('w, 'r)] as 'a);
+  type supertype('w, 'r, 'a) = Stream.subtype([< kind('w, 'r)] as 'a);
+  type t = Stream.subtype([ kind(Buffer.t, Buffer.t)]);
   module Events = {
     include Stream.Duplex.Events;
     [@bs.send]
@@ -608,7 +564,7 @@ module ServerResponse = {
     external getHeaderNames: subtype('w, 'r, 'a) => array(string) =
       "getHeaderNames";
     [@bs.send]
-    external getHeaders: subtype('w, 'r, 'a) => headers = "getHeaders";
+    external getHeaders: subtype('w, 'r, 'a) => headersObject = "getHeaders";
     [@bs.send]
     external hasHeader: (subtype('w, 'r, 'a), string) => bool = "hasHeader";
     [@bs.get]
@@ -719,7 +675,8 @@ module Server = {
         subtype('a),
         [@bs.as "connect"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
+          unit
         )
       ) =>
       subtype('a) =
@@ -739,7 +696,8 @@ module Server = {
         subtype('a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
+          unit
         )
       ) =>
       subtype('a) =
@@ -786,7 +744,8 @@ module Server = {
         subtype('a),
         [@bs.as "connect"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
+          unit
         )
       ) =>
       subtype('a) =
@@ -806,7 +765,8 @@ module Server = {
         subtype('a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
+          unit
         )
       ) =>
       subtype('a) =
@@ -853,7 +813,8 @@ module Server = {
         subtype('a),
         [@bs.as "connect"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
+          unit
         )
       ) =>
       subtype('a) =
@@ -873,7 +834,8 @@ module Server = {
         subtype('a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
+          unit
         )
       ) =>
       subtype('a) =
@@ -945,7 +907,7 @@ external requestOptions:
     ~createConnection: unit => Net.TcpSocket.t=?,
     ~defaultPort: int=?,
     ~family: int=?,
-    ~headers: headers=?,
+    ~headers: headersObject=?,
     ~host: string=?,
     ~hostName: string=?,
     ~localAddress: string=?,
