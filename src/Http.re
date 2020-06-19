@@ -1,99 +1,99 @@
 type http = [ | `Http];
 
 type headersObject = {
-    accept: option(string),
-    [@bs.as "accept-language"]
-    acceptLanguage: option(string),
-    [@bs.as "accept-patch"]
-    acceptPatch: option(string),
-    [@bs.as "accept-ranges"]
-    acceptRanges: option(string),
-    [@bs.as "access-control-allow-credentials"]
-    accessControlAllowCredentials: option(string),
-    [@bs.as "access-control-allow-headers"]
-    accessControlAllowHeaders: option(string),
-    [@bs.as "access-control-allow-methods"]
-    accessControlAllowMethods: string,
-    [@bs.as "access-control-allow-origin"]
-    accessControlAllowOrigin: option(string),
-    [@bs.as "access-control-expose-headers"]
-    accessControlExposeHeaders: option(string),
-    [@bs.as "access-control-max-age"]
-    accessControlMaxAge: option(string),
-    age: option(string),
-    allow: option(string),
-    [@bs.as "alt-svc"]
-    altSvc: option(string),
-    authorization: option(string),
-    [@bs.as "cache-control"]
-    cacheControl: option(string),
-    connection: option(string),
-    [@bs.as "content-disposition"]
-    contentDisposition: option(string),
-    [@bs.as "content-encoding"]
-    contentEncoding: option(string),
-    [@bs.as "content-language"]
-    contentLanguage: option(string),
-    [@bs.as "content-length"]
-    contentLenth: option(string),
-    [@bs.as "content-location"]
-    contentLocation: option(string),
-    [@bs.as "content-range"]
-    contentRange: option(string),
-    [@bs.as "content-type"]
-    contentType: option(string),
-    cookie: option(string),
-    date: option(string),
-    expect: option(string),
-    expires: option(string),
-    forwarded: option(string),
-    from: option(string),
-    host: option(string),
-    [@bs.as "if-match"]
-    ifMatch: option(string),
-    [@bs.as "if-modified-since"]
-    ifModifiedSince: option(string),
-    [@bs.as "if-none-match"]
-    ifNoneMatch: option(string),
-    [@bs.as "if-unmodified-since"]
-    ifUnmodifiedSince: option(string),
-    [@bs.as "last-modified"]
-    lastModified: option(string),
-    location: option(string),
-    pragma: option(string),
-    [@bs.as "proxy-authenticate"]
-    proxyAuthenticate: option(string),
-    [@bs.as "proxy-authorization"]
-    proxyAuthorization: option(string),
-    [@bs.as "public-key-pins"]
-    publicKeyPins: option(string),
-    range: option(string),
-    referer: option(string),
-    [@bs.as "retry-after"]
-    retryAfter: option(string),
-    [@bs.as "set-cookie"]
-    setCookie: option(array(string)),
-    [@bs.as "strict-transport-security"]
-    strictTransportPolicy: option(string),
-    tk: option(string),
-    trailer: option(string),
-    [@bs.as "transfer-encoding"]
-    transferEncoding: option(string),
-    upgrade: option(string),
-    [@bs.as "user-agent"]
-    userAgent: option(string),
-    vary: option(string),
-    via: option(string),
-    warning: option(string),
-    [@bs.as "www-authenticate"]
-    wwwAuthenticate: option(string),
-  };
+  accept: option(string),
+  [@bs.as "accept-language"]
+  acceptLanguage: option(string),
+  [@bs.as "accept-patch"]
+  acceptPatch: option(string),
+  [@bs.as "accept-ranges"]
+  acceptRanges: option(string),
+  [@bs.as "access-control-allow-credentials"]
+  accessControlAllowCredentials: option(string),
+  [@bs.as "access-control-allow-headers"]
+  accessControlAllowHeaders: option(string),
+  [@bs.as "access-control-allow-methods"]
+  accessControlAllowMethods: string,
+  [@bs.as "access-control-allow-origin"]
+  accessControlAllowOrigin: option(string),
+  [@bs.as "access-control-expose-headers"]
+  accessControlExposeHeaders: option(string),
+  [@bs.as "access-control-max-age"]
+  accessControlMaxAge: option(string),
+  age: option(string),
+  allow: option(string),
+  [@bs.as "alt-svc"]
+  altSvc: option(string),
+  authorization: option(string),
+  [@bs.as "cache-control"]
+  cacheControl: option(string),
+  connection: option(string),
+  [@bs.as "content-disposition"]
+  contentDisposition: option(string),
+  [@bs.as "content-encoding"]
+  contentEncoding: option(string),
+  [@bs.as "content-language"]
+  contentLanguage: option(string),
+  [@bs.as "content-length"]
+  contentLenth: option(string),
+  [@bs.as "content-location"]
+  contentLocation: option(string),
+  [@bs.as "content-range"]
+  contentRange: option(string),
+  [@bs.as "content-type"]
+  contentType: option(string),
+  cookie: option(string),
+  date: option(string),
+  expect: option(string),
+  expires: option(string),
+  forwarded: option(string),
+  from: option(string),
+  host: option(string),
+  [@bs.as "if-match"]
+  ifMatch: option(string),
+  [@bs.as "if-modified-since"]
+  ifModifiedSince: option(string),
+  [@bs.as "if-none-match"]
+  ifNoneMatch: option(string),
+  [@bs.as "if-unmodified-since"]
+  ifUnmodifiedSince: option(string),
+  [@bs.as "last-modified"]
+  lastModified: option(string),
+  location: option(string),
+  pragma: option(string),
+  [@bs.as "proxy-authenticate"]
+  proxyAuthenticate: option(string),
+  [@bs.as "proxy-authorization"]
+  proxyAuthorization: option(string),
+  [@bs.as "public-key-pins"]
+  publicKeyPins: option(string),
+  range: option(string),
+  referer: option(string),
+  [@bs.as "retry-after"]
+  retryAfter: option(string),
+  [@bs.as "set-cookie"]
+  setCookie: option(array(string)),
+  [@bs.as "strict-transport-security"]
+  strictTransportPolicy: option(string),
+  tk: option(string),
+  trailer: option(string),
+  [@bs.as "transfer-encoding"]
+  transferEncoding: option(string),
+  upgrade: option(string),
+  [@bs.as "user-agent"]
+  userAgent: option(string),
+  vary: option(string),
+  via: option(string),
+  warning: option(string),
+  [@bs.as "www-authenticate"]
+  wwwAuthenticate: option(string),
+};
 
 module IncomingMessage = {
   type kind('r) = [ Stream.readable('r) | `IncomingMessage];
   type subtype('r, 'a) = Stream.subtype([> kind('r)] as 'a);
   type supertype('r, 'a) = Stream.subtype([< kind('r)] as 'a);
-  type t = Stream.subtype([ kind(Buffer.t)]);
+  type t = Stream.subtype(kind(Buffer.t));
   module Events = {
     include Stream.Readable.Events;
     [@bs.send]
@@ -154,8 +154,7 @@ module IncomingMessage = {
     external setTimeoutWithCallback:
       (subtype('r, 'a), int, subtype('r, 'a) => unit) => subtype('r, 'a) =
       "setTimeout";
-    [@bs.get]
-    external socket: subtype('r, 'a) => Net.TcpSocket.t = "socket";
+    [@bs.get] external socket: subtype('r, 'a) => Net.TcpSocket.t = "socket";
     [@bs.get] external statusCode: subtype('r, 'a) => int = "statusCode";
     [@bs.get]
     external statusMessage: subtype('r, 'a) => string = "statusMessage";
@@ -169,7 +168,7 @@ module ClientRequest = {
   type kind('w, 'r) = [ Stream.duplex('w, 'r) | `ClientRequest];
   type subtype('w, 'r, 'a) = Stream.subtype([> kind('w, 'r)] as 'a);
   type supertype('w, 'r, 'a) = Stream.subtype([< kind('w, 'r)] as 'a);
-  type t = Stream.subtype([ kind(Buffer.t, Buffer.t)]);
+  type t = Stream.subtype(kind(Buffer.t, Buffer.t));
   type information = {
     httpVersion: string,
     httpVersionMajor: int,
@@ -249,9 +248,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "upgrade"] _,
-        [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit
-        )
+        [@bs.uncurry] ((IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit)
       ) =>
       subtype('w, 'r, 'a) =
       "on";
@@ -324,9 +321,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "upgrade"] _,
-        [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit
-        )
+        [@bs.uncurry] ((IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit)
       ) =>
       subtype('w, 'r, 'a) =
       "off";
@@ -345,8 +340,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "connect"] _,
-        (IncomingMessage.t, Net.Socket.subtype('w, 'r, 'c), Buffer.t) =>
-        unit
+        (IncomingMessage.t, Net.Socket.subtype('w, 'r, 'c), Buffer.t) => unit
       ) =>
       unit =
       "once";
@@ -400,9 +394,7 @@ module ClientRequest = {
       (
         subtype('w, 'r, 'a),
         [@bs.as "upgrade"] _,
-        [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit
-        )
+        [@bs.uncurry] ((IncomingMessage.t, Net.TcpSocket.t, Buffer.t) => unit)
       ) =>
       subtype('w, 'r, 'a) =
       "once";
@@ -472,7 +464,7 @@ module ServerResponse = {
   type kind('w, 'r) = [ Stream.duplex('w, 'r) | `ServerResponse];
   type subtype('w, 'r, 'a) = Stream.subtype([> kind('w, 'r)] as 'a);
   type supertype('w, 'r, 'a) = Stream.subtype([< kind('w, 'r)] as 'a);
-  type t = Stream.subtype([ kind(Buffer.t, Buffer.t)]);
+  type t = Stream.subtype(kind(Buffer.t, Buffer.t));
   module Events = {
     include Stream.Duplex.Events;
     [@bs.send]
@@ -675,8 +667,7 @@ module Server = {
         subtype('a),
         [@bs.as "connect"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
-          unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
         )
       ) =>
       subtype('a) =
@@ -696,8 +687,7 @@ module Server = {
         subtype('a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
-          unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
         )
       ) =>
       subtype('a) =
@@ -744,8 +734,7 @@ module Server = {
         subtype('a),
         [@bs.as "connect"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
-          unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
         )
       ) =>
       subtype('a) =
@@ -765,8 +754,7 @@ module Server = {
         subtype('a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
-          unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
         )
       ) =>
       subtype('a) =
@@ -813,8 +801,7 @@ module Server = {
         subtype('a),
         [@bs.as "connect"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
-          unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
         )
       ) =>
       subtype('a) =
@@ -834,8 +821,7 @@ module Server = {
         subtype('a),
         [@bs.as "upgrade"] _,
         [@bs.uncurry] (
-          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) =>
-          unit
+          (IncomingMessage.t, Net.TcpSocket.t, Js.nullable(Buffer.t)) => unit
         )
       ) =>
       subtype('a) =
@@ -854,7 +840,7 @@ module Server = {
     include Events;
     [@bs.send]
     external setTimeout:
-      (subtype('a), int, [@bs.uncurry] (Net.TcpSocket.t => unit)) => unit =
+      (subtype('a), int, [@bs.uncurry] (Net.Socket.t => unit)) => unit =
       "setTimeout";
     [@bs.get] external timeout: subtype('a) => int = "timeout";
     [@bs.send]
