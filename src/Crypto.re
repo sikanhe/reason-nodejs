@@ -64,7 +64,7 @@ module Hash = {
   type kind('w, 'r) = [ Stream.transform('w, 'r) | `Hash];
   type subtype('w, 'r, 'a) = Stream.subtype([> kind('w, 'r)] as 'a);
   type supertype('w, 'r, 'a) = Stream.subtype([< kind('w, 'r)] as 'a);
-  type t = subtype(Buffer.t, Buffer.t, kind('w, 'r));
+  type t = Stream.subtype(kind(Buffer.t, Buffer.t));
   module Impl = {
     include Stream.Transform.Impl;
     [@bs.send] external copy: t => t = "copy";
@@ -106,7 +106,7 @@ module Cipher = {
   type kind('w, 'r) = [ Stream.transform('w, 'r) | `Cipher];
   type subtype('w, 'r, 'a) = Stream.subtype([> kind('w, 'r)] as 'a);
   type supertype('w, 'r, 'a) = Stream.subtype([< kind('w, 'r)] as 'a);
-  type t = subtype(Buffer.t, Buffer.t, kind('w, 'r));
+  type t = Stream.subtype(kind(Buffer.t, Buffer.t));
   module Impl = {
     include Stream.Transform.Impl;
     [@bs.send] external final: (t, string) => Buffer.t = "final";
@@ -150,7 +150,7 @@ module Decipher = {
   type kind('w, 'r) = [ Stream.transform('w, 'r) | `Decipher];
   type subtype('w, 'r, 'a) = Stream.subtype([> kind('w, 'r)] as 'a);
   type supertype('w, 'r, 'a) = Stream.subtype([< kind('w, 'r)] as 'a);
-  type t = subtype(Buffer.t, Buffer.t, kind('w, 'r));
+  type t = Stream.subtype(kind(Buffer.t, Buffer.t));
   module Impl = {
     [@bs.send]
     external final: (subtype('w, 'r, 'a), string) => Buffer.t = "final";
@@ -193,7 +193,7 @@ module Decipher = {
     ) =>
     t =
     "createDecipheriv";
-};
+} /* }*/ /* module Verify = */;
 
 // module DiffieHellman = {
 
@@ -204,9 +204,5 @@ module Decipher = {
 // };
 
 // module Sign = {
-
-// };
-
-// module Verify = {
 
 // };
