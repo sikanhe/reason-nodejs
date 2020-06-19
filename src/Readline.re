@@ -52,8 +52,7 @@ module Interface = {
   [@bs.get] [@bs.return nullable]
   external cursor: t => option(int) = "cursor";
   [@bs.send]
-  external clearLine:
-    (t, Stream.Writable.subtype(Buffer.t, 'ty), int) => bool =
+  external clearLine: (t, Stream.Writable.subtype(Buffer.t, 'ty), int) => bool =
     "clearLine";
   [@bs.send]
   external clearScreenDown:
