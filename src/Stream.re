@@ -1,6 +1,3 @@
-/** Not sure if we will need the `void` type */
-// type void;
-
 type stream = [ | `Stream];
 type objectMode = [ stream | `ObjectMode];
 type writable('w) = [ stream | `Writable('w)];
