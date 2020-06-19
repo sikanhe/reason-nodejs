@@ -117,17 +117,19 @@ module Http2Session = {
     (
       t,
       [@bs.as "stream"] _,
-      (
-        t,
-        Js.t({
-          ..
-          "status": string,
-          "content-type": string,
-        }),
-        int,
-        array(Js.t({..}))
-      ) =>
-      unit
+      [@bs.uncurry] (
+        (
+          t,
+          Js.t({
+            ..
+            "status": string,
+            "content-type": string,
+          }),
+          int,
+          array(Js.t({..}))
+        ) =>
+        unit
+      )
     ) =>
     t =
     "on";
