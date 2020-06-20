@@ -36,7 +36,7 @@ module KeyObject = {
 
 module PivateKey = {
   include KeyObject.Impl;
-  type kind = [ KeyObject.publicKey];
+  type kind = [ KeyObject.privateKey];
   type t('a) = KeyObject.t('a, [ kind]);
   [@bs.module "crypto"] external make: Buffer.t => t('a) = "createPrivateKey";
   [@bs.module "crypto"]
@@ -193,7 +193,7 @@ module Decipher = {
     ) =>
     t =
     "createDecipheriv";
-} /* }*/ /* module Verify = */;
+} /* }*/ /* }*/ /* module Verify = */;
 
 // module DiffieHellman = {
 
@@ -204,5 +204,3 @@ module Decipher = {
 // };
 
 // module Sign = {
-
-// };
