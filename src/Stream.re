@@ -489,8 +489,7 @@ module Readable = {
     external pause: (subtype([> readable('r)]) as 'rs) => 'rs = "pause";
     [@bs.send]
     external pipe:
-      (subtype([> readable('r)]), subtype([> writable('r)]) as 'ws) =>
-      'ws =
+      (subtype([> readable('r)]), subtype([> writable('r)]) as 'ws) => 'ws =
       "pipe";
     [@bs.send]
     external push: (subtype([> readable('r)]), 'r) => unit = "push";
@@ -522,8 +521,7 @@ module Readable = {
     external resume: (subtype([> readable('r)]) as 'rs) => 'rs = "resume";
     [@bs.send]
     external unpipe:
-      (subtype([> readable('r)]), subtype([> writable('r)]) as 'ws) =>
-      'ws =
+      (subtype([> readable('r)]), subtype([> writable('r)]) as 'ws) => 'ws =
       "unpipe";
     [@bs.send]
     external unshift: (subtype([> readable('r)]), 'r) => unit = "unshift";
@@ -684,8 +682,7 @@ module Duplex = {
     makeOptions('w, 'r);
 
   [@bs.module "stream"] [@bs.new]
-  external makeObjMode: makeOptionsObjMode('w, 'r) => t('w, 'r) =
-    "Duplex";
+  external makeObjMode: makeOptionsObjMode('w, 'r) => t('w, 'r) = "Duplex";
 };
 
 module Transform = {
@@ -767,7 +764,6 @@ module Transform = {
     "Transform";
 };
 
-
 module PassThrough = {
   type kind('w, 'r) = [ passThrough('w, 'r)];
   module Events = {
@@ -780,7 +776,8 @@ module PassThrough = {
   include Impl;
   type t('w, 'r) = subtype(passThrough('w, 'r));
   type supertype('w, 'r, 'ty) = subtype([< passThrough('w, 'r)] as 'ty);
-  type nonrec subtype('w, 'r, 'ty) = subtype([> passThrough('w, 'r)] as 'ty);
+  type nonrec subtype('w, 'r, 'ty) =
+    subtype([> passThrough('w, 'r)] as 'ty);
   [@bs.module "stream"] [@bs.new]
   external make: unit => t(Buffer.t, Buffer.t) = "PassThrough";
 };
@@ -798,8 +795,7 @@ include Events;
 type cleanupFn = unit => unit;
 
 [@bs.module "stream"]
-external finished:
-  (subtype('ty), Js.nullable(Js.Exn.t) => unit) => cleanupFn =
+external finished: (subtype('ty), Js.nullable(Js.Exn.t) => unit) => cleanupFn =
   "finished";
 
 [@bs.module "stream"]
@@ -820,7 +816,7 @@ external pipeline3:
     subtype([> writable('t2)] as 'dest),
     Js.nullable(Js.Exn.t) => unit
   ) =>
-  subtype([> writable('t2) ] as 'dest) =
+  subtype([> writable('t2)] as 'dest) =
   "pipeline";
 [@bs.module "stream"]
 external pipeline4:
