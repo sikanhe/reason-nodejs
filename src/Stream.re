@@ -371,6 +371,7 @@ module Readable = {
   type nonrec t('r) = subtype(void, 'r, kind);
   type objStream('r) = subtype(void, 'r, [ kind | objectMode]);
 
+  type calledBackDestroy;
   type makeOptions('r);
   [@bs.obj]
   external makeOptions:
@@ -383,9 +384,9 @@ module Readable = {
                   (
                     t('r),
                     Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => unit
+                    (~err: option(Js.Exn.t)) => calledBackDestroy
                   ) =>
-                  unit
+                  calledBackDestroy
                 ),
       ~read: [@bs.this] ((t('r), Js.nullable(int)) => unit),
       unit
@@ -394,6 +395,7 @@ module Readable = {
   [@bs.module "stream"] [@bs.new]
   external make: makeOptions(Buffer.t) => t(Buffer.t) = "Readable";
 
+  type calledBackDestroyObjMode;
   type makeOptionsObjMode('r);
   [@bs.obj]
   external makeOptionsObjMode:
@@ -406,9 +408,9 @@ module Readable = {
                   (
                     t('r),
                     Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => unit
+                    (~err: option(Js.Exn.t)) => calledBackDestroyObjMode
                   ) =>
-                  unit
+                  calledBackDestroyObjMode
                 ),
       ~read: [@bs.this] ((t('r), Js.nullable(int)) => unit),
       unit
@@ -575,6 +577,11 @@ module Writable = {
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('w) = subtype('w, void, kind);
   type objStream('w) = subtype('w, void, [ kind | objectMode]);
+
+  type calledBackDestroy;
+  type calledBackFinal;
+  type calledBackWritev;
+  type calledBackWrite;
   type makeOptions('w);
   [@bs.obj]
   external makeOptions:
@@ -587,26 +594,28 @@ module Writable = {
                   (
                     t('w),
                     Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => unit
+                    (~err: option(Js.Exn.t)) => calledBackDestroy
                   ) =>
-                  unit
+                  calledBackDestroy
                 )
                   =?,
       ~final: [@bs.this] (
-                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+                (t('w), 'w, (~err: option(Js.Exn.t)) => calledBackFinal) =>
+                calledBackFinal
               )
                 =?,
       ~writev: [@bs.this] (
                  (
                    t('w),
                    array(chunk('w)),
-                   (~err: option(Js.Exn.t)) => unit
+                   (~err: option(Js.Exn.t)) => calledBackWritev
                  ) =>
-                 unit
+                 calledBackWritev
                )
                  =?,
       ~write: [@bs.this] (
-                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+                (t('w), 'w, (~err: option(Js.Exn.t)) => calledBackWrite) =>
+                calledBackWrite
               ),
       unit
     ) =>
@@ -614,6 +623,10 @@ module Writable = {
   [@bs.module "stream"] [@bs.new]
   external make: makeOptions(Buffer.t) => t(Buffer.t) = "Writable";
 
+  type calledBackDestroyObjMode;
+  type calledBackFinalObjMode;
+  type calledBackWritevObjMode;
+  type calledBackWriteObjMode;
   type makeOptionsObjMode('w);
   [@bs.obj]
   external makeOptionsObjMode:
@@ -626,26 +639,36 @@ module Writable = {
                   (
                     t('w),
                     Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => unit
+                    (~err: option(Js.Exn.t)) => calledBackDestroyObjMode
                   ) =>
-                  unit
+                  calledBackDestroyObjMode
                 )
                   =?,
       ~final: [@bs.this] (
-                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+                (
+                  t('w),
+                  'w,
+                  (~err: option(Js.Exn.t)) => calledBackFinalObjMode
+                ) =>
+                calledBackFinalObjMode
               )
                 =?,
       ~writev: [@bs.this] (
                  (
                    t('w),
                    array(chunk('w)),
-                   (~err: option(Js.Exn.t)) => unit
+                   (~err: option(Js.Exn.t)) => calledBackWritevObjMode
                  ) =>
-                 unit
+                 calledBackWritevObjMode
                )
                  =?,
       ~write: [@bs.this] (
-                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+                (
+                  t('w),
+                  'w,
+                  (~err: option(Js.Exn.t)) => calledBackWriteObjMode
+                ) =>
+                calledBackWriteObjMode
               ),
       unit
     ) =>
@@ -669,6 +692,11 @@ module Duplex = {
   type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
   type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
   type nonrec t('w, 'r) = subtype('w, 'r, kind);
+
+  type calledBackDestroy;
+  type calledBackFinal;
+  type calledBackWritev;
+  type calledBackWrite;
   type makeOptions('w, 'r);
   [@bs.obj]
   external makeOptions:
@@ -682,27 +710,37 @@ module Duplex = {
                   (
                     t('w, 'r),
                     Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => unit
+                    (~err: option(Js.Exn.t)) => calledBackDestroy
                   ) =>
-                  unit
+                  calledBackDestroy
                 )
                   =?,
       ~final: [@bs.this] (
-                (t('w, 'r), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+                (
+                  t('w, 'r),
+                  'w,
+                  (~err: option(Js.Exn.t)) => calledBackFinal
+                ) =>
+                calledBackFinal
               )
                 =?,
       ~writev: [@bs.this] (
                  (
                    t('w, 'r),
                    array(chunk('w)),
-                   (~err: option(Js.Exn.t)) => unit
+                   (~err: option(Js.Exn.t)) => calledBackWritev
                  ) =>
-                 unit
+                 calledBackWritev
                )
                  =?,
       ~read: [@bs.this] ((t('w, 'r), Js.nullable(int)) => unit),
       ~write: [@bs.this] (
-                (t('w, 'r), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+                (
+                  t('w, 'r),
+                  'w,
+                  (~err: option(Js.Exn.t)) => calledBackWrite
+                ) =>
+                calledBackWrite
               ),
       unit
     ) =>
@@ -728,6 +766,10 @@ module Transform = {
   type nonrec t('w, 'r) = subtype('w, 'r, kind);
   type objStream('w, 'r) = subtype('w, 'r, [ kind | objectMode]);
   type makeOptions('w, 'r);
+
+  // TODO
+  type calledBackTransform;
+  type calledBackFlush;
   [@bs.obj]
   external makeOptions:
     (
@@ -740,16 +782,18 @@ module Transform = {
                       t('w, 'r),
                       'w,
                       string,
-                      (~err: option(Js.Exn.t), ~data: option('r)) => unit
+                      (~err: option(Js.Exn.t), ~data: option('r)) =>
+                      calledBackTransform
                     ) =>
-                    unit
+                    calledBackTransform
                   ),
       ~flush: [@bs.this] (
                 (
                   t('w, 'r),
-                  (~err: option(Js.Exn.t), ~data: option('r)) => unit
+                  (~err: option(Js.Exn.t), ~data: option('r)) =>
+                  calledBackFlush
                 ) =>
-                unit
+                calledBackFlush
               ),
       unit
     ) =>
@@ -759,6 +803,8 @@ module Transform = {
   external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) =
     "Transform";
 
+  type calledBackTransformObjMode;
+  type calledBackFlushObjMode;
   type makeOptionsObjMode('w, 'r);
   [@bs.obj]
   external makeOptionsObjMode:
@@ -772,16 +818,18 @@ module Transform = {
                       t('w, 'r),
                       'w,
                       string,
-                      (~err: option(Js.Exn.t), ~data: option('r)) => unit
+                      (~err: option(Js.Exn.t), ~data: option('r)) =>
+                      calledBackTransformObjMode
                     ) =>
-                    unit
+                    calledBackTransformObjMode
                   ),
       ~flush: [@bs.this] (
                 (
                   t('w, 'r),
-                  (~err: option(Js.Exn.t), ~data: option('r)) => unit
+                  (~err: option(Js.Exn.t), ~data: option('r)) =>
+                  calledBackFlushObjMode
                 ) =>
-                unit
+                calledBackFlushObjMode
               ),
       unit
     ) =>
