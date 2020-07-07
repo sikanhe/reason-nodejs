@@ -4,8 +4,8 @@ module Interface = {
   [@bs.obj]
   external interfaceOptions:
     (
-      ~input: Stream.Readable.subtype('w, Buffer.t, 'k),
-      ~output: Stream.Writable.subtype(Buffer.t, 'r, 'k)=?,
+      ~input: Stream.Readable.subtype(Buffer.t, 'rtype),
+      ~output: Stream.Writable.subtype(Buffer.t, 'wtype)=?,
       ~completer: (string, (string, (array(string), string)) => unit) => unit
                     =?,
       ~terminal: bool=?,
@@ -52,18 +52,17 @@ module Interface = {
   [@bs.get] [@bs.return nullable]
   external cursor: t => option(int) = "cursor";
   [@bs.send]
-  external clearLine:
-    (t, Stream.Writable.subtype(Buffer.t, 'r, 'k), int) => bool =
+  external clearLine: (t, Stream.Writable.subtype(Buffer.t, 'ty), int) => bool =
     "clearLine";
   [@bs.send]
   external clearScreenDown:
-    (t, Stream.Writable.subtype(Buffer.t, 'r, 'k), unit => unit) => bool =
+    (t, Stream.Writable.subtype(Buffer.t, 'ty), unit => unit) => bool =
     "clearScreenDown";
   [@bs.send]
   external cursorTo:
     (
       t,
-      Stream.Writable.subtype(Buffer.t, 'r, 'k),
+      Stream.Writable.subtype(Buffer.t, 'ty),
       int,
       Js.Undefined.t(int),
       Js.Undefined.t(unit => unit)
@@ -74,7 +73,7 @@ module Interface = {
   external moveCursor:
     (
       t,
-      Stream.Writable.subtype(Buffer.t, 'r, 'k),
+      Stream.Writable.subtype(Buffer.t, 'ty),
       int,
       int,
       Js.Undefined.t(unit => unit)
