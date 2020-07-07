@@ -1,190 +1,353 @@
-/**
- * Streams have complex-looking type signatures. You will notice that most
- * of the stream modules have a type `t` with one or two type variables, and a
- * `subtype` with three type variables. This might be confusing, but they each
- * have their own meaning which is important for composing streams in a typesafe
- * and flexible way.
- *
- * In most cases, the first two type variables for `subtype` are labelled
- * `w` or `r`, which represent the types of data that may be *written* or
- * *read* from a given stream. The third variable is a polymorphic variant
- * that represents the specific class "subtype" for the stream. You could even
- * think of these polymorphic variants as representing the prototype chain for
- * the Node stream object.
- *
- * When a stream is created (e.g. with `Readable.make` or `Fs.createWriteStream`)
- * We lock in the subtype (the third type variable), which allows any function
- * defined in a module of its *supertype* to work on that stream object. In
- * addition, we often lock in the `w` and/or `r` data type variables (e.g. with
- * `Buffer.t`) when that type is known and fixed, which is usually the case for
- * the built-in streams.
- *
- * A good example is the stream returned by `Fs.createReadStream`, which takes
- * a file path and returns a stream of type:
- *
- * ```
- * Stream.Readable.subtype(void, Buffer.t, [`Stream | `Readable | `FileSystem]);
- * ```
- *
- * This indicates:
- *
- * 1. We may write nothing to it (the `Stream.void` type cannot be produced,
- * so we enforce read-only semantics).
- *
- * 2. We may read values of type `Buffer.t` from it.
- *
- * 3. All the functions defined in `Stream.Common` and `Stream.Readable` will
- * accept this stream as a primary arugment, along with any functions that take
- * a file-system specific readable stream.
- *
- * If we create our own readable stream with `Stream.Readable.make`, then, after
- * implementing the necessary functions (`read` and `destroy`), we get back
- * a stream of type:
- *
- * ```
- * Stream.Readable.t(Buffer.t)`;
- * ```
- *
- * What is not shown in the above type signature is that the type `t('r)` in
- * `Readable` is the same thing as `Readable.subtype(void, 'r, readable)`;
- * The `w` type variable is already locked in as `void` since by definition
- * this stream is not configured to be writable. We also lock in the polymorphic
- * variant in the third position, indicating that this stream is a 'Readable'
- * subtype of the `Stream` class, no more and no less.
- *
- * Also note that there is an "object mode" version of these streams, which
- * allows arbitrary JS types to be written or read from the stream as oppose to
- * the usual `Buffer.t` used by most built-in streams.
- *
- * Implementing a custom stream will imply/lock-in the type signatures for `r` and `w`.
- * This will allow a series of streams to be composed together using the `pipe` method.
- * This kind of stream composition is the main reason for so many type parameters.
- * Tracking the readable/writable data types allows the user to compose async
- * data pipelines in a type-safe and expressive way.
- *
-*/
-
-/**
- * The `void` type is meant to represent the type of readable or writable
- * data which can never be produced. It is useful for modelling non-readable
- * or non-writable streams. While the `unit` type might be a good candidate,
- * it is possible to pass unit as a value, which is represented in JavaScript
- * as either `0` or `undefined`, depending on your compiler version. To
- * avoid edge cases, we use the unrepresentable type `void` instead.
- */
-type void;
-
-/**
- * This section contains most of polymorphic variant constraints
- * corresponding to the various subtypes of `Stream.t` throughout this library.
- */
 type stream = [ | `Stream];
-type readable = [ stream | `Readable];
-type writable = [ stream | `Writable];
-type duplex = [ readable | writable];
-type transform = [ duplex | `Transform];
-type passThrough = [ transform | `PassThrough];
-type socket = [ duplex | `Socket];
-type tcpSocket = [ socket | `Tcp];
-type icpSocket = [ socket | `Icp];
-type fsReadable = [ readable | `FileSystem];
-type fsWritable = [ writable | `FileSystem];
 type objectMode = [ stream | `ObjectMode];
+type writable('w) = [ stream | `Writable('w)];
+type readable('r) = [ stream | `Readable('r)];
+type duplex('w, 'r) = [ writable('w) | readable('r)];
+type transform('w, 'r) = [ duplex('w, 'r) | `Transform];
+type passThrough('w, 'r) = [ transform('w, 'r) | `PassThrough];
+type socket('w, 'r) = [ duplex('w, 'r) | `Socket];
+type tcpSocket('w, 'r) = [ socket('w, 'r) | `Tcp];
+type icpSocket('w, 'r) = [ socket('w, 'r) | `Icp];
+type fsWritable('w) = [ writable('w) | `FileSystem];
+type fsReadable('r) = [ readable('r) | `FileSystem];
 
-type subtype('w, 'r, 'a) constraint 'a = [> stream];
-type t('w, 'r) = subtype('w, 'r, stream);
+type kind = [ stream];
+type subtype('ty) constraint 'ty = [> stream];
+type t = subtype(stream);
 
-type chunk('w) =
+type chunk('a) =
   pri {
-    chunk: 'w,
+    chunk: 'a,
     encoding: string,
   };
 
 module Common = {
   type kind = [ stream];
-  type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, 'a);
+
   module Events = {
     [@bs.send]
     external onError:
       (
-        subtype('w, 'r, 'a) as 'stream,
+        subtype('ty) as 'stream,
         [@bs.as "error"] _,
         [@bs.uncurry] (Js.Exn.t => unit)
       ) =>
       'stream =
       "on";
+
     [@bs.send]
     external onClose:
       (
-        subtype('w, 'r, 'a) as 'stream,
+        subtype('ty) as 'stream,
         [@bs.as "close"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
       'stream =
       "on";
+
     [@bs.send]
     external offError:
       (
-        subtype('w, 'r, 'a) as 'stream,
+        subtype('ty) as 'stream,
         [@bs.as "error"] _,
         [@bs.uncurry] (Js.Exn.t => unit)
       ) =>
       'stream =
       "off";
+
     [@bs.send]
     external offClose:
       (
-        subtype('w, 'r, 'a) as 'stream,
+        subtype('ty) as 'stream,
         [@bs.as "close"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
       'stream =
       "off";
-    [@bs.send]
-    external onErrorOnce:
-      (
-        subtype('w, 'r, 'a) as 'stream,
-        [@bs.as "error"] _,
-        [@bs.uncurry] (Js.Exn.t => unit)
-      ) =>
-      'stream =
-      "once";
+
     [@bs.send]
     external onCloseOnce:
       (
-        subtype('w, 'r, 'a) as 'stream,
+        subtype('ty) as 'stream,
         [@bs.as "close"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
       'stream =
       "once";
+
     [@bs.send]
-    external removeAllListeners: (subtype('w, 'r, 'a) as 'stream) => 'stream =
+    external onErrorOnce:
+      (
+        subtype('ty) as 'stream,
+        [@bs.as "error"] _,
+        [@bs.uncurry] (Js.Exn.t => unit)
+      ) =>
+      'stream =
+      "once";
+
+    [@bs.send]
+    external removeAllListeners: (subtype('ty) as 'stream) => 'stream =
       "removeAllListeners";
   };
+
   module Impl = {
     include Events;
     [@bs.send]
-    external destroy: (subtype('w, 'r, [> kind]) as 'stream) => 'stream =
-      "destroy";
+    external destroy: (subtype([> kind]) as 'stream) => 'stream = "destroy";
     [@bs.send]
     external destroyWithError:
-      (subtype('w, 'r, [> kind]) as 'stream, Js.Exn.t) => 'stream =
+      (subtype([> kind]) as 'stream, Js.Exn.t) => 'stream =
       "destroy";
-    [@bs.get]
-    external destroyed: subtype('w, 'r, [> kind]) => bool = "destroyed";
+    [@bs.get] external destroyed: subtype([> kind]) => bool = "destroyed";
   };
   include Impl;
 };
 
+module Writable = {
+  type kind('w) = writable('w);
+  module Events = {
+    [@bs.send]
+    external onDrain:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "drain"] _,
+        [@bs.uncurry] (unit => unit)
+      ) =>
+      'ws =
+      "on";
+    [@bs.send]
+    external onFinish:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "finish"] _,
+        [@bs.uncurry] (unit => unit)
+      ) =>
+      'ws =
+      "on";
+    [@bs.send]
+    external onPipe:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "pipe"] _,
+        [@bs.uncurry] (subtype([> readable('r)]) => unit)
+      ) =>
+      'ws =
+      "on";
+    [@bs.send]
+    external onUnpipe:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "unpipe"] _,
+        [@bs.uncurry] (subtype([> readable('r)]) => unit)
+      ) =>
+      'ws =
+      "on";
+    [@bs.send]
+    external offDrain:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "drain"] _,
+        [@bs.uncurry] (unit => unit)
+      ) =>
+      'ws =
+      "off";
+    [@bs.send]
+    external offFinish:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "finish"] _,
+        [@bs.uncurry] (unit => unit)
+      ) =>
+      'ws =
+      "off";
+    [@bs.send]
+    external offPipe:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "pipe"] _,
+        [@bs.uncurry] (subtype([> readable('r)]) => unit)
+      ) =>
+      'ws =
+      "off";
+    [@bs.send]
+    external offUnpipe:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "unpipe"] _,
+        [@bs.uncurry] (subtype([> readable('r)]) => unit)
+      ) =>
+      'ws =
+      "off";
+    [@bs.send]
+    external onDrainOnce:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "drain"] _,
+        [@bs.uncurry] (unit => unit)
+      ) =>
+      'ws =
+      "once";
+    [@bs.send]
+    external onFinishOnce:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "finish"] _,
+        [@bs.uncurry] (unit => unit)
+      ) =>
+      'ws =
+      "once";
+    [@bs.send]
+    external onPipeOnce:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "pipe"] _,
+        [@bs.uncurry] (subtype([> readable('r)]) => unit)
+      ) =>
+      'ws =
+      "once";
+    [@bs.send]
+    external onUnpipeOnce:
+      (
+        subtype([> writable('w)]) as 'ws,
+        [@bs.as "unpipe"] _,
+        [@bs.uncurry] (subtype([> readable('r)]) => unit)
+      ) =>
+      'ws =
+      "once";
+  };
+  module Impl = {
+    include Common.Impl;
+    include Events;
+    [@bs.send] external cork: subtype([> writable('w)]) => unit = "cork";
+    [@bs.send] external end_: subtype([> writable('w)]) => unit = "end";
+    [@bs.send] external uncork: subtype([> writable('w)]) => unit = "uncork";
+    [@bs.send]
+    external write: (subtype([> writable('w)]), 'w) => bool = "write";
+    [@bs.send]
+    external writeWith:
+      (
+        subtype([> writable('w)]),
+        'w,
+        ~callback: Js.Nullable.t(Js.Exn.t) => unit=?,
+        unit
+      ) =>
+      bool =
+      "write";
+    [@bs.get]
+    external writable: subtype([> writable('w)]) => bool = "writable";
+    [@bs.get]
+    external writableEnded: subtype([> writable('w)]) => bool =
+      "writableEnded";
+    [@bs.get]
+    external writableCorked: subtype([> writable('w)]) => bool =
+      "writableCorked";
+    [@bs.get]
+    external writableFinished: subtype([> writable('w)]) => bool =
+      "writableFinished";
+    [@bs.get]
+    external writableLength: subtype([> writable('w)]) => int =
+      "writableLength";
+    [@bs.get]
+    external writableHighWaterMark: subtype([> writable('w)]) => int =
+      "writableHighWaterMark";
+    [@bs.get]
+    external writableObjectMode: subtype([> writable('w)]) => bool =
+      "writableObjectMode";
+  };
+  include Impl;
+
+  type nonrec t('w) = subtype(writable('w));
+  type objStream('w) = subtype([ writable('w) | objectMode]);
+  type supertype('w, 'ty) = subtype([< writable('w)] as 'ty);
+  type nonrec subtype('w, 'ty) = subtype([> writable('w)] as 'ty);
+
+  type makeOptions('w);
+  [@bs.obj]
+  external makeOptions:
+    (
+      ~highWaterMark: int=?,
+      ~objectMode: [@bs.as {json|false|json}] _,
+      ~emitClose: bool=?,
+      ~autoDestroy: bool=?,
+      ~destroy: [@bs.this] (
+                  (
+                    t('w),
+                    Js.nullable(Js.Exn.t),
+                    (~err: option(Js.Exn.t)) => unit
+                  ) =>
+                  unit
+                )
+                  =?,
+      ~final: [@bs.this] (
+                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+              )
+                =?,
+      ~writev: [@bs.this] (
+                 (
+                   t('w),
+                   array(chunk('w)),
+                   (~err: option(Js.Exn.t)) => unit
+                 ) =>
+                 unit
+               )
+                 =?,
+      ~write: [@bs.this] (
+                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+              ),
+      unit
+    ) =>
+    makeOptions('w);
+  [@bs.module "stream"] [@bs.new]
+  external make: makeOptions(Buffer.t) => t(Buffer.t) = "Writable";
+
+  type makeOptionsObjMode('w);
+  [@bs.obj]
+  external makeOptionsObjMode:
+    (
+      ~highWaterMark: int=?,
+      ~objectMode: [@bs.as {json|true|json}] _,
+      ~emitClose: bool=?,
+      ~autoDestroy: bool=?,
+      ~destroy: [@bs.this] (
+                  (
+                    t('w),
+                    Js.nullable(Js.Exn.t),
+                    (~err: option(Js.Exn.t)) => unit
+                  ) =>
+                  unit
+                )
+                  =?,
+      ~final: [@bs.this] (
+                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+              )
+                =?,
+      ~writev: [@bs.this] (
+                 (
+                   t('w),
+                   array(chunk('w)),
+                   (~err: option(Js.Exn.t)) => unit
+                 ) =>
+                 unit
+               )
+                 =?,
+      ~write: [@bs.this] (
+                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+              ),
+      unit
+    ) =>
+    makeOptionsObjMode('w);
+  [@bs.module "stream"] [@bs.new]
+  external makeObjMode: makeOptionsObjMode('w) => objStream('w) = "Writable";
+};
+
 module Readable = {
-  type kind = [ readable];
+  type kind('r) = [ readable('r)];
   module Events = {
     include Common.Events;
     [@bs.send]
     external onData:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "data"] _,
         [@bs.uncurry] ('r => unit)
       ) =>
@@ -193,7 +356,7 @@ module Readable = {
     [@bs.send]
     external onEnd:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "end"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -202,7 +365,7 @@ module Readable = {
     [@bs.send]
     external onPause:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "pause"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -211,7 +374,7 @@ module Readable = {
     [@bs.send]
     external onReadable:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "readable"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -220,7 +383,7 @@ module Readable = {
     [@bs.send]
     external onResume:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "resume"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -229,7 +392,7 @@ module Readable = {
     [@bs.send]
     external offData:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "data"] _,
         [@bs.uncurry] ('r => unit)
       ) =>
@@ -238,7 +401,7 @@ module Readable = {
     [@bs.send]
     external offEnd:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "end"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -247,7 +410,7 @@ module Readable = {
     [@bs.send]
     external offPause:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "pause"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -256,7 +419,7 @@ module Readable = {
     [@bs.send]
     external offReadable:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "readable"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -265,7 +428,7 @@ module Readable = {
     [@bs.send]
     external offResume:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "resume"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -274,7 +437,7 @@ module Readable = {
     [@bs.send]
     external onDataOnce:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "data"] _,
         [@bs.uncurry] ('r => unit)
       ) =>
@@ -283,7 +446,7 @@ module Readable = {
     [@bs.send]
     external onEndOnce:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "end"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -292,7 +455,7 @@ module Readable = {
     [@bs.send]
     external onPauseOnce:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "pause"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -301,7 +464,7 @@ module Readable = {
     [@bs.send]
     external onReadableOnce:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "readable"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -310,7 +473,7 @@ module Readable = {
     [@bs.send]
     external onResumeOnce:
       (
-        subtype('w, 'r, [> kind]) as 'rs,
+        subtype([> readable('r)]) as 'rs,
         [@bs.as "resume"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -321,55 +484,54 @@ module Readable = {
     include Common.Impl;
     include Events;
     [@bs.send]
-    external isPaused: subtype('w, 'r, [> kind]) => bool = "isPaused";
+    external isPaused: subtype([> readable('r)]) => bool = "isPaused";
     [@bs.send]
-    external pause: (subtype('w, 'r, [> kind]) as 'rs) => 'rs = "pause";
+    external pause: (subtype([> readable('r)]) as 'rs) => 'rs = "pause";
     [@bs.send]
     external pipe:
-      (subtype('a, 'b, [> kind]), subtype('b, 'c, [> writable]) as 'ws) =>
-      'ws =
+      (subtype([> readable('r)]), subtype([> writable('r)]) as 'ws) => 'ws =
       "pipe";
     [@bs.send]
-    external push: (subtype('w, 'r, [> kind]), 'r) => unit = "push";
-    [@bs.send] external read: subtype('w, 'r, [> kind]) => unit = "read";
+    external push: (subtype([> readable('r)]), 'r) => unit = "push";
+    [@bs.send] external read: subtype([> readable('r)]) => unit = "read";
     [@bs.send]
-    external readSize: (subtype('w, 'r, [> kind]), int) => unit = "read";
+    external readSize: (subtype([> readable('r)]), int) => unit = "read";
     [@bs.get]
-    external readable: subtype('w, 'r, [> kind]) => bool = "readable";
+    external readable: subtype([> readable('r)]) => bool = "readable";
     [@bs.get]
     external readableEncoding:
-      subtype('w, 'r, [> kind]) => Js.nullable(string) =
+      subtype([> readable('r)]) => Js.nullable(string) =
       "readableEncoding";
     [@bs.get]
-    external readableEnded: subtype('w, 'r, [> kind]) => bool =
+    external readableEnded: subtype([> readable('r)]) => bool =
       "readableEnded";
     [@bs.get]
-    external readableFlowing: subtype('w, 'r, [> kind]) => bool =
+    external readableFlowing: subtype([> readable('r)]) => bool =
       "readableFlowing";
     [@bs.get]
-    external readableHighWaterMark: subtype('w, 'r, [> kind]) => int =
+    external readableHighWaterMark: subtype([> readable('r)]) => int =
       "readableHighWaterMark";
     [@bs.get]
-    external readableLength: subtype('w, 'r, [> kind]) => int =
+    external readableLength: subtype([> readable('r)]) => int =
       "readableLength";
     [@bs.get]
-    external readableObjectMode: subtype('w, 'r, [> kind]) => bool =
+    external readableObjectMode: subtype([> readable('r)]) => bool =
       "readableObjectMode";
     [@bs.send]
-    external resume: (subtype('w, 'r, [> kind]) as 'rs) => 'rs = "resume";
+    external resume: (subtype([> readable('r)]) as 'rs) => 'rs = "resume";
     [@bs.send]
     external unpipe:
-      (subtype('a, 'b, [> kind]), subtype('b, 'c, [> writable]) as 'ws) =>
-      'ws =
+      (subtype([> readable('r)]), subtype([> writable('r)]) as 'ws) => 'ws =
       "unpipe";
     [@bs.send]
-    external unshift: (subtype('w, 'r, [> kind]), 'r) => unit = "unshift";
+    external unshift: (subtype([> readable('r)]), 'r) => unit = "unshift";
   };
   include Impl;
-  type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
-  type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
-  type nonrec t('r) = subtype(void, 'r, kind);
-  type objStream('r) = subtype(void, 'r, [ kind | objectMode]);
+
+  type nonrec t('r) = subtype(readable('r));
+  type objStream('r) = subtype([ readable('r) | objectMode]);
+  type supertype('r, 'ty) = subtype([< readable('r)] as 'ty);
+  type nonrec subtype('r, 'ty) = subtype([> readable('r)] as 'ty);
 
   type calledBackDestroy;
   type makeOptions('r);
@@ -421,264 +583,8 @@ module Readable = {
   external makeObjMode: makeOptionsObjMode('r) => objStream('r) = "Readable";
 };
 
-module Writable = {
-  type kind = [ writable];
-  module Events = {
-    [@bs.send]
-    external onDrain:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "drain"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      'ws =
-      "on";
-    [@bs.send]
-    external onFinish:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "finish"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      'ws =
-      "on";
-    [@bs.send]
-    external onPipe:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "pipe"] _,
-        [@bs.uncurry] (subtype('w, 'r, [> readable]) => unit)
-      ) =>
-      'ws =
-      "on";
-    [@bs.send]
-    external onUnpipe:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "unpipe"] _,
-        [@bs.uncurry] (subtype('w, 'r, [> readable]) => unit)
-      ) =>
-      'ws =
-      "on";
-    [@bs.send]
-    external offDrain:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "drain"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      'ws =
-      "off";
-    [@bs.send]
-    external offFinish:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "finish"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      'ws =
-      "off";
-    [@bs.send]
-    external offPipe:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "pipe"] _,
-        [@bs.uncurry] (subtype('w, 'r, [> readable]) => unit)
-      ) =>
-      'ws =
-      "off";
-    [@bs.send]
-    external offUnpipe:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "unpipe"] _,
-        [@bs.uncurry] (subtype('w, 'r, [> readable]) => unit)
-      ) =>
-      'ws =
-      "off";
-    [@bs.send]
-    external onDrainOnce:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "drain"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      'ws =
-      "once";
-    [@bs.send]
-    external onFinishOnce:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "finish"] _,
-        [@bs.uncurry] (unit => unit)
-      ) =>
-      'ws =
-      "once";
-    [@bs.send]
-    external onPipeOnce:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "pipe"] _,
-        [@bs.uncurry] (subtype('w, 'r, [> readable]) => unit)
-      ) =>
-      'ws =
-      "once";
-    [@bs.send]
-    external onUnpipeOnce:
-      (
-        subtype('w, 'r, [> kind]) as 'ws,
-        [@bs.as "unpipe"] _,
-        [@bs.uncurry] (subtype('w, 'r, [> readable]) => unit)
-      ) =>
-      'ws =
-      "once";
-  };
-  module Impl = {
-    include Common.Impl;
-    include Events;
-    [@bs.send] external cork: subtype('w, 'r, [> kind]) => unit = "cork";
-    [@bs.send] external end_: subtype('w, 'r, [> kind]) => unit = "end";
-    [@bs.send] external uncork: subtype('w, 'r, [> kind]) => unit = "uncork";
-    [@bs.send]
-    external write: (subtype('w, 'r, [> kind]), 'w) => bool = "write";
-    [@bs.send]
-    external writeWith:
-      (
-        subtype('w, 'r, [> kind]),
-        'w,
-        ~callback: Js.Nullable.t(Js.Exn.t) => unit=?,
-        unit
-      ) =>
-      bool =
-      "write";
-    [@bs.get]
-    external writable: subtype('w, 'r, [> kind]) => bool = "writable";
-    [@bs.get]
-    external writableEnded: subtype('w, 'r, [> kind]) => bool =
-      "writableEnded";
-    [@bs.get]
-    external writableCorked: subtype('w, 'r, [> kind]) => bool =
-      "writableCorked";
-    [@bs.get]
-    external writableFinished: subtype('w, 'r, [> kind]) => bool =
-      "writableFinished";
-    [@bs.get]
-    external writableLength: subtype('w, 'r, [> kind]) => int =
-      "writableLength";
-    [@bs.get]
-    external writableHighWaterMark: subtype('w, 'r, [> kind]) => int =
-      "writableHighWaterMark";
-    [@bs.get]
-    external writableObjectMode: subtype('w, 'r, [> kind]) => bool =
-      "writableObjectMode";
-  };
-  include Impl;
-  type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
-  type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
-  type nonrec t('w) = subtype('w, void, kind);
-  type objStream('w) = subtype('w, void, [ kind | objectMode]);
-
-  type calledBackDestroy;
-  type calledBackFinal;
-  type calledBackWritev;
-  type calledBackWrite;
-  type makeOptions('w);
-  [@bs.obj]
-  external makeOptions:
-    (
-      ~highWaterMark: int=?,
-      ~objectMode: [@bs.as {json|false|json}] _,
-      ~emitClose: bool=?,
-      ~autoDestroy: bool=?,
-      ~destroy: [@bs.this] (
-                  (
-                    t('w),
-                    Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => calledBackDestroy
-                  ) =>
-                  calledBackDestroy
-                )
-                  =?,
-      ~final: [@bs.this] (
-                (t('w), 'w, (~err: option(Js.Exn.t)) => calledBackFinal) =>
-                calledBackFinal
-              )
-                =?,
-      ~writev: [@bs.this] (
-                 (
-                   t('w),
-                   array(chunk('w)),
-                   (~err: option(Js.Exn.t)) => calledBackWritev
-                 ) =>
-                 calledBackWritev
-               )
-                 =?,
-      ~write: [@bs.this] (
-                (t('w), 'w, (~err: option(Js.Exn.t)) => calledBackWrite) =>
-                calledBackWrite
-              ),
-      unit
-    ) =>
-    makeOptions('w);
-  [@bs.module "stream"] [@bs.new]
-  external make: makeOptions(Buffer.t) => t(Buffer.t) = "Writable";
-
-  type calledBackDestroyObjMode;
-  type calledBackFinalObjMode;
-  type calledBackWritevObjMode;
-  type calledBackWriteObjMode;
-  type makeOptionsObjMode('w);
-  [@bs.obj]
-  external makeOptionsObjMode:
-    (
-      ~highWaterMark: int=?,
-      ~objectMode: [@bs.as {json|true|json}] _,
-      ~emitClose: bool=?,
-      ~autoDestroy: bool=?,
-      ~destroy: [@bs.this] (
-                  (
-                    t('w),
-                    Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => calledBackDestroyObjMode
-                  ) =>
-                  calledBackDestroyObjMode
-                )
-                  =?,
-      ~final: [@bs.this] (
-                (
-                  t('w),
-                  'w,
-                  (~err: option(Js.Exn.t)) => calledBackFinalObjMode
-                ) =>
-                calledBackFinalObjMode
-              )
-                =?,
-      ~writev: [@bs.this] (
-                 (
-                   t('w),
-                   array(chunk('w)),
-                   (~err: option(Js.Exn.t)) => calledBackWritevObjMode
-                 ) =>
-                 calledBackWritevObjMode
-               )
-                 =?,
-      ~write: [@bs.this] (
-                (
-                  t('w),
-                  'w,
-                  (~err: option(Js.Exn.t)) => calledBackWriteObjMode
-                ) =>
-                calledBackWriteObjMode
-              ),
-      unit
-    ) =>
-    makeOptionsObjMode('w);
-  [@bs.module "stream"] [@bs.new]
-  external makeObjMode: makeOptionsObjMode('w) => objStream('w) = "Writable";
-};
-
 module Duplex = {
-  type kind = [ duplex];
+  type kind('w, 'r) = [ duplex('w, 'r)];
   module Events = {
     include Readable.Events;
     include Writable.Events;
@@ -689,14 +595,17 @@ module Duplex = {
     include Events;
   };
   include Impl;
-  type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
-  type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
-  type nonrec t('w, 'r) = subtype('w, 'r, kind);
+
+  type t('w, 'r) = subtype(duplex('w, 'r));
+  type supertype('w, 'r, 'ty) = subtype([< duplex('w, 'r)] as 'ty);
+  type nonrec subtype('w, 'r, 'ty) = subtype([> duplex('w, 'r)] as 'ty);
+  type objStream('w, 'r) = subtype('w, 'r, [ duplex('w, 'r) | objectMode]);
 
   type calledBackDestroy;
   type calledBackFinal;
   type calledBackWritev;
   type calledBackWrite;
+
   type makeOptions('w, 'r);
   [@bs.obj]
   external makeOptions:
@@ -749,10 +658,67 @@ module Duplex = {
   [@bs.module "stream"] [@bs.new]
   external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) =
     "Duplex";
+
+  type calledBackDestroyObjMode;
+  type calledBackFinalObjMode;
+  type calledBackWritevObjMode;
+  type calledBackWriteObjMode;
+
+  type makeOptionsObjMode('w, 'r);
+  [@bs.obj]
+  external makeOptionsObjMode:
+    (
+      ~objectMode: [@bs.as {json|true|json}] _,
+      ~allowHalfOpen: bool=?,
+      ~highWaterMark: int=?,
+      ~emitClose: bool=?,
+      ~autoDestroy: bool=?,
+      ~destroy: [@bs.this] (
+                  (
+                    t('w, 'r),
+                    Js.nullable(Js.Exn.t),
+                    (~err: option(Js.Exn.t)) => calledBackDestroy
+                  ) =>
+                  calledBackDestroy
+                )
+                  =?,
+      ~final: [@bs.this] (
+                (
+                  t('w, 'r),
+                  'w,
+                  (~err: option(Js.Exn.t)) => calledBackFinal
+                ) =>
+                calledBackFinal
+              )
+                =?,
+      ~writev: [@bs.this] (
+                 (
+                   t('w, 'r),
+                   array(chunk('w)),
+                   (~err: option(Js.Exn.t)) => calledBackWritev
+                 ) =>
+                 calledBackWritev
+               )
+                 =?,
+      ~read: [@bs.this] ((t('w, 'r), Js.nullable(int)) => unit),
+      ~write: [@bs.this] (
+                (
+                  t('w, 'r),
+                  'w,
+                  (~err: option(Js.Exn.t)) => calledBackWrite
+                ) =>
+                calledBackWrite
+              ),
+      unit
+    ) =>
+    makeOptions('w, 'r);
+
+  [@bs.module "stream"] [@bs.new]
+  external makeObjMode: makeOptionsObjMode('w, 'r) => t('w, 'r) = "Duplex";
 };
 
 module Transform = {
-  type kind = [ transform];
+  type kind('w, 'r) = [ transform('w, 'r)];
   module Events = {
     include Duplex.Events;
   };
@@ -761,10 +727,10 @@ module Transform = {
     include Events;
   };
   include Impl;
-  type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
-  type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
-  type nonrec t('w, 'r) = subtype('w, 'r, kind);
-  type objStream('w, 'r) = subtype('w, 'r, [ kind | objectMode]);
+  type t('w, 'r) = subtype(transform('w, 'r));
+  type objStream('w, 'r) = subtype([ transform('w, 'r) | objectMode]);
+  type supertype('w, 'r, 'ty) = subtype([< transform('w, 'r)] as 'ty);
+  type nonrec subtype('w, 'r, 'ty) = subtype([> transform('w, 'r)] as 'ty);
   type makeOptions('w, 'r);
 
   // TODO
@@ -841,7 +807,7 @@ module Transform = {
 };
 
 module PassThrough = {
-  type kind = [ passThrough];
+  type kind('w, 'r) = [ passThrough('w, 'r)];
   module Events = {
     include Transform.Events;
   };
@@ -850,9 +816,10 @@ module PassThrough = {
     include Events;
   };
   include Impl;
-  type nonrec supertype('w, 'r, 'a) = subtype('w, 'r, [< kind] as 'a);
-  type nonrec subtype('w, 'r, 'a) = subtype('w, 'r, [> kind] as 'a);
-  type nonrec t('w, 'r) = subtype('w, 'r, kind);
+  type t('w, 'r) = subtype(passThrough('w, 'r));
+  type supertype('w, 'r, 'ty) = subtype([< passThrough('w, 'r)] as 'ty);
+  type nonrec subtype('w, 'r, 'ty) =
+    subtype([> passThrough('w, 'r)] as 'ty);
   [@bs.module "stream"] [@bs.new]
   external make: unit => t(Buffer.t, Buffer.t) = "PassThrough";
 };
@@ -870,38 +837,37 @@ include Events;
 type cleanupFn = unit => unit;
 
 [@bs.module "stream"]
-external finished:
-  (subtype('w, 'r, 'a), Js.nullable(Js.Exn.t) => unit) => cleanupFn =
+external finished: (subtype('ty), Js.nullable(Js.Exn.t) => unit) => cleanupFn =
   "finished";
 
 [@bs.module "stream"]
-external pipeline0:
+external pipeline2:
   (
-    Readable.subtype('t0, 't1, 'src),
-    Writable.subtype('t1, 't2, 'dest),
+    subtype([> readable('t1)] as 'src),
+    subtype([> writable('t1)] as 'dest),
     Js.nullable(Js.Exn.t) => unit
   ) =>
-  Writable.subtype('t1, 't1, 'dest) =
+  subtype([> writable('t1)] as 'dest) =
   "pipeline";
 
 [@bs.module "stream"]
-external pipeline1:
+external pipeline3:
   (
-    Readable.subtype('t0, 't1, 'src),
-    Duplex.subtype('t1, 't2, 'kind1),
-    Writable.subtype('t2, 't3, 'dest),
+    subtype([> readable('t1)] as 'src),
+    subtype([> writable('t1) | readable('t2)] as 'kindA),
+    subtype([> writable('t2)] as 'dest),
     Js.nullable(Js.Exn.t) => unit
   ) =>
-  Writable.subtype('t1, 't2, 'dest) =
+  subtype([> writable('t2)] as 'dest) =
   "pipeline";
 [@bs.module "stream"]
-external pipeline2:
+external pipeline4:
   (
-    Readable.subtype('t0, 't1, 'src),
-    Duplex.subtype('t1, 't2, 'kind1),
-    Duplex.subtype('t2, 't3, 'kind2),
-    Writable.subtype('t3, 't4, 'dest),
+    subtype([> readable('t1)] as 'src),
+    subtype([> writable('t1) | readable('t2)] as 'kindA),
+    subtype([> writable('t2) | readable('t3)] as 'kindA),
+    subtype([> writable('t3)] as 'dest),
     Js.nullable(Js.Exn.t) => unit
   ) =>
-  Writable.subtype('t1, 't3, 'dest) =
+  subtype([> writable('t3)] as 'dest) =
   "pipeline";

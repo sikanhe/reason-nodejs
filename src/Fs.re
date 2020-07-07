@@ -352,21 +352,21 @@ external openWithMode:
   "open";
 
 module WriteStream = {
-  type kind = [ Stream.writable | `FileSystem];
-  type subtype('w, 'r, 'a) = Stream.Writable.subtype('w, 'r, [> kind] as 'a);
-  type supertype('w, 'r, 'a) = Stream.subtype('w, 'r, [< kind] as 'a);
-  type t = subtype(Buffer.t, Buffer.t, [ kind]);
+  type kind('w) = [ Stream.writable('w) | `FileSystem];
+  type subtype('w, 'ty) = Stream.subtype([> kind('w)] as 'ty);
+  type supertype('w, 'ty) = Stream.subtype([< kind('w)] as 'ty);
+  type t = subtype(Buffer.t, [ kind(Buffer.t)]);
   module Impl = {
     include Stream.Writable.Impl;
     [@bs.send]
-    external bytesWritten: subtype('w, 'r, [> kind]) => int = "bytesWritten";
-    [@bs.send] external path: subtype('w, 'r, [> kind]) => string = "path";
+    external bytesWritten: subtype('w, [> kind('w)]) => int = "bytesWritten";
+    [@bs.send] external path: subtype('w, [> kind('w)]) => string = "path";
     [@bs.send]
-    external pending: subtype('w, 'r, [> kind]) => bool = "pending";
+    external pending: subtype('w, [> kind('w)]) => bool = "pending";
     [@bs.send]
     external onOpen:
       (
-        subtype('w, 'r, [> kind]) as 'stream',
+        subtype('w, [> kind('w)]) as 'stream',
         [@bs.as "open"] _,
         [@bs.uncurry] (fd => unit)
       ) =>
@@ -375,7 +375,7 @@ module WriteStream = {
     [@bs.send]
     external onReady:
       (
-        subtype('w, 'r, [> kind]) as 'stream,
+        subtype('w, [> kind('w)]) as 'stream,
         [@bs.as "ready"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
@@ -386,23 +386,22 @@ module WriteStream = {
 };
 
 module ReadStream = {
-  type kind = [ Stream.readable | `FileSystem];
-  type subtype('w, 'r, 'a) =
-    Stream.Readable.subtype(Stream.void, 'r, [> kind] as 'a);
-  type supertype('w, 'r, 'a) =
-    Stream.subtype(Stream.void, 'r, [< kind] as 'a);
-  type t = subtype(Stream.void, Buffer.t, [ kind]);
+  type kind('r) = [ Stream.readable('r) | `FileSystem];
+  type subtype('r, 'ty) = Stream.subtype([> kind('r)] as 'ty);
+  type supertype('r, 'ty) =
+    Stream.subtype([< kind('r)] as 'ty);
+  type t = subtype(Buffer.t, [ kind(Buffer.t)]);
   module Impl = {
     include Stream.Readable.Impl;
     [@bs.send]
-    external bytesRead: subtype('w, 'r, [> kind]) => int = "bytesWritten";
-    [@bs.send] external path: subtype('w, 'r, [> kind]) => string = "path";
+    external bytesRead: subtype('r, [> kind('r)]) => int = "bytesWritten";
+    [@bs.send] external path: subtype('r, [> kind('r)]) => string = "path";
     [@bs.send]
-    external pending: subtype('w, 'r, [> kind]) => bool = "pending";
+    external pending: subtype('r, [> kind('r)]) => bool = "pending";
     [@bs.send]
     external onOpen:
       (
-        subtype('w, 'r, [> kind]) as 'stream,
+        subtype('r, [> kind('r)]) as 'stream,
         [@bs.as "open"] _,
         [@bs.uncurry] (fd => unit)
       ) =>
@@ -411,7 +410,7 @@ module ReadStream = {
     [@bs.send]
     external onReady:
       (
-        subtype('w, 'r, [> kind]) as 'stream,
+        subtype('r, [> kind('r)]) as 'stream,
         [@bs.as "ready"] _,
         [@bs.uncurry] (unit => unit)
       ) =>
