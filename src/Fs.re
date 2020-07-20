@@ -227,7 +227,7 @@ module FileHandle = {
     (t, Buffer.t, ~offset: int, ~length: int, ~position: int) =>
     Js.Promise.t(readInfo) =
     "read";
-  [@bs.send] external readFile: t => Js.Promise.t(Buffer.t) = "read";
+  [@bs.send] external readFile: t => Js.Promise.t(Buffer.t) = "readFile";
   [@bs.send]
   external readFileWith: (t, readFileOptions) => Js.Promise.t(Buffer.t) =
     "read";
