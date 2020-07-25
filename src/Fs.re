@@ -359,8 +359,7 @@ external copyFile: (string, ~dest: string) => Js.Promise.t(unit) = "copyFile";
 
 [@bs.module "fs"] [@bs.scope "promises"]
 external copyFileFlag:
-  // TODO: fix type
-  (string, ~dest: string, ~flag: string) => Js.Promise.t(unit) =
+  (string, ~dest: string, ~flags: Constants.t) => Js.Promise.t(unit) =
   "copyFile";
 
 [@bs.module "fs"] [@bs.scope "promises"]
