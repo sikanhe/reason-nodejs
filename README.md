@@ -26,7 +26,7 @@ This library is still under construction. Some of the core design details are st
 Using the [yarn](https://yarnpkg.com/) package manager:
 
 ```shell
-yarn install reason-nodejs
+yarn add reason-nodejs
 ```
 
 Using the [npm](https://www.npmjs.com/) package manager:
