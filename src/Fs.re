@@ -73,14 +73,68 @@ module Stats = {
 };
 
 module Constants = {
-  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
-  external f_ok: int = "F_OK";
-  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
-  external w_ok: int = "W_OK";
-  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
-  external r_ok: int = "R_OK";
-  [@bs.module "fs"] [@bs.val] [@bs.scope "constants"]
-  external x_ok: int = "X_OK";
+  type t = pri int;
+
+  /** Bitwise 'or' i.e. JavaScript [x | y] */
+  external (lor): (t, t) => t = "%orint";
+
+  [@text "{1 File Access Constants}"];
+
+  [@bs.module "fs"] [@bs.scope "constants"] external f_ok: t = "F_OK";
+  [@bs.module "fs"] [@bs.scope "constants"] external w_ok: t = "W_OK";
+  [@bs.module "fs"] [@bs.scope "constants"] external r_ok: t = "R_OK";
+  [@bs.module "fs"] [@bs.scope "constants"] external x_ok: t = "X_OK";
+
+  [@text "{1 File Copy Constants}"];
+
+  [@bs.module "fs"] [@bs.scope "constants"] external copyfile_excl: t = "COPYFILE_EXCL";
+  [@bs.module "fs"] [@bs.scope "constants"] external copyfile_ficlone: t = "COPYFILE_FICLONE";
+  [@bs.module "fs"] [@bs.scope "constants"] external copyfile_ficlone_force: t = "COPYFILE_FICLONE_FORCE";
+
+  [@text "{1 File Open Constants}"];
+
+  [@bs.module "fs"] [@bs.scope "constants"] external o_rdonly: t = "O_RDONLY";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_wronly: t = "O_WRONLY";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_rdwr: t = "O_RDWR";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_creat: t = "O_CREAT";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_excl: t = "O_EXCL";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_noctty: t = "O_NOCTTY";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_trunc: t = "O_TRUNC";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_append: t = "O_APPEND";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_directory: t = "O_DIRECTORY";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_noatime: t = "O_NOATIME";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_nofollow: t = "O_NOFOLLOW";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_sync: t = "O_SYNC";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_dsync: t = "O_DSYNC";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_symlink: t = "O_SYMLINK";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_direct: t = "O_DIRECT";
+  [@bs.module "fs"] [@bs.scope "constants"] external o_nonblock: t = "O_NONBLOCK";
+
+  [@text "{1 File Type Constants}"];
+
+  [@bs.module "fs"] [@bs.scope "constants"] external s_ifmt: t = "S_IFMT";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_ifreg: t = "S_IFREG";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_ifdir: t = "S_IFDIR";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_ifchr: t = "S_IFCHR";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_ifblk: t = "S_IFBLK";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_ififo: t = "S_IFIFO";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_iflnk: t = "S_IFLNK";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_ifsock: t = "S_IFSOCK";
+
+  [@text "{1 File Mode Constants}"];
+
+  [@bs.module "fs"] [@bs.scope "constants"] external s_irwxu: t = "S_IRWXU";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_irusr: t = "S_IRUSR";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_iwusr: t = "S_IWUSR";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_ixusr: t = "S_IXUSR";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_irwxg: t = "S_IRWXG";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_irgrp: t = "S_IRGRP";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_iwgrp: t = "S_IWGRP";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_ixgrp: t = "S_IXGRP";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_irwxo: t = "S_IRWXO";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_iroth: t = "S_IROTH";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_iwoth: t = "S_IWOTH";
+  [@bs.module "fs"] [@bs.scope "constants"] external s_ixoth: t = "S_IXOTH";
 };
 
 module Flag: {
@@ -305,7 +359,7 @@ external copyFile: (string, ~dest: string) => Js.Promise.t(unit) = "copyFile";
 
 [@bs.module "fs"] [@bs.scope "promises"]
 external copyFileFlag:
-  (string, ~dest: string, ~flag: string) => Js.Promise.t(unit) =
+  (string, ~dest: string, ~flags: Constants.t) => Js.Promise.t(unit) =
   "copyFile";
 
 [@bs.module "fs"] [@bs.scope "promises"]
