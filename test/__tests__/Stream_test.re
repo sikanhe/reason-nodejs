@@ -1,6 +1,6 @@
 open Jest;
 
-describe("Stream", () => {
+describe("Stream.Readable", () => {
   testAsync("'Stream.Readable.make' should return a defined value", resolve => {
     open! ExpectJs;
     open StreamTestLib;
@@ -15,23 +15,6 @@ describe("Stream", () => {
     let readable = makeReadableEmpty();
     expect(readable->Internal__JsTypeReflection.constructorName)
     |> toBe("Readable")
-    |> resolve;
-  });
-
-  testAsync("'Stream.Writable.make' should return a defined value", resolve => {
-    open! ExpectJs;
-    open StreamTestLib;
-    let writable = makeWritableEmpty();
-    expect(writable->Js.Undefined.return) |> toBeDefined |> resolve;
-  });
-
-  testAsync(
-    "'Stream.Writable.make' should return an instance of 'Writable'", resolve => {
-    open! ExpectJs;
-    open StreamTestLib;
-    let writable = makeWritableEmpty();
-    expect(writable->Internal__JsTypeReflection.constructorName)
-    |> toBe("Writable")
     |> resolve;
   });
 
@@ -65,6 +48,75 @@ describe("Stream", () => {
       open! ExpectJs;
       let readable = StreamTestLib.makeReadableEmpty();
       expect(readable->Stream.destroy) |> toBe(readable) |> resolve;
+    },
+  );
+});
+
+describe("Stream.Writable", () => {
+  testAsync("'Stream.Writable.make' should return a defined value", resolve => {
+    open! ExpectJs;
+    open StreamTestLib;
+    let writable = makeWritableEmpty();
+    expect(writable->Js.Undefined.return) |> toBeDefined |> resolve;
+  });
+
+  testAsync(
+    "'Stream.Writable.make' should return an instance of 'Writable'", resolve => {
+    open! ExpectJs;
+    open StreamTestLib;
+    let writable = makeWritableEmpty();
+    expect(writable->Internal__JsTypeReflection.constructorName)
+    |> toBe("Writable")
+    |> resolve;
+  });
+
+  testAsync(
+    "Stream.Writable.makeObjMode should have a 'write' function with the correct function signature",
+    resolve => {
+      open Stream;
+
+      let args = ref(None);
+
+      let options =
+        Writable.makeOptionsObjMode(
+          ~write=
+            [@bs.this] (wstream, ~data, ~encoding, ~callback) => {
+              args := Some((wstream, data, encoding, callback));
+              callback(~error=None);
+            },
+          (),
+        );
+
+      let writeStream = Writable.makeObjMode(options);
+
+      ExpectJs.(
+        Writable.writeWith(
+          writeStream,
+          42,
+          ~callback=
+            _ => {
+              expect(
+                {
+                  switch (args^) {
+                  | None => None
+                  | Some((wstream, value, encoding, cb)) =>
+                    Some((
+                      Internal__JsTypeReflection.constructorName(wstream)
+                      === "Writable",
+                      Js.typeof(value) === "number",
+                      Js.typeof(encoding) === "string",
+                      Js.typeof(cb) === "function",
+                    ))
+                  };
+                },
+              )
+              |> toEqual(Some((true, true, true, true)))
+              |> resolve
+            },
+          (),
+        )
+        ->ignore
+      );
     },
   );
 });

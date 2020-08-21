@@ -261,7 +261,8 @@ module Socket = {
     [@bs.get] external destroyed: subtype('w, 'r, 'ty) => bool = "destroyed";
     [@bs.send]
     external destroy:
-      (subtype('w, 'r, 'ty), ~exn: Js.Exn.t=?, unit) => subtype('w, 'r, 'ty) =
+      (subtype('w, 'r, 'ty), ~error: option(Js.Exn.t)) =>
+      subtype('w, 'r, 'ty) =
       "destroy";
     [@bs.get]
     external localAddress: subtype('w, 'r, 'ty) => string = "localAddress";
@@ -292,7 +293,7 @@ module Socket = {
       (
         subtype('w, 'r, 'ty),
         int,
-        ~callback: [@bs.this] (subtype('w, 'r, 'ty) => unit)=?
+        ~callback: [@bs.this] (subtype('w, 'r, 'ty) => unit)
       ) =>
       subtype('w, 'r, 'ty) =
       "setTimeout";
@@ -303,7 +304,7 @@ module Socket = {
       (
         subtype('w, 'r, [> kind('w, 'r) | icp]) as 'icpSocket,
         ~path: string,
-        unit => unit
+        [@bs.uncurry] (unit => unit)
       ) =>
       'icpSocket =
       "connect";
@@ -313,7 +314,7 @@ module Socket = {
         subtype('w, 'r, [> kind('w, 'r) | tcp]) as 'tcpSocket,
         ~port: int,
         ~host: string,
-        unit => unit
+        [@bs.uncurry] (unit => unit)
       ) =>
       'tcpSocket =
       "connect";
@@ -343,7 +344,12 @@ module TcpSocket = {
     include Events;
     [@bs.send]
     external connect:
-      (subtype('w, 'r, 'ty), ~port: int, ~host: string, unit => unit) =>
+      (
+        subtype('w, 'r, 'ty),
+        ~port: int,
+        ~host: string,
+        [@bs.uncurry] (unit => unit)
+      ) =>
       subtype('w, 'r, 'ty) =
       "connect";
   };
@@ -363,7 +369,7 @@ module IcpSocket = {
     include Socket.Impl;
     [@bs.send]
     external connect:
-      (subtype('w, 'r, 'ty), ~path: string, unit => unit) =>
+      (subtype('w, 'r, 'ty), ~path: string, [@bs.uncurry] (unit => unit)) =>
       subtype('w, 'r, 'ty) =
       "connect";
   };
@@ -462,7 +468,8 @@ module Server = {
       (subtype('ty), (Js.nullable(Js.Exn.t), int) => unit) => subtype('ty) =
       "getConnections";
     [@bs.set]
-    external setMaxConnections: (subtype('ty), int) => unit = "maxConnections";
+    external setMaxConnections: (subtype('ty), int) => unit =
+      "maxConnections";
     [@bs.get] external maxConnections: subtype('ty) => int = "maxConnections";
     [@bs.send] external ref: subtype('ty) => subtype('ty) = "ref";
     [@bs.send] external unref: subtype('ty) => subtype('ty) = "unref";
@@ -555,7 +562,7 @@ module TcpServer = {
     include Events;
     [@bs.send]
     external close:
-      (subtype('ty), ~callback: Js.nullable(Js.Exn.t) => unit=?, unit) =>
+      (subtype('ty), ~callback: Js.nullable(Js.Exn.t) => unit) =>
       subtype('ty) =
       "close";
     [@bs.send]
@@ -563,7 +570,8 @@ module TcpServer = {
       (subtype('ty), (Js.nullable(Js.Exn.t), int) => unit) => subtype('ty) =
       "getConnections";
     [@bs.set]
-    external setMaxConnections: (subtype('ty), int) => unit = "maxConnections";
+    external setMaxConnections: (subtype('ty), int) => unit =
+      "maxConnections";
     [@bs.get] external maxConnections: subtype('ty) => int = "maxConnections";
     [@bs.send] external ref: subtype('ty) => subtype('ty) = "ref";
     [@bs.send] external unref: subtype('ty) => subtype('ty) = "unref";
@@ -584,11 +592,10 @@ module TcpServer = {
     listenOptions;
   [@bs.module "net"] [@bs.new] external make: unit => t = "Server";
   [@bs.send]
-  external listen:
-    (t, ~port: int, ~host: string, ~callback: unit => unit=?, unit) => t =
+  external listen: (t, ~port: int, ~host: string, ~callback: unit => unit) => t =
     "listen";
   [@bs.send]
-  external listenWith: (t, listenOptions, ~callback: unit => unit=?, unit) => t =
+  external listenWithOptions: (t, listenOptions, ~callback: unit => unit) => t =
     "listen";
 };
 
@@ -675,7 +682,7 @@ module IcpServer = {
     include Events;
     [@bs.send]
     external close:
-      (subtype('ty), ~callback: Js.nullable(Js.Exn.t) => unit=?, unit) =>
+      (subtype('ty), ~callback: Js.nullable(Js.Exn.t) => unit) =>
       subtype('ty) =
       "close";
     [@bs.send]
@@ -683,7 +690,8 @@ module IcpServer = {
       (subtype('ty), (Js.nullable(Js.Exn.t), int) => unit) => subtype('ty) =
       "getConnections";
     [@bs.set]
-    external setMaxConnections: (subtype('ty), int) => unit = "maxConnections";
+    external setMaxConnections: (subtype('ty), int) => unit =
+      "maxConnections";
     [@bs.get] external maxConnections: subtype('ty) => int = "maxConnections";
     [@bs.send] external ref: subtype('ty) => subtype('ty) = "ref";
     [@bs.send] external unref: subtype('ty) => subtype('ty) = "unref";
@@ -704,11 +712,10 @@ module IcpServer = {
     ) =>
     listenOptions;
   [@bs.send]
-  external listen: (t, ~path: string, ~callback: unit => unit=?, unit) => t =
-    "listen";
+  external listen: (t, ~path: string, ~callback: unit => unit) => t = "listen";
   [@bs.send]
-  external listenWith:
-    (t, ~options: listenOptions, ~callback: unit => unit=?, unit) => t =
+  external listenWithOptions:
+    (t, ~options: listenOptions, ~callback: unit => unit) => t =
     "listen";
 };
 

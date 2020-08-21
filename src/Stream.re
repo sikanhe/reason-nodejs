@@ -21,6 +21,13 @@ type chunk('a) =
     encoding: string,
   };
 
+type destroy_done;
+type writev_done;
+type final_done;
+type write_done;
+type transform_done;
+type flush_done;
+
 module Common = {
   type kind = [ stream];
 
@@ -272,27 +279,38 @@ module Writable = {
       ~destroy: [@bs.this] (
                   (
                     t('w),
-                    Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => unit
+                    ~error: Js.nullable(Js.Exn.t),
+                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
                   ) =>
-                  unit
+                  destroy_done
                 )
                   =?,
       ~final: [@bs.this] (
-                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+                (
+                  t('w),
+                  ~callback: (~error: option(Js.Exn.t)) => final_done
+                ) =>
+                final_done
               )
                 =?,
       ~writev: [@bs.this] (
                  (
                    t('w),
-                   array(chunk('w)),
-                   (~err: option(Js.Exn.t)) => unit
+                   ~data: array(chunk('w)),
+                   ~encoding: StringEncoding.t,
+                   ~callback: (~error: option(Js.Exn.t)) => writev_done
                  ) =>
-                 unit
+                 writev_done
                )
                  =?,
       ~write: [@bs.this] (
-                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+                (
+                  t('w),
+                  ~data: 'w,
+                  ~encoding: StringEncoding.t,
+                  ~callback: (~error: option(Js.Exn.t)) => write_done
+                ) =>
+                write_done
               ),
       unit
     ) =>
@@ -310,28 +328,39 @@ module Writable = {
       ~autoDestroy: bool=?,
       ~destroy: [@bs.this] (
                   (
-                    t('w),
-                    Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => unit
+                    objStream('w),
+                    ~error: Js.nullable(Js.Exn.t),
+                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
                   ) =>
-                  unit
+                  destroy_done
                 )
                   =?,
       ~final: [@bs.this] (
-                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+                (
+                  objStream('w),
+                  ~callback: (~error: option(Js.Exn.t)) => final_done
+                ) =>
+                final_done
               )
                 =?,
       ~writev: [@bs.this] (
                  (
-                   t('w),
-                   array(chunk('w)),
-                   (~err: option(Js.Exn.t)) => unit
+                   objStream('w),
+                   ~data: array(chunk('w)),
+                   ~encoding: StringEncoding.t,
+                   ~callback: (~error: option(Js.Exn.t)) => writev_done
                  ) =>
-                 unit
+                 writev_done
                )
                  =?,
       ~write: [@bs.this] (
-                (t('w), 'w, (~err: option(Js.Exn.t)) => unit) => unit
+                (
+                  objStream('w),
+                  ~data: 'w,
+                  ~encoding: StringEncoding.t,
+                  ~callback: (~error: option(Js.Exn.t)) => write_done
+                ) =>
+                write_done
               ),
       unit
     ) =>
@@ -533,7 +562,6 @@ module Readable = {
   type supertype('r, 'ty) = subtype([< readable('r)] as 'ty);
   type nonrec subtype('r, 'ty) = subtype([> readable('r)] as 'ty);
 
-  type calledBackDestroy;
   type makeOptions('r);
   [@bs.obj]
   external makeOptions:
@@ -545,19 +573,18 @@ module Readable = {
       ~destroy: [@bs.this] (
                   (
                     t('r),
-                    Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => calledBackDestroy
+                    ~error: Js.nullable(Js.Exn.t),
+                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
                   ) =>
-                  calledBackDestroy
+                  destroy_done
                 ),
-      ~read: [@bs.this] ((t('r), Js.nullable(int)) => unit),
+      ~read: [@bs.this] ((t('r), ~size: Js.nullable(int)) => unit),
       unit
     ) =>
     makeOptions('r);
   [@bs.module "stream"] [@bs.new]
   external make: makeOptions(Buffer.t) => t(Buffer.t) = "Readable";
 
-  type calledBackDestroyObjMode;
   type makeOptionsObjMode('r);
   [@bs.obj]
   external makeOptionsObjMode:
@@ -568,13 +595,13 @@ module Readable = {
       ~autoDestroy: bool=?,
       ~destroy: [@bs.this] (
                   (
-                    t('r),
-                    Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => calledBackDestroyObjMode
+                    objStream('r),
+                    ~error: Js.nullable(Js.Exn.t),
+                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
                   ) =>
-                  calledBackDestroyObjMode
+                  destroy_done
                 ),
-      ~read: [@bs.this] ((t('r), Js.nullable(int)) => unit),
+      ~read: [@bs.this] ((objStream('r), ~size: Js.nullable(int)) => unit),
       unit
     ) =>
     makeOptionsObjMode('r);
@@ -601,11 +628,6 @@ module Duplex = {
   type nonrec subtype('w, 'r, 'ty) = subtype([> duplex('w, 'r)] as 'ty);
   type objStream('w, 'r) = subtype('w, 'r, [ duplex('w, 'r) | objectMode]);
 
-  type calledBackDestroy;
-  type calledBackFinal;
-  type calledBackWritev;
-  type calledBackWrite;
-
   type makeOptions('w, 'r);
   [@bs.obj]
   external makeOptions:
@@ -618,38 +640,40 @@ module Duplex = {
       ~destroy: [@bs.this] (
                   (
                     t('w, 'r),
-                    Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => calledBackDestroy
+                    ~error: Js.nullable(Js.Exn.t),
+                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
                   ) =>
-                  calledBackDestroy
+                  destroy_done
                 )
                   =?,
       ~final: [@bs.this] (
                 (
                   t('w, 'r),
-                  'w,
-                  (~err: option(Js.Exn.t)) => calledBackFinal
+                  ~data: 'w,
+                  ~callback: (~error: option(Js.Exn.t)) => final_done
                 ) =>
-                calledBackFinal
+                final_done
               )
                 =?,
       ~writev: [@bs.this] (
                  (
                    t('w, 'r),
-                   array(chunk('w)),
-                   (~err: option(Js.Exn.t)) => calledBackWritev
+                   ~data: array(chunk('w)),
+                   ~encoding: StringEncoding.t,
+                   ~callback: (~error: option(Js.Exn.t)) => writev_done
                  ) =>
-                 calledBackWritev
+                 writev_done
                )
                  =?,
-      ~read: [@bs.this] ((t('w, 'r), Js.nullable(int)) => unit),
+      ~read: [@bs.this] ((t('w, 'r), ~size: Js.nullable(int)) => unit),
       ~write: [@bs.this] (
                 (
                   t('w, 'r),
-                  'w,
-                  (~err: option(Js.Exn.t)) => calledBackWrite
+                  ~data: 'w,
+                  ~encoding: StringEncoding.t,
+                  ~callback: (~error: option(Js.Exn.t)) => write_done
                 ) =>
-                calledBackWrite
+                write_done
               ),
       unit
     ) =>
@@ -658,11 +682,6 @@ module Duplex = {
   [@bs.module "stream"] [@bs.new]
   external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) =
     "Duplex";
-
-  type calledBackDestroyObjMode;
-  type calledBackFinalObjMode;
-  type calledBackWritevObjMode;
-  type calledBackWriteObjMode;
 
   type makeOptionsObjMode('w, 'r);
   [@bs.obj]
@@ -675,43 +694,46 @@ module Duplex = {
       ~autoDestroy: bool=?,
       ~destroy: [@bs.this] (
                   (
-                    t('w, 'r),
-                    Js.nullable(Js.Exn.t),
-                    (~err: option(Js.Exn.t)) => calledBackDestroy
+                    objStream('w, 'r),
+                    ~error: Js.nullable(Js.Exn.t),
+                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
                   ) =>
-                  calledBackDestroy
+                  destroy_done
                 )
                   =?,
       ~final: [@bs.this] (
                 (
-                  t('w, 'r),
-                  'w,
-                  (~err: option(Js.Exn.t)) => calledBackFinal
+                  objStream('w, 'r),
+                  ~callback: (~error: option(Js.Exn.t)) => final_done
                 ) =>
-                calledBackFinal
+                final_done
               )
                 =?,
       ~writev: [@bs.this] (
                  (
-                   t('w, 'r),
-                   array(chunk('w)),
-                   (~err: option(Js.Exn.t)) => calledBackWritev
+                   objStream('w, 'r),
+                   ~data: array(chunk('w)),
+                   ~encoding: StringEncoding.t,
+                   ~callback: (~error: option(Js.Exn.t)) => writev_done
                  ) =>
-                 calledBackWritev
+                 writev_done
                )
                  =?,
-      ~read: [@bs.this] ((t('w, 'r), Js.nullable(int)) => unit),
+      ~read: [@bs.this] (
+               (objStream('w, 'r), ~size: Js.nullable(int)) => unit
+             ),
       ~write: [@bs.this] (
                 (
-                  t('w, 'r),
-                  'w,
-                  (~err: option(Js.Exn.t)) => calledBackWrite
+                  objStream('w, 'r),
+                  ~data: 'w,
+                  ~encoding: StringEncoding.t,
+                  ~callback: (~error: option(Js.Exn.t)) => write_done
                 ) =>
-                calledBackWrite
+                write_done
               ),
       unit
     ) =>
-    makeOptions('w, 'r);
+    makeOptionsObjMode('w, 'r);
 
   [@bs.module "stream"] [@bs.new]
   external makeObjMode: makeOptionsObjMode('w, 'r) => t('w, 'r) = "Duplex";
@@ -731,11 +753,9 @@ module Transform = {
   type objStream('w, 'r) = subtype([ transform('w, 'r) | objectMode]);
   type supertype('w, 'r, 'ty) = subtype([< transform('w, 'r)] as 'ty);
   type nonrec subtype('w, 'r, 'ty) = subtype([> transform('w, 'r)] as 'ty);
+
   type makeOptions('w, 'r);
 
-  // TODO
-  type calledBackTransform;
-  type calledBackFlush;
   [@bs.obj]
   external makeOptions:
     (
@@ -746,20 +766,23 @@ module Transform = {
       ~transform: [@bs.this] (
                     (
                       t('w, 'r),
-                      'w,
-                      string,
-                      (~err: option(Js.Exn.t), ~data: option('r)) =>
-                      calledBackTransform
+                      ~data: 'w,
+                      ~encoding: StringEncoding.t,
+                      ~callback: (
+                                   ~error: option(Js.Exn.t),
+                                   ~data: option('r)
+                                 ) =>
+                                 transform_done
                     ) =>
-                    calledBackTransform
+                    transform_done
                   ),
       ~flush: [@bs.this] (
                 (
                   t('w, 'r),
-                  (~err: option(Js.Exn.t), ~data: option('r)) =>
-                  calledBackFlush
+                  ~callback: (~error: option(Js.Exn.t), ~data: option('r)) =>
+                             flush_done
                 ) =>
-                calledBackFlush
+                flush_done
               ),
       unit
     ) =>
@@ -769,8 +792,6 @@ module Transform = {
   external make: makeOptions(Buffer.t, Buffer.t) => t(Buffer.t, Buffer.t) =
     "Transform";
 
-  type calledBackTransformObjMode;
-  type calledBackFlushObjMode;
   type makeOptionsObjMode('w, 'r);
   [@bs.obj]
   external makeOptionsObjMode:
@@ -781,21 +802,24 @@ module Transform = {
       ~autoDestroy: bool=?,
       ~transform: [@bs.this] (
                     (
-                      t('w, 'r),
-                      'w,
-                      string,
-                      (~err: option(Js.Exn.t), ~data: option('r)) =>
-                      calledBackTransformObjMode
+                      objStream('w, 'r),
+                      ~data: 'w,
+                      ~encoding: StringEncoding.t,
+                      ~callback: (
+                                   ~error: option(Js.Exn.t),
+                                   ~data: option('r)
+                                 ) =>
+                                 transform_done
                     ) =>
-                    calledBackTransformObjMode
+                    transform_done
                   ),
       ~flush: [@bs.this] (
                 (
-                  t('w, 'r),
-                  (~err: option(Js.Exn.t), ~data: option('r)) =>
-                  calledBackFlushObjMode
+                  objStream('w, 'r),
+                  ~callback: (~error: option(Js.Exn.t), ~data: option('r)) =>
+                             flush_done
                 ) =>
-                calledBackFlushObjMode
+                flush_done
               ),
       unit
     ) =>
