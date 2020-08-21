@@ -18,10 +18,10 @@
   "license": "MIT",
   "dependencies": {},
   "peerDependencies": {
-    "bs-platform": ">= 8.2.0"
+    "bs-platform": ">= 7.3.2"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.10",
-    "bs-platform": "8.2.0"
+    "bs-platform": "7.3.2"
   }
 }
