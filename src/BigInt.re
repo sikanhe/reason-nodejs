@@ -10,7 +10,7 @@ external (+): (t, t) => t = "%addfloat";
 external (-): (t, t) => t = "%subfloat";
 external ( * ): (t, t) => t = "%mulfloat";
 external (/): (t, t) => t = "%divfloat";
-external (%): (t, t) => t = "%modfloat";
+let (%): (t, t) => t = Obj.magic(mod_float);
 let ( ** ): (t, t) => t = [%raw {|function (a, b) { return (a ** b); }|}];
 external (land): (t, t) => t = "%andint";
 external (lor): (t, t) => t = "%orint";
