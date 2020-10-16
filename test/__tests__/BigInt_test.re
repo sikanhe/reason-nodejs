@@ -119,7 +119,7 @@ describe("BigInt", () => {
 
   test("BigInt.(lnot)", () => {
     let a = randomInt();
-    let b =  lnot(a);
+    let b = lnot(a);
 
     Expect.(
       [@ocaml.warning "-44"] expect(BigInt.(lnot(fromInt(a))))
