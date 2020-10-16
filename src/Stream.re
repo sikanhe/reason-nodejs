@@ -21,13 +21,6 @@ type chunk('a) =
     encoding: string,
   };
 
-type destroy_done;
-type writev_done;
-type final_done;
-type write_done;
-type transform_done;
-type flush_done;
-
 module Common = {
   type kind = [ stream];
 
@@ -280,17 +273,17 @@ module Writable = {
                   (
                     t('w),
                     ~error: Js.nullable(Js.Exn.t),
-                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
+                    ~callback: (~error: option(Js.Exn.t)) => unit
                   ) =>
-                  destroy_done
+                  unit
                 )
                   =?,
       ~final: [@bs.this] (
                 (
                   t('w),
-                  ~callback: (~error: option(Js.Exn.t)) => final_done
+                  ~callback: (~error: option(Js.Exn.t)) => unit
                 ) =>
-                final_done
+                unit
               )
                 =?,
       ~writev: [@bs.this] (
@@ -298,9 +291,9 @@ module Writable = {
                    t('w),
                    ~data: array(chunk('w)),
                    ~encoding: StringEncoding.t,
-                   ~callback: (~error: option(Js.Exn.t)) => writev_done
+                   ~callback: (~error: option(Js.Exn.t)) => unit
                  ) =>
-                 writev_done
+                 unit
                )
                  =?,
       ~write: [@bs.this] (
@@ -308,9 +301,9 @@ module Writable = {
                   t('w),
                   ~data: 'w,
                   ~encoding: StringEncoding.t,
-                  ~callback: (~error: option(Js.Exn.t)) => write_done
+                  ~callback: (~error: option(Js.Exn.t)) => unit
                 ) =>
-                write_done
+                unit
               ),
       unit
     ) =>
@@ -330,17 +323,17 @@ module Writable = {
                   (
                     objStream('w),
                     ~error: Js.nullable(Js.Exn.t),
-                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
+                    ~callback: (~error: option(Js.Exn.t)) => unit
                   ) =>
-                  destroy_done
+                  unit
                 )
                   =?,
       ~final: [@bs.this] (
                 (
                   objStream('w),
-                  ~callback: (~error: option(Js.Exn.t)) => final_done
+                  ~callback: (~error: option(Js.Exn.t)) => unit
                 ) =>
-                final_done
+                unit
               )
                 =?,
       ~writev: [@bs.this] (
@@ -348,9 +341,9 @@ module Writable = {
                    objStream('w),
                    ~data: array(chunk('w)),
                    ~encoding: StringEncoding.t,
-                   ~callback: (~error: option(Js.Exn.t)) => writev_done
+                   ~callback: (~error: option(Js.Exn.t)) => unit
                  ) =>
-                 writev_done
+                 unit
                )
                  =?,
       ~write: [@bs.this] (
@@ -358,9 +351,9 @@ module Writable = {
                   objStream('w),
                   ~data: 'w,
                   ~encoding: StringEncoding.t,
-                  ~callback: (~error: option(Js.Exn.t)) => write_done
+                  ~callback: (~error: option(Js.Exn.t)) => unit
                 ) =>
-                write_done
+                unit
               ),
       unit
     ) =>
@@ -574,9 +567,9 @@ module Readable = {
                   (
                     t('r),
                     ~error: Js.nullable(Js.Exn.t),
-                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
+                    ~callback: (~error: option(Js.Exn.t)) => unit
                   ) =>
-                  destroy_done
+                  unit
                 ),
       ~read: [@bs.this] ((t('r), ~size: Js.nullable(int)) => unit),
       unit
@@ -597,9 +590,9 @@ module Readable = {
                   (
                     objStream('r),
                     ~error: Js.nullable(Js.Exn.t),
-                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
+                    ~callback: (~error: option(Js.Exn.t)) => unit
                   ) =>
-                  destroy_done
+                  unit
                 ),
       ~read: [@bs.this] ((objStream('r), ~size: Js.nullable(int)) => unit),
       unit
@@ -641,18 +634,18 @@ module Duplex = {
                   (
                     t('w, 'r),
                     ~error: Js.nullable(Js.Exn.t),
-                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
+                    ~callback: (~error: option(Js.Exn.t)) => unit
                   ) =>
-                  destroy_done
+                  unit
                 )
                   =?,
       ~final: [@bs.this] (
                 (
                   t('w, 'r),
                   ~data: 'w,
-                  ~callback: (~error: option(Js.Exn.t)) => final_done
+                  ~callback: (~error: option(Js.Exn.t)) => unit
                 ) =>
-                final_done
+                unit
               )
                 =?,
       ~writev: [@bs.this] (
@@ -660,9 +653,9 @@ module Duplex = {
                    t('w, 'r),
                    ~data: array(chunk('w)),
                    ~encoding: StringEncoding.t,
-                   ~callback: (~error: option(Js.Exn.t)) => writev_done
+                   ~callback: (~error: option(Js.Exn.t)) => unit
                  ) =>
-                 writev_done
+                 unit
                )
                  =?,
       ~read: [@bs.this] ((t('w, 'r), ~size: Js.nullable(int)) => unit),
@@ -671,9 +664,9 @@ module Duplex = {
                   t('w, 'r),
                   ~data: 'w,
                   ~encoding: StringEncoding.t,
-                  ~callback: (~error: option(Js.Exn.t)) => write_done
+                  ~callback: (~error: option(Js.Exn.t)) => unit
                 ) =>
-                write_done
+                unit
               ),
       unit
     ) =>
@@ -696,17 +689,17 @@ module Duplex = {
                   (
                     objStream('w, 'r),
                     ~error: Js.nullable(Js.Exn.t),
-                    ~callback: (~error: option(Js.Exn.t)) => destroy_done
+                    ~callback: (~error: option(Js.Exn.t)) => unit
                   ) =>
-                  destroy_done
+                  unit
                 )
                   =?,
       ~final: [@bs.this] (
                 (
                   objStream('w, 'r),
-                  ~callback: (~error: option(Js.Exn.t)) => final_done
+                  ~callback: (~error: option(Js.Exn.t)) => unit
                 ) =>
-                final_done
+                unit
               )
                 =?,
       ~writev: [@bs.this] (
@@ -714,9 +707,9 @@ module Duplex = {
                    objStream('w, 'r),
                    ~data: array(chunk('w)),
                    ~encoding: StringEncoding.t,
-                   ~callback: (~error: option(Js.Exn.t)) => writev_done
+                   ~callback: (~error: option(Js.Exn.t)) => unit
                  ) =>
-                 writev_done
+                 unit
                )
                  =?,
       ~read: [@bs.this] (
@@ -727,9 +720,9 @@ module Duplex = {
                   objStream('w, 'r),
                   ~data: 'w,
                   ~encoding: StringEncoding.t,
-                  ~callback: (~error: option(Js.Exn.t)) => write_done
+                  ~callback: (~error: option(Js.Exn.t)) => unit
                 ) =>
-                write_done
+                unit
               ),
       unit
     ) =>
@@ -772,17 +765,17 @@ module Transform = {
                                    ~error: option(Js.Exn.t),
                                    ~data: option('r)
                                  ) =>
-                                 transform_done
+                                 unit
                     ) =>
-                    transform_done
+                    unit
                   ),
       ~flush: [@bs.this] (
                 (
                   t('w, 'r),
                   ~callback: (~error: option(Js.Exn.t), ~data: option('r)) =>
-                             flush_done
+                             unit
                 ) =>
-                flush_done
+                unit
               ),
       unit
     ) =>
@@ -809,17 +802,17 @@ module Transform = {
                                    ~error: option(Js.Exn.t),
                                    ~data: option('r)
                                  ) =>
-                                 transform_done
+                                 unit
                     ) =>
-                    transform_done
+                    unit
                   ),
       ~flush: [@bs.this] (
                 (
                   objStream('w, 'r),
                   ~callback: (~error: option(Js.Exn.t), ~data: option('r)) =>
-                             flush_done
+                             unit
                 ) =>
-                flush_done
+                unit
               ),
       unit
     ) =>
