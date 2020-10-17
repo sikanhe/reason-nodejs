@@ -10,24 +10,28 @@ external notStrictEqual: ('a, 'a) => unit = "notStrictEqual";
 external deepStrictEqual: ('a, 'a) => unit = "deepStrictEqual";
 [@bs.module "assert"]
 external notDeepStrictEqual: ('a, 'a) => unit = "notDeepStrictEqual";
-
-[@bs.module "assert"] external throws: (unit => 'a) => unit = "throws";
 [@bs.module "assert"]
-external throwsError: (unit => 'a, 'e) => unit = "throws";
+external throws: ([@bs.uncurry] (unit => 'a)) => unit = "throws";
 [@bs.module "assert"]
-external doesNotThrow: (unit => 'a) => unit = "doesNotThrow";
+external throwsError: ([@bs.uncurry] (unit => 'a), 'e) => unit = "throws";
 [@bs.module "assert"]
-external doesNotThrowError: (unit => 'a, 'e) => unit = "doesNotThrow";
-
+external doesNotThrow: ([@bs.uncurry] (unit => 'a)) => unit = "doesNotThrow";
+[@bs.module "assert"]
+external doesNotThrowError: ([@bs.uncurry] (unit => 'a), 'e) => unit =
+  "doesNotThrow";
 [@bs.module "assert"] external ifError: 'a => unit = "ifError";
 [@bs.module "assert"]
-external rejects: (unit => Js.Promise.t('a)) => unit = "rejects";
+external rejects: ([@bs.uncurry] (unit => Js.Promise.t('a))) => unit =
+  "rejects";
 [@bs.module "assert"]
-external rejectsError: (unit => Js.Promise.t('a), 'e) => unit = "rejects";
+external rejectsError: ([@bs.uncurry] (unit => Js.Promise.t('a)), 'e) => unit =
+  "rejects";
 [@bs.module "assert"]
-external doesNotReject: (unit => Js.Promise.t('a)) => unit = "doesNotReject";
+external doesNotReject: ([@bs.uncurry] (unit => Js.Promise.t('a))) => unit =
+  "doesNotReject";
 [@bs.module "assert"]
-external doesNotRejectError: (unit => Js.Promise.t('a), 'e) => unit =
+external doesNotRejectError:
+  ([@bs.uncurry] (unit => Js.Promise.t('a)), 'e) => unit =
   "doesNotReject";
 
 module AssertionError = Errors.AssertionError;
