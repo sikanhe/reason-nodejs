@@ -47,22 +47,23 @@ module WriteStream = {
       unit =
       "once";
   };
+
   module Impl = {
     include Stream.Writable.Impl;
     [@bs.send]
     external clearLineLeft:
-      (t, [@bs.as {json|-1|json}] _, ~callback: unit => unit=?, unit) => bool =
+      (t, [@bs.as {json|-1|json}] _, unit => unit, unit) => bool =
       "clearLine";
     [@bs.send]
     external clearLineRight:
-      (t, [@bs.as {json|1|json}] _, ~callback: unit => unit=?, unit) => bool =
+      (t, [@bs.as {json|1|json}] _, unit => unit, unit) => bool =
       "clearLine";
     [@bs.send]
     external clearLine:
-      (t, [@bs.as {json|0|json}] _, ~callback: unit => unit=?, unit) => bool =
+      (t, [@bs.as {json|0|json}] _, unit => unit, unit) => bool =
       "clearLine";
     [@bs.send]
-    external clearScreenDown: (t, ~callback: unit => unit=?, unit) => bool =
+    external clearScreenDown: (t, unit => unit, unit) => bool =
       "clearScreenDown";
     [@bs.get] external columns: t => int = "columns";
     [@bs.send] external getColorDepth: t => int = "getColorDepth";
@@ -87,3 +88,4 @@ module WriteStream = {
 };
 
 [@bs.module "tty"] external isatty: Fs.fd => bool = "isatty";
+
