@@ -8,8 +8,8 @@ type consoleOptions;
 [@bs.obj]
 external consoleOptions:
   (
-    ~stdout: Stream.Writable.subtype('w, 'r, 'a),
-    ~stderr: Stream.Writable.subtype('w, 'r, 'a)=?,
+    ~stdout: Stream.Writable.subtype('w, 'a),
+    ~stderr: Stream.Writable.subtype('w, 'a)=?,
     ~ignoreErrors: bool=?,
     ~colorMode: bool=?,
     ~inspectOptions: Util.inspectOptions=?,
@@ -20,13 +20,13 @@ external consoleOptions:
 [@bs.new] [@bs.module "console"]
 external make: consoleOptions => t = "Console";
 [@bs.new] [@bs.module "console"]
-external make2: {.. "stdout": Stream.Writable.subtype('w, 'r, 'a)} => t =
+external make2: {.. "stdout": Stream.Writable.subtype('w, 'a)} => t =
   "Console";
 
 [@bs.send] external assert_: (t, bool) => unit = "assert";
 // TODO: reconsider naming
 [@bs.send] external assertWithMessage: (t, bool, string) => unit = "assert";
-[@bs.send] external clear: (t, unit) => unit = "clear";
+[@bs.send] external clear: (t) => unit = "clear";
 [@bs.send] external count: (t, string) => unit = "count";
 [@bs.send] external countReset: (t, string) => unit = "countReset";
 
@@ -34,7 +34,7 @@ external make2: {.. "stdout": Stream.Writable.subtype('w, 'r, 'a)} => t =
 [@bs.send] [@bs.variadic]
 external debugMany: (t, array('a)) => unit = "debug";
 
-[@bs.send] external dir: (t, string) => unit = "dir";
+[@bs.send] external dir: (t, 'a) => unit = "dir";
 [@bs.send] [@bs.variadic] external dirMany: (t, array('a)) => unit = "dir";
 
 [@bs.send] external dirxml: (t, string) => unit = "dirxml";

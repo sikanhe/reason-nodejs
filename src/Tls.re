@@ -1,10 +1,10 @@
 type tls = [ | `Tls];
 
 module TlsSocket = {
-  type kind = [ Net.TcpSocket.kind | tls];
-  type subtype('w, 'r, 'a) = Net.Socket.subtype('w, 'r, [> kind] as 'a);
-  type supertype('w, 'r, 'a) = Net.Socket.subtype('w, 'r, [< kind] as 'a);
-  type t = Net.TcpSocket.subtype(Buffer.t, Buffer.t, kind);
+  type kind('w, 'r) = [ Net.Socket.kind('w, 'r) | tls];
+  type subtype('w, 'r, 'ty) = Stream.subtype([> kind('w, 'r)] as 'ty);
+  type supertype('w, 'r, 'ty) = Stream.subtype([< kind('w, 'r)] as 'ty);
+  type t = Stream.subtype(kind(Buffer.t, Buffer.t));
   module Events = {
     include Net.TcpSocket.Events;
   };
@@ -16,10 +16,10 @@ module TlsSocket = {
 };
 
 module TlsServer = {
-  type kind = [ Net.TcpServer.kind | tls];
-  type subtype('a) = Net.Server.subtype([> kind] as 'a);
-  type supertype('a) = Net.Server.subtype([< kind] as 'a);
-  type t = subtype(kind);
+  type kind = [ Net.Server.kind | tls];
+  type subtype('ty) = Net.Server.subtype([> kind] as 'ty);
+  type supertype('ty) = Net.Server.subtype([< kind] as 'ty);
+  type t = Net.Server.subtype(kind);
   module Events = {
     include Net.TcpServer.Events;
   };

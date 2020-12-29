@@ -3,8 +3,11 @@ let makeReadableEmpty = () => {
   open Stream.Readable;
   let options =
     makeOptions(
-      ~destroy=[@bs.this] (_, _, done_) => {done_(~err=None)},
-      ~read=[@bs.this] (_, _) => (),
+      ~destroy=
+        [@bs.this] (_, ~error, ~callback) => {
+          callback(~error=Js.Nullable.toOption(error))
+        },
+      ~read=[@bs.this] (_, ~size as _) => (),
       ~autoDestroy=true,
       (),
     );
@@ -16,8 +19,13 @@ let makeWritableEmpty = () => {
   open Stream.Writable;
   let options =
     makeOptions(
-      ~destroy=[@bs.this] (_, _, done_) => {done_(~err=None)},
-      ~write=[@bs.this] (_, _, _) => (),
+      ~destroy=
+        [@bs.this] (_, ~error, ~callback) => {
+          callback(~error=Js.Nullable.toOption(error))
+        },
+      ~write=
+        [@bs.this] (_, ~data as _, ~encoding as _, ~callback) =>
+          callback(~error=None),
       ~autoDestroy=true,
       (),
     );

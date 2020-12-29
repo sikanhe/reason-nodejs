@@ -93,7 +93,6 @@ external execOptions:
   (
     ~cwd: string=?,
     ~env: Js.Dict.t(string)=?,
-    ~encoding: string=?,
     ~shell: string=?,
     ~timeout: int=?,
     ~maxBuffer: int=?,
@@ -106,12 +105,12 @@ external execOptions:
   execOptions;
 
 [@bs.module "child_process"] [@bs.val]
-external exec: (string, (option(Js.Exn.t), string, string) => unit) => t =
+external exec: (string, (Js.nullable(Js.Exn.t), Buffer.t, Buffer.t) => unit) => t =
   "exec";
 
 [@bs.module "child_process"] [@bs.val]
 external execWith:
-  (string, execOptions, (option(Js.Exn.t), string, string) => unit) => t =
+  (string, execOptions, (Js.nullable(Js.Exn.t), Buffer.t, Buffer.t) => unit) => t =
   "exec";
 
 type execFileOptions;
@@ -121,7 +120,6 @@ external execFileOption:
   (
     ~cwd: string=?,
     ~env: Js.Dict.t(string)=?,
-    ~encoding: string=?,
     ~timeout: int=?,
     ~maxBuffer: int=?,
     ~killSignal: string=?,
@@ -135,7 +133,7 @@ external execFileOption:
 
 [@bs.module "child_process"] [@bs.val]
 external execFile:
-  (string, array(string), (option(Js.Exn.t), string, string) => unit) => t =
+  (string, array(string), (Js.nullable(Js.Exn.t), Buffer.t, Buffer.t) => unit) => t =
   "execFile";
 
 [@bs.module "child_process"] [@bs.val]
@@ -144,7 +142,7 @@ external execFileWith:
     string,
     array(string),
     execFileOptions,
-    (option(Js.Exn.t), string, string) => unit
+    (Js.nullable(Js.Exn.t), Buffer.t, Buffer.t) => unit
   ) =>
   t =
   "execFile";
@@ -202,11 +200,11 @@ external spawnWith: (string, array(string), spawnOptions) => t = "spawn";
 type spawnSyncResult('a) = {
   pid: int,
   output: array('a),
-  stdout: string,
-  stderr: string,
+  stdout: Buffer.t,
+  stderr: Buffer.t,
   status: int,
-  signal: Js.Nullable.t(string),
-  error: option(Js.Exn.t),
+  signal: Js.nullable(string),
+  error: Js.nullable(Js.Exn.t),
 };
 
 type spawnSyncOptions;
@@ -247,7 +245,6 @@ external execSyncOptions:
     ~cwd: string=?,
     ~env: Js.Dict.t(string)=?,
     ~input: Buffer.t=?,
-    ~encoding: string=?,
     ~shell: string=?,
     ~timeout: int=?,
     ~maxBuffer: int=?,
@@ -260,10 +257,10 @@ external execSyncOptions:
   execSyncOptions;
 
 [@bs.module "child_process"] [@bs.val]
-external execSync: string => string = "execSync";
+external execSync: string => Buffer.t = "execSync";
 
 [@bs.module "child_process"] [@bs.val]
-external execSyncWith: (string, execSyncOptions) => string = "execSync";
+external execSyncWith: (string, execSyncOptions) => Buffer.t = "execSync";
 
 type execFileSyncOptions;
 
@@ -273,7 +270,6 @@ external execFileSyncOptions:
     ~cwd: string=?,
     ~env: Js.Dict.t(string)=?,
     ~input: Buffer.t=?,
-    ~encoding: string=?,
     ~shell: string=?,
     ~timeout: int=?,
     ~maxBuffer: int=?,
@@ -286,9 +282,9 @@ external execFileSyncOptions:
   execFileSyncOptions;
 
 [@bs.module "child_process"] [@bs.val]
-external execFileSync: (string, array(string)) => string = "execFileSync";
+external execFileSync: (string, array(string)) => Buffer.t = "execFileSync";
 
 [@bs.module "child_process"] [@bs.val]
 external execFileSyncWith:
-  (string, array(string), execFileSyncOptions) => string =
+  (string, array(string), execFileSyncOptions) => Buffer.t =
   "execFileSync";
