@@ -76,6 +76,11 @@ module WriteStream = {
     [@bs.send]
     external hasColorsFromEnv: (t, int, Js.Dict.t('ty)) => bool = "hasColors";
     [@bs.send] external hasAtLeast16Colors: t => bool = "hasColors";
+    [@bs.send]
+    external moveCursor:
+      (t, int, int, [@bs.uncurry] (unit => unit)) => bool =
+      "moveCursor";
+    [@bs.get] external rows: t => int = "rows";
     [@bs.get] external isTTY: t => bool = "isTTY";
     external unsafeCoerceToSocket: t => Net.Socket.t = "%identity";
     external unsafeCoerceFromSocket: Net.Socket.t => t = "%identity";
