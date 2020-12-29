@@ -37,7 +37,7 @@ npm i reason-nodejs
 
 ## Goal of this library
 
-Help all Reason Node.js apps and libaries to be built faster by reducing the time spent on hand written bindings.
+Help all Reason Node.js apps and libraries to be built faster by reducing the time spent on hand written bindings.
 
 ## Non-Goals
 
