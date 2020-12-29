@@ -52,18 +52,19 @@ module WriteStream = {
     include Stream.Writable.Impl;
     [@bs.send]
     external clearLineLeft:
-      (t, [@bs.as {json|-1|json}] _, unit => unit, unit) => bool =
+      (t, [@bs.as {json|-1|json}] _, [@bs.uncurry] (unit => unit), unit) =>
+      bool =
       "clearLine";
     [@bs.send]
     external clearLineRight:
-      (t, [@bs.as {json|1|json}] _, unit => unit, unit) => bool =
+      (t, [@bs.as {json|1|json}] _, [@bs.uncurry] (unit => unit), unit) => bool =
       "clearLine";
     [@bs.send]
     external clearLine:
-      (t, [@bs.as {json|0|json}] _, unit => unit, unit) => bool =
+      (t, [@bs.as {json|0|json}] _, [@bs.uncurry] (unit => unit), unit) => bool =
       "clearLine";
     [@bs.send]
-    external clearScreenDown: (t, unit => unit, unit) => bool =
+    external clearScreenDown: (t, [@bs.uncurry] (unit => unit), unit) => bool =
       "clearScreenDown";
     [@bs.get] external columns: t => int = "columns";
     [@bs.send] external getColorDepth: t => int = "getColorDepth";
