@@ -26,7 +26,7 @@ external make2: {.. "stdout": Stream.Writable.subtype('w, 'a)} => t =
 [@bs.send] external assert_: (t, bool) => unit = "assert";
 // TODO: reconsider naming
 [@bs.send] external assertWithMessage: (t, bool, string) => unit = "assert";
-[@bs.send] external clear: (t, unit) => unit = "clear";
+[@bs.send] external clear: (t) => unit = "clear";
 [@bs.send] external count: (t, string) => unit = "count";
 [@bs.send] external countReset: (t, string) => unit = "countReset";
 

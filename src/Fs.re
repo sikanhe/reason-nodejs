@@ -388,8 +388,7 @@ module WriteStream = {
 module ReadStream = {
   type kind('r) = [ Stream.readable('r) | `FileSystem];
   type subtype('r, 'ty) = Stream.subtype([> kind('r)] as 'ty);
-  type supertype('r, 'ty) =
-    Stream.subtype([< kind('r)] as 'ty);
+  type supertype('r, 'ty) = Stream.subtype([< kind('r)] as 'ty);
   type t = subtype(Buffer.t, [ kind(Buffer.t)]);
   module Impl = {
     include Stream.Readable.Impl;
