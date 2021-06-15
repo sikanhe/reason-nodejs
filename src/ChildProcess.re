@@ -79,11 +79,11 @@ include Events;
 [@bs.get] external pid: t => int = "pid";
 [@bs.get] external ref: t => unit = "ref";
 [@bs.get] [@bs.return nullable]
-external stderr: t => option(Stream.Writable.t(Buffer.t)) = "stderr";
+external stderr: t => option(Stream.Readable.t(Buffer.t)) = "stderr";
 [@bs.get] [@bs.return nullable]
-external stdin: t => option(Stream.Readable.t(Buffer.t)) = "stdin";
+external stdin: t => option(Stream.Writable.t(Buffer.t)) = "stdin";
 [@bs.get] [@bs.return nullable]
-external stdout: t => option(Stream.Writable.t(Buffer.t)) = "stdout";
+external stdout: t => option(Stream.Readable.t(Buffer.t)) = "stdout";
 [@bs.get] external unref: t => unit = "unref";
 
 type execOptions;
