@@ -509,7 +509,7 @@ external createWriteStreamOptions:
     ~fs: Js.t({..})=?,
     unit
   ) =>
-  createReadStreamOptions;
+  createWriteStreamOptions;
 [@bs.module "fs"]
 external createWriteStream: string => WriteStream.t = "createWriteStream";
 
